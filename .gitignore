@@ -1,0 +1,10 @@
+tools/
+dist/
+clean/*.asi
+clean/*.pdb
+clean/*.lib
+clean/tests/*.exe
+clean/tests/*.bmp
+clean/tests/*.ini*
+*.log
+__pycache__/
