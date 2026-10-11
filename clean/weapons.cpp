@@ -203,6 +203,7 @@ void give(Obj pawn,Obj manager,int selected,int destination) {
 #include "progression_items.inl"
 #include "progression_vigor_upgrades.inl"
 #include "progression_infusions.inl"
+#include "vitals.inl"
 void __fastcall camera(void *pc,void *,void *location,void *rotation) {
     cameraOriginal(pc,location,rotation);
     if(inside)return;
@@ -236,6 +237,7 @@ void __fastcall camera(void *pc,void *,void *location,void *rotation) {
         else if(selected==-7)grantLockpicks((Obj)pc,pawn);
         else if(selected==-8)grantVigorUpgrades((Obj)pc,pawn,manager);
         else if(selected==-9)grantInfusions((Obj)pc,pawn);
+        else if(selected==-10)vitals::refill((Obj)pc,pawn);
         else give(pawn,manager,selected,destination);
         AcquireSRWLockExclusive(&stateLock);busy=false;ReleaseSRWLockExclusive(&stateLock);
     }
@@ -272,6 +274,13 @@ bool requestProgression(ProgressionAction action) {
         snprintf(message,sizeof(message),"Ajout demande...");
     } else if(pending==-1 && !busy)snprintf(message,sizeof(message),"%s",progressionEnabled
         ?"Chargez une partie active avec Booker.":"Ajouts de progression desactives dans InfiniteMod.ini.");
+    ReleaseSRWLockExclusive(&stateLock);return ok;
+}
+bool requestVitals() {
+    AcquireSRWLockExclusive(&stateLock);DWORD now=GetTickCount();
+    bool ok=available && now-lastSeen<1500 && pending==-1 && !busy;
+    if(ok){pending=-10;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;snprintf(message,sizeof(message),"Recharge sante, bouclier et sels demandee...");}
+    else if(pending==-1 && !busy)snprintf(message,sizeof(message),"Chargez une partie active avec Booker.");
     ReleaseSRWLockExclusive(&stateLock);return ok;
 }
 void weaponStatus(char *text,size_t capacity) {

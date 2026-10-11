@@ -1,10 +1,15 @@
 tools/
 dist/
+releases/
 clean/*.asi
 clean/*.pdb
 clean/*.lib
 clean/tests/*.exe
+clean/tests/*.pdb
+clean/tests/*.lib
 clean/tests/*.bmp
 clean/tests/*.ini*
+*.o
 *.log
 __pycache__/
+distribution/tests/private/

@@ -7,6 +7,7 @@ bool installWeapons(BYTE *image);
 void weaponWindow(HWND window);
 bool requestWeapon(int index,int destination=0);
 bool requestAmmo();
+bool requestVitals();
 enum class ProgressionAction { Powers, Gear, WeaponUpgrades, Money, Lockpicks, VigorUpgrades, Infusions, Count };
 bool requestProgression(ProgressionAction action);
 void weaponStatus(char *text,size_t capacity);

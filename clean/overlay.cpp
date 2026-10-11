@@ -1,6 +1,7 @@
 #include "shared.h"
 #include "weapons.h"
 #include "aim.h"
+#include "keybinds.h"
 #include <d3d11.h>
 #include <stdio.h>
 #include "imgui.h"
@@ -42,11 +43,131 @@ typedef HRESULT (STDMETHODCALLTYPE *SwapFn)(IDXGIFactory *,IUnknown *,DXGI_SWAP_
 typedef HRESULT (STDMETHODCALLTYPE *PresentFn)(IDXGISwapChain *,UINT,UINT);
 static FactoryFn factoryOriginal;
 static void **factoryImport;
-static bool menuOpen,insertHeld,f1Held,settingError;
-static bool f2Held,f3Held,f4Held,f5Held,f6Held,fovMinusHeld,fovPlusHeld,f9Held,f10Held,f11Held,f12Held;
-static bool vigorUpgradesHeld,reticleHeld;
-static int selectedWeapon,selectedDestination;
+static bool menuOpen,bindingsOpen,bindingsReturnToMain,settingError,bindingsLoaded,bindingsError;
+static unsigned selectedBinding;
+static int selectedWeapon;
+static keybinds::Engine overlayBindings;
+static char bindingsNotice[256];
+static bool navigationHeld[4],navigationFocused;
+static constexpr unsigned bindingsPageSize=8;
 static const int aimKeys[]={VK_MBUTTON,VK_RBUTTON,'Z',VK_XBUTTON1,VK_XBUTTON2};
+static SHORT overlayKeyQuery(int key) {return GetAsyncKeyState(key);}
+static std::string shortcutLabel(keybinds::Action action) {
+    keybinds::Chord chord=overlayBindings.binding(action);
+    if(chord.modifiers==0 && chord.key==VK_OEM_MINUS)return "-";
+    if(chord.modifiers==0 && chord.key==VK_OEM_PLUS)return "+";
+    return overlayBindings.bindingLabel(action);
+}
+static void loadOverlayBindings() {
+    if(bindingsLoaded)return;
+    keybinds::LoadReport result=overlayBindings.load(modIni);bindingsLoaded=true;
+    if(result.invalid || result.conflicts) {
+        bindingsError=true;
+        snprintf(bindingsNotice,sizeof(bindingsNotice),"Raccourcis invalides (%u) ou en conflit (%u) : valeurs par defaut restaurees.",result.invalid,result.conflicts);
+    }
+    modLog("Keybinds loaded: invalid=%u, conflicts=%u",result.invalid,result.conflicts);
+}
+static void publishMenuState() {InterlockedExchange(&modMenuOpen,menuOpen || bindingsOpen);}
+static void closeBindingsMenu() {
+    bindingsOpen=false;menuOpen=bindingsReturnToMain;publishMenuState();
+}
+static void updateMenuInput(bool focused) {
+    using Action=keybinds::Action;
+    loadOverlayBindings();
+    const int navigationKeys[4]={VK_UP,VK_DOWN,VK_RETURN,VK_ESCAPE};
+    bool navigationEdges[4]={};
+    for(unsigned i=0;i<4;++i) {
+        bool down=(overlayKeyQuery(navigationKeys[i])&0x8000)!=0;
+        navigationEdges[i]=focused && navigationFocused && down && !navigationHeld[i];
+        navigationHeld[i]=down;
+    }
+    navigationFocused=focused;
+    keybinds::Events events=overlayBindings.pollEdges(focused,menuOpen && !bindingsOpen,false,overlayKeyQuery);
+    if(overlayBindings.capturing()) {
+        keybinds::CaptureResult result=overlayBindings.pollCapture(focused,overlayKeyQuery);
+        if(result.status==keybinds::CaptureStatus::Conflict) {
+            bindingsError=true;
+            snprintf(bindingsNotice,sizeof(bindingsNotice),"%s est deja utilise pour : %s.",keybinds::chordLabel(result.candidate).c_str(),keybinds::definitions[static_cast<unsigned>(result.conflict)].label);
+        } else if(result.status==keybinds::CaptureStatus::Invalid) {
+            bindingsError=true;snprintf(bindingsNotice,sizeof(bindingsNotice),"Appuie sur une seule touche, avec Ctrl, Alt ou Maj si souhaite.");
+        } else if(result.status==keybinds::CaptureStatus::Cancelled) {
+            bindingsError=false;snprintf(bindingsNotice,sizeof(bindingsNotice),"Modification annulee. Le raccourci precedent est conserve.");
+        } else if(result.status==keybinds::CaptureStatus::Captured) {
+            keybinds::RebindResult saved=overlayBindings.rebindAndSave(result.action,result.candidate,modIni);
+            bindingsError=!saved.ok;
+            if(saved.ok) {
+                snprintf(bindingsNotice,sizeof(bindingsNotice),"Enregistre : %s = %s.",keybinds::definitions[static_cast<unsigned>(result.action)].label,keybinds::chordLabel(result.candidate).c_str());
+                modLog("Keybind saved: action=%ls, shortcut=%s",keybinds::definitions[static_cast<unsigned>(result.action)].iniName,keybinds::chordLabel(result.candidate).c_str());
+                overlayBindings.cancelCapture();
+            } else snprintf(bindingsNotice,sizeof(bindingsNotice),"Enregistrement impossible. Le raccourci precedent est conserve. Echap : annuler.");
+        }
+        return;
+    }
+    // Plain navigation belongs to the editor while it is open. A user may bind
+    // either menu to an arrow/Enter/Escape without making the editor unusable.
+    if(focused && bindingsOpen) {
+        bool plain=true;
+        for(int key:{VK_CONTROL,VK_LCONTROL,VK_RCONTROL,VK_MENU,VK_LMENU,VK_RMENU,VK_SHIFT,VK_LSHIFT,VK_RSHIFT,VK_LWIN,VK_RWIN})
+            if(overlayKeyQuery(key)&0x8000){plain=false;break;}
+        if(plain && (navigationEdges[0] || navigationEdges[1] || navigationEdges[2] || navigationEdges[3])) {
+            if(navigationEdges[3]){closeBindingsMenu();return;}
+            if(navigationEdges[0])selectedBinding=(selectedBinding+keybinds::count-1)%keybinds::count;
+            if(navigationEdges[1])selectedBinding=(selectedBinding+1)%keybinds::count;
+            if(navigationEdges[2])overlayBindings.beginCapture(static_cast<Action>(selectedBinding));
+            return;
+        }
+    }
+    if(events.has(Action::MainMenu)) {
+        if(bindingsOpen){bindingsOpen=false;menuOpen=true;}
+        else menuOpen=!menuOpen;
+        publishMenuState();modLog("Overlay %s",menuOpen?"opened":"closed");return;
+    }
+    if(events.has(Action::BindingsMenu)) {
+        if(bindingsOpen)closeBindingsMenu();
+        else {bindingsReturnToMain=menuOpen;menuOpen=false;bindingsOpen=true;publishMenuState();}
+        modLog("Keybind menu %s",bindingsOpen?"opened":"closed");return;
+    }
+    if(!focused)return;
+    if(bindingsOpen)return;
+    if(!menuOpen)return;
+    if(events.has(Action::Vitals))requestVitals();
+    if(events.has(Action::Ammo))requestAmmo();
+    if(events.has(Action::WeaponPrevious))selectedWeapon=(selectedWeapon+weaponChoiceCount-1)%weaponChoiceCount;
+    if(events.has(Action::WeaponNext))selectedWeapon=(selectedWeapon+1)%weaponChoiceCount;
+    if(events.has(Action::GiveMain))requestWeapon(selectedWeapon,0);
+    if(events.has(Action::GiveSecondary))requestWeapon(selectedWeapon,1);
+    if(events.has(Action::Powers))requestProgression(ProgressionAction::Powers);
+    if(events.has(Action::Gear))requestProgression(ProgressionAction::Gear);
+    if(events.has(Action::WeaponUpgrades))requestProgression(ProgressionAction::WeaponUpgrades);
+    if(events.has(Action::VigorUpgrades))requestProgression(ProgressionAction::VigorUpgrades);
+    if(events.has(Action::Infusions))requestProgression(ProgressionAction::Infusions);
+    if(events.has(Action::Money))requestProgression(ProgressionAction::Money);
+    if(events.has(Action::Lockpicks))requestProgression(ProgressionAction::Lockpicks);
+    if(events.has(Action::SkipIntros))settingError=!queueIntroSetting(!InterlockedCompareExchange(&configWanted,0,0));
+    if(events.has(Action::Speed)) {
+        int value=(int)InterlockedCompareExchange(&speedPercent,0,0);
+        settingError=!saveSpeedSetting(value>=100 && value<200 && value%25==0?value+25:100);
+    }
+    if(events.has(Action::FovDecrease)) {
+        int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
+        if(value>80)settingError=!saveFOVSetting(value<85?80:value-5);
+    }
+    if(events.has(Action::FovIncrease)) {
+        int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
+        if(value<130)settingError=!saveFOVSetting(value>125?130:value+5);
+    }
+    if(events.has(Action::Crosshair))settingError=!saveCrosshairSetting(!InterlockedCompareExchange(&crosshairHidden,0,0));
+    if(events.has(Action::HUD)) {
+        int value=(int)InterlockedCompareExchange(&hudWanted,0,0);
+        settingError=!saveHUDSetting(value==100?125:value==125?150:value==150?200:100);
+    }
+    if(events.has(Action::HoldAim))settingError=!saveAimSetting(!InterlockedCompareExchange(&aimWanted,0,0));
+    if(events.has(Action::AimKey)) {
+        int old=(int)InterlockedCompareExchange(&aimKey,0,0),next=0;
+        for(int i=0;i<5;++i)if(aimKeys[i]==old){next=(i+1)%5;break;}
+        settingError=!saveAimKey(aimKeys[next]);
+    }
+}
 static const char *aimKeyLabel(int key) {
     switch(key){case VK_MBUTTON:return "bouton central";case VK_RBUTTON:return "clic droit";case 'Z':return "Z";
     case VK_XBUTTON1:return "bouton lateral 1";case VK_XBUTTON2:return "bouton lateral 2";default:return "touche personnalisee (INI)";}
@@ -74,6 +195,99 @@ static bool renderer(IDXGISwapChain *chain) {
     QueryPerformanceFrequency(&frequency);QueryPerformanceCounter(&lastTime);
     modLog("Overlay renderer initialized on GAME device %p",device);return true;
 }
+static void drawShortcut(keybinds::Action action,const char *description) {
+    ImGui::TextWrapped("%s   %s",shortcutLabel(action).c_str(),description);
+}
+static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"%s",label);}
+static void drawMainMenuContents() {
+    using Action=keybinds::Action;
+    drawMenuSection("INFINITEMOD");
+    ImGui::TextDisabled("%s : menu | %s : raccourcis",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
+    ImGui::TextDisabled("Commandes actives avec ce menu ouvert. Le jeu continue.");
+    ImGui::Separator();
+    if(ImGui::BeginTable("mainColumns",2,ImGuiTableFlags_SizingStretchSame)) {
+        ImGui::TableNextRow();ImGui::TableSetColumnIndex(0);
+        drawMenuSection("SANTE ET ARMES");
+        drawShortcut(Action::Vitals,"Remplir sante, bouclier et sels");
+        drawShortcut(Action::Ammo,"Remplir les munitions des deux armes");
+        ImGui::TextWrapped("%s / %s   Choisir : %s",shortcutLabel(Action::WeaponPrevious).c_str(),shortcutLabel(Action::WeaponNext).c_str(),weaponChoices[selectedWeapon].label);
+        drawShortcut(Action::GiveMain,"Donner l'arme selectionnee en main");
+        drawShortcut(Action::GiveSecondary,"Donner l'arme selectionnee en secondaire");
+        ImGui::Separator();drawMenuSection("PROGRESSION");
+        drawShortcut(Action::Powers,"Tous les pouvoirs");
+        drawShortcut(Action::Gear,"Tous les cadeaux (equipements)");
+        drawShortcut(Action::WeaponUpgrades,"Toutes les ameliorations d'armes");
+        drawShortcut(Action::VigorUpgrades,"Toutes les ameliorations de pouvoirs");
+        drawShortcut(Action::Infusions,"Infusions des trois jauges au maximum");
+        drawShortcut(Action::Money,"Argent au maximum");
+        drawShortcut(Action::Lockpicks,"Crochets au maximum");
+        ImGui::Separator();
+        char weaponText[192];weaponStatus(weaponText,sizeof(weaponText));ImGui::TextWrapped("%s",weaponText);
+        ImGui::TableSetColumnIndex(1);
+        drawMenuSection("DEPLACEMENT ET FOV");
+        ImGui::TextWrapped("%s   Vitesse : x%.2f",shortcutLabel(Action::Speed).c_str(),(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
+        ImGui::TextWrapped("%s / %s   FOV du monde : %ld deg",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),InterlockedCompareExchange(&fovDegrees,0,0));
+        char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
+        ImGui::Separator();drawMenuSection("AFFICHAGE ET VISEE");
+        bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();
+        ImGui::TextWrapped("%s   Masquer les reticules : %s",shortcutLabel(Action::Crosshair).c_str(),!hideCrosshair?"NON":reticleState>0?"OUI":reticleState<0?"INDISPONIBLE":"EN ATTENTE");
+        if(hideCrosshair && reticleState<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Masquage indisponible : voir le journal.");
+        LONG hud=InterlockedCompareExchange(&hudWanted,0,0),applied=InterlockedCompareExchange(&hudApplied,0,0);
+        if(hud==100)ImGui::TextWrapped("%s   Interface : compacte (native)",shortcutLabel(Action::HUD).c_str());
+        else ImGui::TextWrapped("%s   Interface : jusqu'a x%.2f",shortcutLabel(Action::HUD).c_str(),(double)hud/100);
+        if(InterlockedCompareExchange(&hudResult,0,0)<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Reglage HUD non applique : voir le journal.");
+        else if(InterlockedCompareExchange(&hudResult,0,0)==2)ImGui::TextDisabled("Verification de l'interface au demarrage...");
+        else if(hud!=applied)ImGui::TextDisabled("Interface : relancer pour appliquer le changement.");
+        else ImGui::TextDisabled("Interface : changement au prochain lancement.");
+        ImGui::TextWrapped("%s   Visee maintenue : %s",shortcutLabel(Action::HoldAim).c_str(),InterlockedCompareExchange(&aimWanted,0,0)?"ON":"OFF");
+        if(!aimReady())ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Visee maintenue indisponible : voir le journal.");
+        ImGui::TextWrapped("%s   Touche de visee : %s",shortcutLabel(Action::AimKey).c_str(),aimKeyLabel((int)InterlockedCompareExchange(&aimKey,0,0)));
+        ImGui::TextDisabled("Meme touche que dans les commandes du jeu.");
+        ImGui::Separator();drawMenuSection("DEMARRAGE");
+        bool wanted=InterlockedCompareExchange(&configWanted,0,0)!=0;
+        ImGui::TextWrapped("%s   Passer les logos : %s",shortcutLabel(Action::SkipIntros).c_str(),wanted?"OUI":"NON");
+        ImGui::TextDisabled("Au prochain lancement. Chargement conserve.");
+        LONG status=InterlockedCompareExchange(&configResult,0,0);
+        if(status<0 || settingError)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Enregistrement impossible : voir le journal.");
+        else if(status==2)ImGui::TextDisabled("Configuration enregistree. Relancer le jeu.");
+        else if(status==1)ImGui::TextDisabled("Configuration verifiee.");
+        else ImGui::TextDisabled("Verification de la configuration...");
+        ImGui::EndTable();
+    }
+}
+static void drawBindingsMenuContents() {
+    using Action=keybinds::Action;
+    drawMenuSection("INFINITEMOD / RACCOURCIS");
+    ImGui::TextDisabled("%s : fermer | %s : menu principal",shortcutLabel(Action::BindingsMenu).c_str(),shortcutLabel(Action::MainMenu).c_str());
+    if(overlayBindings.capturing()) {
+        ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"Nouvelle touche : %s",keybinds::definitions[selectedBinding].label);
+        ImGui::TextWrapped("Relache les touches, puis presse ton raccourci (Ctrl, Alt ou Maj possibles). Echap : annuler.");
+    } else ImGui::TextDisabled("Haut / Bas : choisir | Entree : modifier | Echap : retour");
+    ImGui::Separator();
+    unsigned first=(selectedBinding/bindingsPageSize)*bindingsPageSize,last=first+bindingsPageSize;
+    if(last>keybinds::count)last=keybinds::count;
+    if(ImGui::BeginTable("bindingRows",2,ImGuiTableFlags_SizingStretchProp)) {
+        ImGui::TableSetupColumn("Action",ImGuiTableColumnFlags_WidthStretch,0.70f);
+        ImGui::TableSetupColumn("Touche",ImGuiTableColumnFlags_WidthStretch,0.30f);
+        for(unsigned i=first;i<last;++i) {
+            ImGui::TableNextRow();ImGui::TableSetColumnIndex(0);
+            if(i==selectedBinding)ImGui::PushStyleColor(ImGuiCol_Text,ImVec4(0.96f,0.72f,0.3f,1));
+            ImGui::TextWrapped("%s %s",i==selectedBinding?">":" ",keybinds::definitions[i].label);
+            ImGui::TableSetColumnIndex(1);ImGui::TextWrapped("%s",shortcutLabel(static_cast<Action>(i)).c_str());
+            if(i==selectedBinding)ImGui::PopStyleColor();
+        }
+        ImGui::EndTable();
+    }
+    ImGui::Separator();
+    ImGui::TextDisabled("Page %u / %u - %u raccourcis configurables",selectedBinding/bindingsPageSize+1,(keybinds::count+bindingsPageSize-1)/bindingsPageSize,keybinds::count);
+    if(*bindingsNotice) {
+        ImGui::PushStyleColor(ImGuiCol_Text,bindingsError?ImVec4(1,0.4f,0.35f,1):ImVec4(0.4f,0.86f,0.62f,1));
+        ImGui::TextWrapped("%s",bindingsNotice);ImGui::PopStyleColor();
+    }
+    ImGui::TextDisabled("Les modifications sont enregistrees automatiquement.");
+    ImGui::TextDisabled("Haut / Bas / Entree / Echap reserves dans cet editeur.");
+    ImGui::TextDisabled("Aucune commande du mod n'est executee pendant le reglage.");
+}
 static void drawMenu(IDXGISwapChain *chain) {
     if(!renderer(chain)) return;
     ImGui::SetCurrentContext(gui);
@@ -91,59 +305,11 @@ static void drawMenu(IDXGISwapChain *chain) {
     ImGuiStyle &style=ImGui::GetStyle();style.WindowPadding=ImVec2(20*scale,18*scale);style.ItemSpacing=ImVec2(10*scale,10*scale);style.WindowRounding=8*scale;
     ImGui_ImplDX11_NewFrame();ImGui::NewFrame();
     ImGui::SetNextWindowPos(ImVec2(desc.Width*0.5f,desc.Height*0.5f),ImGuiCond_Always,ImVec2(0.5f,0.5f));
-    ImGui::SetNextWindowSize(ImVec2(740*scale,0),ImGuiCond_Always);
+    float menuWidth=1100*scale;if(menuWidth>desc.Width-40*scale)menuWidth=desc.Width-40*scale;
+    ImGui::SetNextWindowSize(ImVec2(menuWidth,0),ImGuiCond_Always);
     ImGui::SetNextWindowBgAlpha(0.97f);
     ImGui::Begin("InfiniteMod",nullptr,ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"INFINITEMOD");
-    ImGui::TextDisabled("Inser : ouvrir / fermer");ImGui::Separator();
-    ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"ARMES");
-    ImGui::Text("F2 / F3   Choisir : %s",weaponChoices[selectedWeapon].label);
-    ImGui::Text("F5        Emplacement : %s",selectedDestination?"SECONDAIRE":"EN MAIN");
-    ImGui::Text("F4        Placer l'arme dans cet emplacement");
-    ImGui::Text("F6        Remplir les munitions des deux armes");
-    ImGui::Separator();
-    ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"PROGRESSION");
-    ImGui::Text("Ctrl + F2   Tous les pouvoirs");
-    ImGui::Text("Ctrl + F3   Tous les cadeaux (equipements)");
-    ImGui::Text("Ctrl + F4   Toutes les ameliorations d'armes");
-    ImGui::Text("Ctrl + F5   Argent au maximum");
-    ImGui::Text("Ctrl + F6   Crochets au maximum");
-    ImGui::Text("Ctrl + F7   Toutes les ameliorations de pouvoirs");
-    ImGui::Text("Ctrl + F8   Infusions sante, sels et bouclier au maximum");
-    char weaponText[192];weaponStatus(weaponText,sizeof(weaponText));ImGui::TextWrapped("%s",weaponText);
-    ImGui::Separator();
-    ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"DEPLACEMENT ET FOV");
-    ImGui::Text("F12       Vitesse du joueur : x%.2f",(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
-    ImGui::Text("- / +     Champ de vision : %ld deg",InterlockedCompareExchange(&fovDegrees,0,0));
-    char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
-    ImGui::Separator();
-    ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"AFFICHAGE ET VISEE");
-    bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;
-    LONG reticleState=crosshairStatus();
-    ImGui::Text("F8   Masquer les reticules : %s",!hideCrosshair?"NON":reticleState>0?"OUI":reticleState<0?"INDISPONIBLE":"EN ATTENTE");
-    if(hideCrosshair && reticleState<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Masquage indisponible : voir le journal.");
-    LONG hud=InterlockedCompareExchange(&hudWanted,0,0),applied=InterlockedCompareExchange(&hudApplied,0,0);
-    if(hud==100)ImGui::Text("F9   Taille interface : compacte (native)");
-    else ImGui::Text("F9   Taille interface : jusqu'a x%.2f",(double)hud/100);
-    ImGui::TextDisabled("Compacte = taille native fixe. Concerne le HUD et les menus.");
-    if(InterlockedCompareExchange(&hudResult,0,0)<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Reglage HUD non applique : voir le journal.");
-    else if(InterlockedCompareExchange(&hudResult,0,0)==2)ImGui::TextDisabled("Verification du reglage HUD au demarrage...");
-    else if(hud!=applied)ImGui::TextDisabled("Changement enregistre : relancer le jeu.");
-    else ImGui::TextDisabled("Taille confirmee. Tout changement demande de relancer le jeu.");
-    ImGui::Text("F10  Visee maintenue : %s",InterlockedCompareExchange(&aimWanted,0,0)?"ON":"OFF");
-    if(!aimReady())ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Visee maintenue indisponible : voir le journal.");
-    ImGui::Text("F11  Touche de visee : %s",aimKeyLabel((int)InterlockedCompareExchange(&aimKey,0,0)));
-    ImGui::TextDisabled("Choisir la meme touche que dans les commandes du jeu.");
-    ImGui::Separator();
-    bool wanted=InterlockedCompareExchange(&configWanted,0,0)!=0;
-    ImGui::Text("F1   Passer les logos au demarrage : %s",wanted?"OUI":"NON");
-    ImGui::TextDisabled("Chargement initial conserve. Modification au prochain lancement.");
-    LONG status=InterlockedCompareExchange(&configResult,0,0);
-    if(status==1) ImGui::TextColored(ImVec4(0.4f,0.86f,0.62f,1),"Configuration verifiee.");
-    else if(status==2) ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"Configuration mise a jour. Relancer le jeu.");
-    else if(status<0 || settingError) ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Enregistrement impossible. Voir le journal.");
-    else ImGui::TextDisabled("Verification de la configuration...");
-    ImGui::Separator();ImGui::TextDisabled("Menu au clavier. Le jeu continue en arriere-plan.");
+    if(bindingsOpen)drawBindingsMenuContents();else drawMainMenuContents();
     ImGui::End();ImGui::Render();
 
     // Restore every state touched by the backend, including stages it clears.
@@ -170,61 +336,8 @@ static HRESULT STDMETHODCALLTYPE gamePresent(IDXGISwapChain *chain,UINT sync,UIN
             weaponWindow(desc.OutputWindow);
             if(frames==1 || frames==120 || frames==600) modLog("GAME Present #%lu: %ux%u, window=%p, thread=%lu",frames,desc.BufferDesc.Width,desc.BufferDesc.Height,desc.OutputWindow,GetCurrentThreadId());
             bool focused=desc.OutputWindow && GetForegroundWindow()==desc.OutputWindow;
-            bool insert=(GetAsyncKeyState(VK_INSERT)&0x8000)!=0,f1=(GetAsyncKeyState(VK_F1)&0x8000)!=0;
-            if(focused && insert && !insertHeld) {menuOpen=!menuOpen;InterlockedExchange(&modMenuOpen,menuOpen);modLog("Overlay %s",menuOpen?"opened":"closed");}
-            if(focused && menuOpen && f1 && !f1Held) settingError=!queueIntroSetting(!InterlockedCompareExchange(&configWanted,0,0));
-            bool f2=(GetAsyncKeyState(VK_F2)&0x8000)!=0,f3=(GetAsyncKeyState(VK_F3)&0x8000)!=0,f4=(GetAsyncKeyState(VK_F4)&0x8000)!=0;
-            bool f5=(GetAsyncKeyState(VK_F5)&0x8000)!=0,f6=(GetAsyncKeyState(VK_F6)&0x8000)!=0;
-            bool vigorUpgrade=(GetAsyncKeyState(VK_F7)&0x8000)!=0,reticle=(GetAsyncKeyState(VK_F8)&0x8000)!=0;
-            bool f7=((GetAsyncKeyState(VK_SUBTRACT)|GetAsyncKeyState(VK_OEM_MINUS))&0x8000)!=0,f8=((GetAsyncKeyState(VK_ADD)|GetAsyncKeyState(VK_OEM_PLUS))&0x8000)!=0,f12=(GetAsyncKeyState(VK_F12)&0x8000)!=0;
-            bool f9=(GetAsyncKeyState(VK_F9)&0x8000)!=0,f10=(GetAsyncKeyState(VK_F10)&0x8000)!=0,f11=(GetAsyncKeyState(VK_F11)&0x8000)!=0;
-            if(focused && menuOpen) {
-                bool control=(GetAsyncKeyState(VK_CONTROL)&0x8000)!=0;
-                if(control) {
-                    if(f2 && !f2Held)requestProgression(ProgressionAction::Powers);
-                    if(f3 && !f3Held)requestProgression(ProgressionAction::Gear);
-                    if(f4 && !f4Held)requestProgression(ProgressionAction::WeaponUpgrades);
-                    if(f5 && !f5Held)requestProgression(ProgressionAction::Money);
-                    if(f6 && !f6Held)requestProgression(ProgressionAction::Lockpicks);
-                    if(vigorUpgrade && !vigorUpgradesHeld)requestProgression(ProgressionAction::VigorUpgrades);
-                    if(reticle && !reticleHeld)requestProgression(ProgressionAction::Infusions);
-                } else {
-                if(f2 && !f2Held)selectedWeapon=(selectedWeapon+weaponChoiceCount-1)%weaponChoiceCount;
-                if(f3 && !f3Held)selectedWeapon=(selectedWeapon+1)%weaponChoiceCount;
-                if(f5 && !f5Held)selectedDestination=1-selectedDestination;
-                if(f4 && !f4Held)requestWeapon(selectedWeapon,selectedDestination);
-                if(f6 && !f6Held)requestAmmo();
-                }
-                if(f7 && !fovMinusHeld) {
-                    int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
-                    if(value>80)settingError=!saveFOVSetting(value<85?80:value-5);
-                }
-                if(f8 && !fovPlusHeld) {
-                    int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
-                    if(value<130)settingError=!saveFOVSetting(value>125?130:value+5);
-                }
-                if(f12 && !f12Held) {
-                    int value=(int)InterlockedCompareExchange(&speedPercent,0,0);
-                    settingError=!saveSpeedSetting(value>=100 && value<200 && value%25==0?value+25:100);
-                }
-                if(!control && reticle && !reticleHeld)settingError=!saveCrosshairSetting(!InterlockedCompareExchange(&crosshairHidden,0,0));
-                if(f9 && !f9Held) {
-                    int value=(int)InterlockedCompareExchange(&hudWanted,0,0);
-                    settingError=!saveHUDSetting(value==100?125:value==125?150:value==150?200:100);
-                }
-                if(f10 && !f10Held)settingError=!saveAimSetting(!InterlockedCompareExchange(&aimWanted,0,0));
-                if(f11 && !f11Held) {
-                    int old=(int)InterlockedCompareExchange(&aimKey,0,0),next=0;
-                    for(int i=0;i<5;i++)if(aimKeys[i]==old){next=(i+1)%5;break;}
-                    settingError=!saveAimKey(aimKeys[next]);
-                }
-            }
-            f2Held=f2;f3Held=f3;f4Held=f4;
-            f5Held=f5;f6Held=f6;f9Held=f9;f10Held=f10;f11Held=f11;
-            vigorUpgradesHeld=vigorUpgrade;reticleHeld=reticle;
-            fovMinusHeld=f7;fovPlusHeld=f8;f12Held=f12;
-            insertHeld=insert;f1Held=f1;
-            if(menuOpen && focused) drawMenu(chain);
+            updateMenuInput(focused);
+            if((menuOpen || bindingsOpen) && focused) drawMenu(chain);
         }
         ReleaseSRWLockExclusive(&drawLock);
     }

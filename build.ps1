@@ -1,4 +1,4 @@
-param([switch]$Test)
+﻿param([switch]$Test)
 $ErrorActionPreference='Stop'
 & (Join-Path $PSScriptRoot 'clean/build.ps1') -Test:$Test
 if(-not $Test){

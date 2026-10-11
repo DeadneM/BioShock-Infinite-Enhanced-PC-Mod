@@ -1,7 +1,10 @@
-param([switch]$Test)
+param([switch]$Test,[string]$ZigPath=$env:INFINITEMOD_ZIG)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
-$zig=Join-Path $root 'tools/zig-windows-x86_64-0.13.0/zig.exe'
+$zig=if($ZigPath){[IO.Path]::GetFullPath($ZigPath)}else{Join-Path $root 'tools/zig-windows-x86_64-0.13.0/zig.exe'}
+if(-not (Test-Path -LiteralPath $zig -PathType Leaf)){throw 'Zig not found. Run distribution/bootstrap.ps1 or set INFINITEMOD_ZIG.'}
+$zigVersion=& $zig version
+if($LASTEXITCODE -ne 0 -or $zigVersion.Trim() -ne '0.13.0'){throw 'Required compiler: Zig 0.13.0.'}
 $env:ZIG_GLOBAL_CACHE_DIR=Join-Path $root 'tools/zig-cache'
 $env:ZIG_LOCAL_CACHE_DIR=Join-Path $root 'tools/zig-local-cache'
 $imgui=Join-Path $root 'vendor/imgui-1.91.9b'

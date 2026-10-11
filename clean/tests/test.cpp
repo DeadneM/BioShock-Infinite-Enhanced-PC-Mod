@@ -29,12 +29,16 @@ static SHORT testKeys(int key){return keys[key];}
 #include "../overlay.cpp"
 #undef GetForegroundWindow
 #undef GetAsyncKeyState
+#include "imgui_internal.h"
 #define CHECK(x) do{if(!(x)){fprintf(stderr,"FAIL %d: %s\n",__LINE__,#x);exit(1);}}while(0)
 #include "weapons_fixture.h"
 #include "aim_fixture.h"
 #include "ui_fixture.h"
 #include "player_options_fixture.h"
 #include "resources_fixture.h"
+#include "vitals_fixture.h"
+#include "keybinds_fixture.h"
+#include "overlay_bindings_fixture.h"
 #include "reticle_fixture.h"
 #include "loot_fixture.h"
 #include "upgrades_fixture.h"
@@ -65,10 +69,20 @@ static void capture(IDXGISwapChain *chain,const char *path) {
     }
     fclose(file);context->Unmap(copy,0);copy->Release();buffer->Release();
 }
+static void checkMenuBounds(UINT width,UINT height) {
+    ImGuiWindow *menu=ImGui::FindWindowByName("InfiniteMod");CHECK(menu && menu->Active);
+    CHECK(menu->Pos.x>=0 && menu->Pos.y>=0);
+    CHECK(menu->Pos.x+menu->Size.x<=(float)width+0.5f);
+    CHECK(menu->Pos.y+menu->Size.y<=(float)height+0.5f);
+    CHECK(menu->ScrollMax.x<=0.5f && menu->ScrollMax.y<=0.5f);
+    CHECK(menu->ContentSize.y<=menu->Size.y-2*menu->WindowPadding.y+0.5f);
+}
 int main(int argc,char **argv) {
     testWeapons();
     testPlayerOptions();
     testResources();
+    testVitals();
+    testKeybinds();
     testReticle();
     testLoot();
     testUpgrades();
@@ -122,45 +136,7 @@ int main(int argc,char **argv) {
     HWND window=CreateWindowExW(0,wc.lpszClassName,L"",WS_POPUP,0,0,1280,720,nullptr,nullptr,wc.hInstance,nullptr);CHECK(window);
     DXGI_SWAP_CHAIN_DESC desc={};desc.BufferDesc.Width=1280;desc.BufferDesc.Height=720;desc.BufferDesc.Format=DXGI_FORMAT_R8G8B8A8_UNORM;desc.SampleDesc.Count=1;desc.BufferUsage=DXGI_USAGE_RENDER_TARGET_OUTPUT;desc.BufferCount=1;desc.OutputWindow=window;desc.Windowed=TRUE;
     IDXGISwapChain *chain=nullptr;CHECK(SUCCEEDED(factory->CreateSwapChain(dev,&desc,&chain)));
-    tap(chain,VK_INSERT);CHECK(!menuOpen && !gui); // No initialization until explicit foreground open.
-    focus=window;keys[VK_INSERT]=(SHORT)0x8000;CHECK(SUCCEEDED(chain->Present(0,0)));CHECK(menuOpen && gui);
-    CHECK(SUCCEEDED(chain->Present(0,0)));CHECK(menuOpen);keys[VK_INSERT]=0;chain->Present(0,0);
-    tap(chain,VK_F1);CHECK(configWanted==0);tap(chain,VK_F1);CHECK(configWanted==1);
-    tap(chain,VK_F2);CHECK(selectedWeapon==weaponChoiceCount-1);tap(chain,VK_F3);CHECK(selectedWeapon==0);
-    keys[VK_F3]=(SHORT)0x8000;chain->Present(0,0);chain->Present(0,0);CHECK(selectedWeapon==1);keys[VK_F3]=0;chain->Present(0,0);
-    tap(chain,VK_F4);CHECK(pending==-1); // Main menu / no live player cannot enqueue.
-    tap(chain,VK_F5);CHECK(selectedDestination==1);tap(chain,VK_F5);CHECK(selectedDestination==0);
-    tap(chain,VK_F6);CHECK(pending==-1);
-    // Ctrl commands must never trigger the corresponding ordinary weapon key.
-    available=true;lastSeen=GetTickCount();keys[VK_CONTROL]=(SHORT)0x8000;
-    int oldWeapon=selectedWeapon,oldDestination=selectedDestination;
-    for(int i=0;i<7;i++) {
-        keys[VK_F2+i]=(SHORT)0x8000;chain->Present(0,0);CHECK(pending==-3-i);
-        pending=-1;chain->Present(0,0);CHECK(pending==-1); // A held input does not repeat.
-        keys[VK_F2+i]=0;chain->Present(0,0);
-        CHECK(selectedWeapon==oldWeapon && selectedDestination==oldDestination);
-        CHECK(crosshairHidden==0); // Ctrl+F8 must not toggle the reticle setting.
-        lastSeen=GetTickCount();
-    }
-    focus=nullptr;tap(chain,VK_F2);CHECK(pending==-1);focus=window;
-    tap(chain,VK_INSERT);tap(chain,VK_F2);CHECK(pending==-1);tap(chain,VK_INSERT);
-    keys[VK_CONTROL]=0;available=false;lastSeen=0;
-    keys[VK_F8]=(SHORT)0x8000;chain->Present(0,0);chain->Present(0,0);CHECK(crosshairHidden==1);
-    keys[VK_F8]=0;chain->Present(0,0);tap(chain,VK_F8);CHECK(crosshairHidden==0);
-    focus=nullptr;tap(chain,VK_F8);CHECK(crosshairHidden==0);focus=window;
-    tap(chain,VK_F9);CHECK(hudWanted==125 && hudApplied==100);
-    tap(chain,VK_F9);CHECK(hudWanted==150);tap(chain,VK_F9);CHECK(hudWanted==200);
-    tap(chain,VK_F9);CHECK(hudWanted==100);
-    tap(chain,VK_F10);CHECK(aimWanted==1);tap(chain,VK_F10);CHECK(aimWanted==0);
-    tap(chain,VK_F11);CHECK(aimKey==VK_RBUTTON);
-    tap(chain,VK_SUBTRACT);CHECK(fovDegrees==80);
-    keys[VK_ADD]=(SHORT)0x8000;chain->Present(0,0);chain->Present(0,0);CHECK(fovDegrees==85);keys[VK_ADD]=0;chain->Present(0,0);
-    for(int i=0;i<12;i++)tap(chain,VK_ADD);CHECK(fovDegrees==130);
-    for(int i=0;i<12;i++)tap(chain,VK_SUBTRACT);CHECK(fovDegrees==80);
-    for(int expected:{125,150,175,200,100}){tap(chain,VK_F12);CHECK(speedPercent==expected);}
-    keys[VK_F12]=(SHORT)0x8000;chain->Present(0,0);chain->Present(0,0);CHECK(speedPercent==125);keys[VK_F12]=0;chain->Present(0,0);
-    focus=nullptr;tap(chain,VK_ADD);tap(chain,VK_F12);CHECK(fovDegrees==80 && speedPercent==125);focus=window;
-    tap(chain,VK_OEM_PLUS);CHECK(fovDegrees==85);tap(chain,VK_OEM_MINUS);CHECK(fovDegrees==80);
+    testOverlayBindings(chain,window);
     ID3DBlob *shaderCode=nullptr;const char *shader="RWByteAddressBuffer output:register(u0);[numthreads(1,1,1)]void main(uint3 id:SV_DispatchThreadID){output.Store(0,id.x);}";
     CHECK(SUCCEEDED(D3DCompile(shader,strlen(shader),nullptr,nullptr,nullptr,"main","cs_5_0",0,0,&shaderCode,nullptr)));
     ID3D11ComputeShader *compute=nullptr;CHECK(SUCCEEDED(dev->CreateComputeShader(shaderCode->GetBufferPointer(),shaderCode->GetBufferSize(),nullptr,&compute)));shaderCode->Release();ctx->CSSetShader(compute,nullptr,0);
@@ -171,18 +147,27 @@ int main(int argc,char **argv) {
         CHECK(SUCCEEDED(chain->GetBuffer(0,__uuidof(ID3D11Texture2D),(void **)&buffer)));
         CHECK(SUCCEEDED(dev->CreateRenderTargetView(buffer,nullptr,&target)));buffer->Release();
         float background[]={0.025f,0.04f,0.07f,1};ctx->ClearRenderTargetView(target,background);ctx->OMSetRenderTargets(1,&target,nullptr);
-        drawMenu(chain);drawMenu(chain);CHECK(ImGui::GetDrawData()->TotalVtxCount>0);
+        drawMenu(chain);ctx->ClearRenderTargetView(target,background);drawMenu(chain);CHECK(ImGui::GetDrawData()->TotalVtxCount>0);checkMenuBounds(size[0],size[1]);
         ID3D11RenderTargetView *after=nullptr;ctx->OMGetRenderTargets(1,&after,nullptr);CHECK(after==target);after->Release();
         ID3D11ComputeShader *afterShader=nullptr;ctx->CSGetShader(&afterShader,nullptr,nullptr);CHECK(afterShader==compute);afterShader->Release();
         char path[64];snprintf(path,sizeof(path),"clean-%ux%u.bmp",size[0],size[1]);capture(chain,path);
+        for(unsigned page:{0u,2u}) {
+            menuOpen=false;bindingsOpen=true;selectedBinding=page*bindingsPageSize;publishMenuState();
+            ctx->ClearRenderTargetView(target,background);drawMenu(chain);ctx->ClearRenderTargetView(target,background);drawMenu(chain);
+            CHECK(ImGui::GetDrawData()->TotalVtxCount>0);checkMenuBounds(size[0],size[1]);
+            ID3D11RenderTargetView *bindingTarget=nullptr;ctx->OMGetRenderTargets(1,&bindingTarget,nullptr);CHECK(bindingTarget==target);bindingTarget->Release();
+            ID3D11ComputeShader *bindingShader=nullptr;ctx->CSGetShader(&bindingShader,nullptr,nullptr);CHECK(bindingShader==compute);bindingShader->Release();
+            snprintf(path,sizeof(path),"bindings-%ux%u-%u.bmp",size[0],size[1],page);capture(chain,path);
+        }
+        bindingsOpen=false;menuOpen=true;selectedBinding=0;publishMenuState();
         ctx->OMSetRenderTargets(0,nullptr,nullptr);target->Release();CHECK(SUCCEEDED(chain->Present(0,0)));
     }
-    tap(chain,VK_INSERT);CHECK(!menuOpen);tap(chain,VK_F1);CHECK(configWanted==1);
-    tap(chain,VK_ADD);tap(chain,VK_F12);CHECK(fovDegrees==80 && speedPercent==125);
+    tap(chain,VK_INSERT);CHECK(!menuOpen && !bindingsOpen);tap(chain,VK_F1);CHECK(pending==-1 && configWanted==1);
+    tap(chain,VK_ADD);tap(chain,VK_F12);tap(chain,VK_F7);CHECK(configWanted==1 && fovDegrees==80 && speedPercent==125);
     ctx->CSSetShader(nullptr,nullptr,0);compute->Release();releaseRenderer();
     for(unsigned i=0;i<slotCount;i++)CHECK(replacePointer(slots[i].address,slots[i].replacement,slots[i].original));
     CHECK(replacePointer((void **)&importSlot,(void *)gameCreateFactory,(void *)factoryOriginal));
     chain->Release();ctx->Release();dev->Release();adapter->Release();factory->Release();DestroyWindow(window);
-    puts("PASS: real factory/device/swapchain capture, delay-IAT rearm, foreground/key edges, shader/target restoration, menu rendering, 720p/4K/ultrawide resize, release without retained buffers.");
+    puts("PASS: real factory/device/swapchain capture, delay-IAT rearm, configurable foreground/key edges, shader/target restoration, main/config pages inside viewport at 720p/4K/ultrawide, resize and release without retained buffers.");
     return 0;
 }
