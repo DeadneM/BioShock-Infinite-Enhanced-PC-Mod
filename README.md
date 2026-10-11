@@ -8,6 +8,13 @@ It starts from the latest user-validated base, 0.15. The FOV fixes from
 0.16–0.17.1 were rejected and are kept on a separate branch.
 **Weapon/hand FOV and aiming zoom at high FOV still need correction.**
 
+## Download
+
+[Installable v0.18 ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.0-experimental/InfiniteMod-v0.18.0.zip) ? [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.0-experimental)
+
+The downloaded ZIP was checked against SHA256 `19EB0A28136633554D38B91D749D37DAEA32760EF1F6DDA8658F33460B5BEE0D`.
+See [release verification](docs/DELIVERY-v018.md). The release is a preview; its F1/editor features are user-confirmed, while the FOV work remains unfinished.
+
 ## Installation
 
 The installable ZIP contains README, scripts, licenses, and

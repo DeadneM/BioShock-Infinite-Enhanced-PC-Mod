@@ -32,7 +32,7 @@ of Vigor effects remains a separate visual check from the native HUD setting.
 
 - [x] Create the public BioShock-Infinite-Enhanced-PC-Mod repository on DeadneM.
 - [ ] Complete source upload and check remote references.
-- [ ] Publish an installable ZIP and verify the direct link and downloaded contents.
+- [x] Publish an installable ZIP and verify the direct link and downloaded contents.
 - [ ] Record the commit, hashes, status, and actual result in BUILD-v018.md.
 - [ ] Keep README, history, technical notebook, and this TODO consistent after each build.
 
