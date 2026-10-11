@@ -3,7 +3,7 @@
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
-**Experimental build: BUILT and CHECKED; in-game testing is still pending.**
+**BUILT and CHECKED. The player confirmed vitals refill and shortcut reassignment in-game.**
 It starts from the latest user-validated base, 0.15. The FOV fixes from
 0.16–0.17.1 were rejected and are kept on a separate branch.
 **Weapon/hand FOV and aiming zoom at high FOV still need correction.**
@@ -105,7 +105,7 @@ gauges**. The initial shield must already have been obtained in the campaign.
 **F1 fills current values up to their capacities; Ctrl+F5 increases those
 capacities through infusions.** F1 does not revive a dead character or grant
 the initial shield. Values and maxima are read again after the refill.
-This new feature still awaits in-game confirmation.
+The player confirmed this refill in-game on October 11, 2026.
 
 No items are granted automatically at launch. Commands may be retained by
 an autosave; keep an earlier save to restore progression from before testing.
@@ -172,7 +172,7 @@ suite passed, including new commands, conflicts/persistence, foreground guards,
 and regressions. The graphics fixture checks menus at 720p, 4K, and ultrawide.
 These checks remain distinct from testing in an actual game session.
 
-**EXPERIMENTAL, not yet USER-VALIDATED.** Expected test: F1 with a partially
+**USER-VALIDATED for F1 refill and shortcut reassignment.** Additional checks: F1 with a partially
 empty gauge, F2/F5/F6 for both weapons, then reassign commands and menu-opening
 shortcuts and confirm they persist after restarting.
 

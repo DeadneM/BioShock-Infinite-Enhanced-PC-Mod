@@ -21,8 +21,8 @@ of Vigor effects remains a separate visual check from the native HUD setting.
 - [x] Complete and record the integrated tests and delivery build, without warnings.
 - [x] Check menu rendering and bounds at 720p/4K/ultrawide, including all three pages.
 - [x] Check navigation and conflicts after reassigning menu-opening shortcuts.
-- [ ] Prepare and check the installable ZIP and its hashes.
-- [ ] Install after backup and normal game closure; retain preferences.
+- [x] Prepare and check the installable ZIP and its hashes.
+- [x] Install after backup and normal game closure; retain preferences.
 - [ ] Obtain the player's F1 test with at least one partially empty gauge.
 - [ ] Obtain the player's test of new shortcuts, particularly F2/F5/F6.
 - [ ] Obtain reassignment of both menu-opening shortcuts and persistence after restart.
@@ -60,3 +60,4 @@ do not restart a series of general scans or per-weapon profiles.
 
 Current progression commands add to the save; they are not yet a New Game+
 campaign with story progression restarted.
+Completed checkpoint: controlled ZIP structure/payload, verified backup and installation, and player confirmation of F1/refill and shortcut reassignment. GitHub source branches are verified; final release/link verification follows.

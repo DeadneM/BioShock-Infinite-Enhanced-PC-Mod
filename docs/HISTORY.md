@@ -64,3 +64,10 @@ Validate the new shortcuts, F1 refill, and 0.18 shortcut persistence. Then
 resume a separate global FOV experiment: a world view and a shared view for
 the character's complete first-person rendering. The technical decision is
 described in TECHNICAL-NOTEBOOK.md; per-weapon fixes must not replace this goal.
+## Player confirmation - October 11, 2026
+
+The player confirmed that current-value vitals refill and shortcut reassignment work in-game
+("Recharge et raccourcis OK", translated: "Vitals refill and shortcuts OK"). These two features
+are USER-VALIDATED. A restart-persistence test and every remapped action were not separately reported;
+those remain distinguished from the integrated routing/INI-reload checks. Weapon/hand FOV remains unresolved.
+The accepted controls build can serve as the next retained base without importing rejected FOV hooks.

@@ -17,11 +17,11 @@ the 0.16–0.17.1 FOV experiments are not part of this objective.
   commit `0d331468ac6f987b1742d8a95fbb60fc34ef4c11`.
 - This build's branch: experiment/v0.18.0-bindings; delivery commit to be
   finalized and checked after compilation/packaging.
-- Status: **BUILT**, **CHECKED**, **EXPERIMENTAL**; player validation pending.
+- Status: **BUILT**, **CHECKED**, **INSTALLED**; F1 refill and shortcut reassignment are **USER-VALIDATED**. The FOV work remains separate.
 - x86 compilation and integrated tests: passed, without warnings.
 - This build's ASI SHA256:
   `61F2C81E8E737F378B5BA7825249F517C59AACB8738DF5B7885FA6A583F86BA2`.
-- Installation: not yet performed at the time of this preparation.
+- Installation: completed with a verified backup on October 11, 2026; the existing mod INI, loader and game EXE were preserved.
 - ZIP and release: to be produced and verified; no download link claimed
   before actual publication.
 
@@ -165,3 +165,11 @@ The freshly linked output was SHA256160B010A9899DEA3B47BE162D3F735A16BEFB506A2A5
 It is a separate reproducibility check, not the packaged/installed binary. The installable package pins
 SHA25661F2C81E8E737F378B5BA7825249F517C59AACB8738DF5B7885FA6A583F86BA2 from the fully tested build.
 Compiler/dependency warnings appeared while populating the fresh compiler cache; the build exited0.
+
+## Player confirmation - October 11, 2026
+
+The player confirmed that current-value vitals refill and shortcut reassignment work in-game
+("Recharge et raccourcis OK", translated: "Vitals refill and shortcuts OK"). These two features
+are USER-VALIDATED. A restart-persistence test and every remapped action were not separately reported;
+those remain distinguished from the integrated routing/INI-reload checks. Weapon/hand FOV remains unresolved.
+The accepted controls build can serve as the next retained base without importing rejected FOV hooks.
