@@ -35,6 +35,7 @@ static SHORT testKeys(int key){return keys[key];}
 #include "ui_fixture.h"
 #include "player_options_fixture.h"
 #include "resources_fixture.h"
+#include "viewmodel_fixture.h"
 #include "reticle_fixture.h"
 #include "loot_fixture.h"
 #include "upgrades_fixture.h"
@@ -68,6 +69,7 @@ static void capture(IDXGISwapChain *chain,const char *path) {
 int main(int argc,char **argv) {
     testWeapons();
     testPlayerOptions();
+    testViewmodel();
     testResources();
     testReticle();
     testLoot();

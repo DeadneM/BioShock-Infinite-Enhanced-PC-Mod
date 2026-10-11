@@ -9,6 +9,3 @@ High FOV may still distort first-person rendering and retains native aiming zoom
 Compatible only with the inspected GOG x86 1.1.25.5165 binary. No game EXE, assets, or saves are included in this repository.
 Build with Zig 0.13.0; place Zig in `tools/zig-windows-x86_64-0.13.0`, then run `build.ps1` / `test.ps1`.
 ImGui and MinHook dependency licenses accompany their sources.
-Experimental v0.18.0 adds configurable hotkeys and current-value health/shield/salts refill.
-It remains on [its own branch](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/tree/experiment/v0.18.0-bindings)
-until the player validates it. Installable builds are listed under [Releases](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases).

@@ -93,6 +93,7 @@ bool player(Obj pc,Obj &pawn,Obj &manager) {
         && ptr(pawn+0x218)==pc && ptr(manager+0x8c)==pawn && health>0 && health<100000;
 }
 #include "player_options.inl"
+#include "viewmodel.inl"
 #include "reticle.inl"
 Obj carried(Obj manager,Obj archetype) {
     // InventoryItems is a fixed 36-element array, verified through reflection.
@@ -215,6 +216,7 @@ void __fastcall camera(void *pc,void *,void *location,void *rotation) {
     Obj aimPawn=ptr((Obj)pc+0x1fc);
     updateAim(pc,window,available && latestController==(Obj)pc && latestPawn==aimPawn);
     reticle::update((Obj)pc,aimPawn,available && latestController==(Obj)pc && latestPawn==aimPawn);
+    viewmodel::refresh((Obj)pc,aimPawn,available && latestController==(Obj)pc && latestPawn==aimPawn);
     AcquireSRWLockExclusive(&stateLock);
     if(now-lastPoll<500 && pending==-1){ReleaseSRWLockExclusive(&stateLock);inside=false;return;}
     lastPoll=now;
@@ -281,10 +283,13 @@ void weaponStatus(char *text,size_t capacity) {
 }
 void playerOptionsStatus(char *text,size_t capacity) {
     LONG state=InterlockedCompareExchange(&player_options::optionState,0,0);
+    LONG weaponView=InterlockedCompareExchange(&viewmodel::state,0,0);
     snprintf(text,capacity,"%s",!player_options::speedInstalled || !player_options::fovInstalled
         ?"Reglage indisponible : voir le journal.":state<0?"Joueur non reconnu : reglages non appliques."
         :state==0?"Reglages memorises. Chargez une partie pour les appliquer."
-        :"Reglages actifs. Visee native conservee.");
+        :!viewmodel::installed || weaponView<0?"FOV de l'arme indisponible : voir le journal."
+        :weaponView>0?"Perspective premiere personne adaptee. Zoom proportionnel."
+        :"Zoom proportionnel memorise. En attente du rendu de la partie.");
 }
 LONG crosshairStatus(){return InterlockedCompareExchange(&reticle::state,0,0);}
 bool installWeapons(BYTE *image) {
@@ -298,6 +303,6 @@ bool installWeapons(BYTE *image) {
     MH_STATUS result=MH_CreateHook(image+0x25030,(void *)camera,(void **)&cameraOriginal);
     if(result==MH_OK)result=MH_EnableHook(image+0x25030);
     modLog("Weapons: camera command seam %s",MH_StatusToString(result));
-    if(result==MH_OK){player_options::install();}
+    if(result==MH_OK){player_options::install();viewmodel::install();}
     return result==MH_OK;
 }
