@@ -1,5 +1,11 @@
 # Cumulative technical notebook
 
+Latest delivery: v0.18.1 English is installed and published. English main and
+shortcut menus plus preserved opening keys are player-confirmed. The public
+ZIP and checksum were downloaded and verified, including every entry and
+inner ASI; see [DELIVERY-v0181.md](DELIVERY-v0181.md). Earlier pending
+checkpoints below are retained as history and superseded by that record.
+
 ## Scope and base
 
 x86 ASI mod for the GOG executable checked by SHA256:
@@ -120,7 +126,8 @@ identity again. A partial or unconfirmed effect keeps a warning instead of
 a success message.
 
 F1 current-value refill is **USER-VALIDATED** on 0.18. The English 0.18.1 binary
-preserves that implementation but still awaits its own in-game result.
+preserves that implementation. Its English menus and custom menu keys have
+been player-confirmed; a separate F1 test on that binary was not reported.
 
 ## Why the FOV experiments are not retained
 
@@ -221,6 +228,9 @@ The accepted controls build can serve as the next retained base without importin
 
 ## English localization checkpoint — October 12, 2026
 
+Historical build checkpoint; its pending installation/player statements are
+superseded by the installation and confirmation checkpoint below.
+
 0.18.1 uses the accepted 0.18 controls source. Runtime changes are limited
 to text, the version label, and matching fixture expectations. Native wide
 identifiers, format specifiers, INI keys, all 23 action identities, default
@@ -248,3 +258,33 @@ available for compatibility. English localization does not change native
 game text or supply an independent weapon/hand FOV fix. The next optical
 experiment stays separate and must cover complete first-person rendering
 and proportional aiming rather than per-weapon offsets.
+
+## English installation and source checkpoint — October 12, 2026
+
+The local ZIP is immutable at SHA256
+`1853FEF39BAFE9CCC6739B1E66A30A959E44999E86A956A4C82BF831B9EAA545`.
+All 18 entries and payload hashes were checked; the ASI matches the built
+`B13DBE911E2A650A7A9308575214A0C9129DF1AEBD653CA5B11121E3F13EAFD9`.
+The root layout includes scripts, docs, licenses, INI, ASI and loader, without
+an enclosing folder or private game data. Its documentation preserves the
+earlier pre-installation checkpoint. Current delivery records and eventual
+release notes supersede its pending-status statements without repackaging.
+
+The installed transaction followed normal game closure and a verified backup
+on October 12. The complete existing custom INI, loader and executable kept
+their exact hashes. The player confirmed readable English main and shortcut
+menus with the custom menu-opening keys preserved. This is **USER-VALIDATED**
+for those menus and keys only; every gameplay command and restart persistence
+were not separately reported.
+
+The English source published on `main` is
+`cd0873936a92f0a0e2c00dca88557c7724b7b1a6`, with tree
+`cca6c50943f84d2c88b1f8eeebcfd2b3e92b0c35`, identical to the checked local
+build snapshot `eab12be926efbfb286051087e95749138d0fb067`. The stable controls
+base remains `b54167ef6a0ed254b4ef9d52319f9be4e886e5fc`. A new public release
+and its downloaded ZIP still need verification. Actual installation/source
+evidence is recorded in [DELIVERY-v0181.md](DELIVERY-v0181.md).
+
+FOV research is paused at the user's request. Independent complete first-person
+FOV and proportional aiming remain unfinished. No 0.19 diagnostic or rejected
+0.20 projection/aiming hooks are included in this localization.

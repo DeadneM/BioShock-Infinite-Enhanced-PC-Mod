@@ -30,7 +30,7 @@ the entire build containing it.
 | 0.18.0, October 10–11, 2026 | Return to the 0.15 camera base. Requested default shortcuts, health/shield/salts refill, and a menu to edit all 23 shortcuts, including Insert. x86 compilation, integrated checks, installation, and public delivery were recorded. The player confirmed F1 refill and shortcut reassignment. | **BUILT**, **CHECKED**; F1/refill and remapping **USER-VALIDATED**. Current accepted controls base; restart persistence and every remapped action not separately confirmed |
 | 0.19, October 11, 2026 | FOV diagnostic experiment. Its observations did not produce a functional weapon/hand FOV correction. | **DIAGNOSTIC**; no functional FOV fix retained |
 | 0.20, October 11, 2026 | Renderer experiment. The player reported HUD flicker and no weapon/hand FOV correction. | **REJECTED**; excluded from the accepted controls base |
-| 0.18.1, October 11–12, 2026 | English localization from the accepted 0.18 controls checkpoint. Runtime edits change text, the version label, and equivalent fixture expectations while preserving behavior. The retained suite and x86 compilation passed; menu fixtures covered 720p/4K/ultrawide. | **BUILT**, **CHECKED**, **EXPERIMENTAL**; installation, verified package/release, and player result pending |
+| 0.18.1, October 11–12, 2026 | English localization from the accepted 0.18 controls checkpoint. Runtime edits change text, the version label, and equivalent fixture expectations while preserving behavior. The retained suite and x86 compilation passed; menu fixtures covered 720p/4K/ultrawide. Local ZIP, backup and installation were verified. The player confirmed English menus and preserved custom menu keys. | **BUILT**, **CHECKED**, **INSTALLED**; English menus/custom menu keys **USER-VALIDATED**. Public release/download and further unreported gameplay/restart checks pending |
 
 ## Resume from the validated base
 
@@ -74,10 +74,11 @@ These results are not in-game validation.
 
 ## Next step
 
-Package the built and checked English localization, preserve the existing INI,
-then verify its package and direct download before delivery. Record its actual
-results in [BUILD-v0181.md](BUILD-v0181.md). Keep restart persistence and all
-remapped actions as explicit remaining player checks.
+Publish the already checked English ZIP, then verify its release and downloaded
+contents before replacing the public download link. The installation and player
+menu result are recorded in [DELIVERY-v0181.md](DELIVERY-v0181.md). Keep restart
+persistence and all remapped actions as explicit remaining player checks.
+FOV research is paused; publication does not claim an optical correction.
 
 The FOV investigation remains separate. After the unsuccessful 0.19 diagnostic
 and rejected 0.20 experiment, reassess the evidence and correction boundary
@@ -94,6 +95,9 @@ earlier validated features and excluding rejected FOV hooks.
 
 ## 0.18.1 preparation — October 11, 2026
 
+Historical preparation checkpoint; superseded by the build and installation
+checkpoints below.
+
 Objective: translate the mod and project text into English without changing
 accepted behavior. The runtime pass covers both menus, all 23 action labels,
 weapon display names, request/progression statuses, and errors. Native names,
@@ -108,6 +112,9 @@ result recorded separately. At preparation there is no new ASI/ZIP hash or
 verified release link. The README continues to offer the verified 0.18 ZIP.
 
 ## 0.18.1 build and regression checkpoint — October 12, 2026
+
+Historical pre-installation checkpoint; its pending delivery/player statements
+are superseded by the installation and confirmation checkpoint below.
 
 The English localization was compiled for x86 from
 `experiment/v0.18.1-english`, based on the accepted controls checkpoint
@@ -128,3 +135,44 @@ results. The English `Rollback.ps1` entry retains `Retour.ps1` compatibility.
 No rejected FOV hooks were imported, and no weapon/hand or aiming FOV fix is
 claimed. Installation, package/release verification, and the player result
 are pending at this checkpoint.
+
+## 0.18.1 installation and menu confirmation — October 12, 2026
+
+The immutable installable ZIP was checked: 18 entries at the root and required
+`Binaries/Win32` tree, without game files or private data. Its SHA256 is
+`1853FEF39BAFE9CCC6739B1E66A30A959E44999E86A956A4C82BF831B9EAA545`;
+the packaged and installed ASI has SHA256
+`B13DBE911E2A650A7A9308575214A0C9129DF1AEBD653CA5B11121E3F13EAFD9`.
+Its bundled documentation is the earlier pre-installation checkpoint and is
+retained unchanged. This record and eventual release notes supersede its
+pending-status statements.
+
+Installation followed verified normal game closure and a checked backup on
+October 12. The complete custom INI, compatible loader, and executable retained
+their exact hashes. The player confirmed both English menus and existing custom
+menu keys. Those results are **USER-VALIDATED**; no additional gameplay-command
+or restart-persistence test is inferred.
+
+English source commit on `main`:
+`cd0873936a92f0a0e2c00dca88557c7724b7b1a6`, tree
+`cca6c50943f84d2c88b1f8eeebcfd2b3e92b0c35`, matching the checked local build
+snapshot `eab12be926efbfb286051087e95749138d0fb067`. The separate stable 0.18
+controls checkpoint stays at `b54167ef6a0ed254b4ef9d52319f9be4e886e5fc`.
+The public release and downloaded payload were subsequently verified below.
+See [DELIVERY-v0181.md](DELIVERY-v0181.md) for the actual delivery checkpoint.
+
+The user paused after the English-menu confirmation. FOV research remains
+paused and unfinished; no diagnostic 0.19 or rejected 0.20 hooks are retained.
+
+## 0.18.1 public delivery - October 12, 2026
+
+The user authorized publishing the completed English step while FOV research
+remained paused. The English branch and source tag were verified at
+`cd0873936a92f0a0e2c00dca88557c7724b7b1a6`. Prerelease ID410669351 is
+published at `v0.18.1-experimental`; it contains the immutable installable ZIP
+and checksum. Both were downloaded from their public direct links. ZIP hash,
+all 18 entry bytes, manifest payload sizes/hashes and inner ASI match the
+locally installed package. The accepted stable controls branch is unchanged.
+README now points to the verified English release. Full delivery evidence:
+[DELIVERY-v0181.md](DELIVERY-v0181.md). This is publication of the confirmed
+English menus and retained controls, not a new FOV correction.

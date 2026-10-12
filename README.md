@@ -3,25 +3,36 @@
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
-**0.18.1 is BUILT and CHECKED; its in-game result remains EXPERIMENTAL.**
-The verified installable release remains **0.18.0**.
+**0.18.1 is BUILT, CHECKED, and INSTALLED. English menus and preserved custom
+menu keys are USER-VALIDATED.** The v0.18.1 public prerelease and downloaded
+payload are verified.
 The localization starts from the accepted **0.18 controls base**. The player
 confirmed F1 vitals refill and shortcut reassignment in-game. Menus, shortcuts,
 weapon labels, and gameplay status messages are now in English. The retained
-tests and x86 compilation passed on October 12, 2026. Installation, package
-verification, release publication, and player confirmation remain pending.
+tests and x86 compilation passed on October 12, 2026. The local installable
+ZIP and installation backup were verified, and the complete existing INI was
+preserved. The player then confirmed both English menus and existing menu keys.
+Unreported gameplay/restart checks remain separate from those confirmations.
+See [the verified delivery](docs/DELIVERY-v0181.md).
 **Weapon/hand FOV and aiming zoom at high FOV still need correction.**
 
 ## Download
 
-[Installable v0.18 ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.0-experimental/InfiniteMod-v0.18.0.zip) · [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.0-experimental)
+[Installable v0.18.1 English ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.1-experimental/InfiniteMod-v0.18.1-English.zip) · [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.1-experimental)
 
-The downloaded ZIP was checked against SHA256 `19EB0A28136633554D38B91D749D37DAEA32760EF1F6DDA8658F33460B5BEE0D`.
-See [release verification](docs/DELIVERY-v018.md). The release is a preview; its F1/editor features are user-confirmed, while the FOV work remains unfinished.
+The downloaded ZIP was checked against SHA256
+`1853FEF39BAFE9CCC6739B1E66A30A959E44999E86A956A4C82BF831B9EAA545`.
+All 18 downloaded entries match the package used for the confirmed local
+installation. See [release verification](docs/DELIVERY-v0181.md).
+The release is a preview of an unfinished mod; its English menus and saved
+menu keys are confirmed, while the first-person FOV work remains unfinished.
 
-This link continues to deliver the accepted 0.18.0 package. A 0.18.1 link
-will be added only after its package, release, and downloaded contents are
-verified. See [the English localization objective](docs/BUILD-v0181.md).
+The [accepted v0.18 package](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.0-experimental/InfiniteMod-v0.18.0.zip)
+remains available for rollback. The v0.18.1 ZIP's 18 entries have no enclosing
+folder. Its bundled documentation records the pre-installation checkpoint;
+this repository's delivery record and published
+release notes supersede those pending-status statements. The ZIP is retained
+unchanged. See [the English localization objective](docs/BUILD-v0181.md).
 
 ## Installation
 
@@ -188,7 +199,8 @@ settings; see the technical notebook and rollback instructions.
 
 ## Status and tracking
 
-0.18.1 is **BUILT**, **CHECKED**, and **EXPERIMENTAL**. Its objective is English text throughout the mod and
+0.18.1 is **BUILT**, **CHECKED**, and **INSTALLED**, with English main/shortcut
+menus and preserved custom menu keys **USER-VALIDATED**. Its objective is English text throughout the mod and
 project documentation while preserving the accepted 0.18 behavior. The runtime
 changes are confined to string literals, the version label, and equivalent
 English fixture expectations. Default shortcuts, custom bindings, INI keys,
@@ -201,8 +213,18 @@ accepted features. The checked ASI SHA256 is
 The retained suite passed, including native command guards, key reassignment,
 INI persistence, and the module's own D3D11 menu fixture at 720p/4K/ultrawide.
 The 720p main menu and shortcut menu images were also inspected. These checks
-and six isolated installer/rollback scenarios do not replace a player test.
-No new ZIP hash or release link is claimed yet.
+and six isolated installer/rollback scenarios remain distinct from the
+player's menu confirmation. No test of every command or restart persistence
+is inferred. The checked English source on `main` is
+`cd0873936a92f0a0e2c00dca88557c7724b7b1a6`, tree
+`cca6c50943f84d2c88b1f8eeebcfd2b3e92b0c35`, identical to the checked local
+build snapshot `eab12be926efbfb286051087e95749138d0fb067`.
+The stable 0.18 controls checkpoint remains
+`b54167ef6a0ed254b4ef9d52319f9be4e886e5fc`. The public tag
+`v0.18.1-experimental` points to the checked English source commit; both
+uploaded assets and the downloaded ZIP/checksum were verified. FOV research
+is paused and remains a separate
+unfinished experiment.
 
 The accepted 0.18.0 is **BUILT**, **CHECKED**, and **USER-VALIDATED for F1 refill
 and shortcut reassignment**. Its integrated checks covered conflicts,
@@ -211,6 +233,7 @@ The player has not separately confirmed persistence after restarting or every
 remapped action; those remain additional checks.
 
 - [Build 0.18.1 English objective, checks, and player test](docs/BUILD-v0181.md)
+- [Current 0.18.1 installation, source, and player checkpoint](docs/DELIVERY-v0181.md)
 - [Build 0.18 objective, results, and test](docs/BUILD-v018.md)
 - [Cumulative history and statuses](docs/HISTORY.md)
 - [Technical notebook](docs/TECHNICAL-NOTEBOOK.md)

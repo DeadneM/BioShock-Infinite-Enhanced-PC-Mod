@@ -23,8 +23,12 @@ Compilation and fixture checks do not replace that player result.
 - New ASI SHA256:
   `B13DBE911E2A650A7A9308575214A0C9129DF1AEBD653CA5B11121E3F13EAFD9`.
 - Status: **BUILT**, **CHECKED**, **EXPERIMENTAL**.
-- Not yet claimed: installation, ZIP hash, verified remote branch/commit,
-  new release/direct-download link, or player validation of this binary.
+- Installed and local ZIP verified; source publication on `main` checked.
+  Full checkpoint and hashes: [DELIVERY-v0181.md](DELIVERY-v0181.md).
+- Experimental remote branch, source tag, public prerelease and downloaded
+  ZIP/checksum verified. Further gameplay/restart checks not reported remain separate.
+- English main/shortcut menus and preserved menu keys are USER-VALIDATED
+  on October 12, 2026; see [DELIVERY-v0181.md](DELIVERY-v0181.md).
 
 The player confirmed F1 current-value refill and shortcut reassignment in
 0.18, then confirmed the restored controls base was correct except for
@@ -66,10 +70,12 @@ identify the actual files before any replacement.
 | Menu rendering at 720p, 4K, and ultrawide | Passed in the module's own D3D11 fixture |
 | 720p main and shortcut menu image inspection | Performed |
 | Six isolated installation/rollback scenarios through the English rollback entry | Passed |
-| Installation and backup transaction | Pending |
-| ZIP structure/payload/hashes | Pending |
-| Published branch/commit and downloaded release payload | Pending |
-| Player test of the new binary | Pending |
+| Installation and backup transaction | INSTALLED; existing INI, loader and executable preserved |
+| ZIP structure/payload/hashes | Passed; 18 entries and exact payload hashes |
+| Published source commit on main | Checked; identical tree to the local build snapshot |
+| Experimental remote branch | Checked at the published source commit |
+| Downloaded release payload | Passed; all 18 entries and manifest hashes equal the installed package |
+| Player test of the new binary | English menus and preserved menu keys confirmed; no broader test claimed |
 
 The D3D11 fixture is a controlled menu-rendering check. It is distinct from
 the game's graphics device and is not proof that the new ASI works in a live
