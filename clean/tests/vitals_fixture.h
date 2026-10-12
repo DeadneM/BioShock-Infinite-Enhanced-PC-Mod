@@ -121,6 +121,6 @@ static void testVitals() {
     host[0x5edf7f]=4;CHECK(!vitals::bind().health);host[0x5edf7f]=8;
     host[0x3554d0]^=1;CHECK(!vitals::bind().health);
     player_options::speedInstalled=false;player_options::attributeOriginal=nullptr;
-    VirtualFree(host,0,MEM_RELEASE);host=nullptr;strcpy(message,"Chargez une partie pour ajouter une arme.");
+    VirtualFree(host,0,MEM_RELEASE);host=nullptr;strcpy(message,"Load a game to add a weapon.");
     puts("PASS: vitals native thiscall/ProcessEvent ABI, dynamic capacities, current and fallback schema, full/no-op/overcap/damaged/empty shield, ignored native changes, stale/dead/cinematic/thread guards and unchanged maxima/other currency.");
 }

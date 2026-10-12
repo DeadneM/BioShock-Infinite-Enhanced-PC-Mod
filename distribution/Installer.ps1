@@ -45,10 +45,10 @@ try {
     $record.state='INSTALLED';Write-ModJson $recordPath $record
 } catch {
     $record.state='INCOMPLETE';Write-ModJson $recordPath $record
-    Write-Warning "Installation interrupted. Verified backup: $backup. Use Retour.ps1 with this directory."
+    Write-Warning "Installation interrupted. Verified backup: $backup. Use Rollback.ps1 with this directory."
     throw
 }
 Write-Output "InfiniteMod $($package.version) installed. Status: $($package.status)."
 Write-Output 'Existing INI preserved. No game, save or native configuration files were replaced.'
-Write-Output "Rollback: .\Retour.ps1 -GameDirectory '$($layout.Game)' -BackupDirectory '$backup'"
+Write-Output "Rollback: .\Rollback.ps1 -GameDirectory '$($layout.Game)' -BackupDirectory '$backup'"
 Write-Output "In-game success criterion: $($package.successCriterion)"

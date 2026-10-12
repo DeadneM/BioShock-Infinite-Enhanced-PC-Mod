@@ -120,19 +120,19 @@ void grantInfusions(Obj pc,Obj pawn) {
     progression_loot::Inventory inventory;
     if(GetCurrentThreadId()!=windowThread || !player(pc,actual,manager) || actual!=pawn
         || (read<unsigned>(pc+0x248)&0x20000) || !db || !fn || !progression_loot::snapshot(pc,inventory)) {
-        status("Infusions : joueur ou inventaire indisponible, aucun ajout.");return;
+        status("Infusions: player or inventory unavailable; nothing added.");return;
     }
     // The initial shield is a story unlock. This command only upgrades an
     // existing shield and never grants its initial tonic or advances that scene.
     if(progression_loot::quantity(inventory,346)<=0) {
-        status("Infusions : obtenez d'abord le bouclier initial dans l'histoire.");return;
+        status("Infusions: obtain the initial shield in the story first.");return;
     }
     int caps[count]={},before[count]={};float values[count]={};
     for(unsigned i=0;i<count;i++) {
         before[i]=progression_loot::quantity(inventory,choices[i].id);
         if(!resolve(db,choices[i],caps[i]) || before[i]<0 || !stat(pawn,choices[i],values[i])) {
             modLog("Infusions: catalogue rejected id=%u name=%s quantity=%d cap=%d",choices[i].id,choices[i].name,before[i],caps[i]);
-            status("Infusions : catalogue ou attribut non reconnu, aucun ajout.");return;
+            status("Infusions: unrecognized catalog or attribute; nothing added.");return;
         }
     }
     bool ok=true;
@@ -141,7 +141,7 @@ void grantInfusions(Obj pc,Obj pawn) {
     if(ptr(pc+0x1fc)==pawn && progression_loot::snapshot(pc,inventory)) {
         for(unsigned i=0;i<count;i++) {after[i]=progression_loot::quantity(inventory,choices[i].id);if(after[i]<caps[i])ok=false;}
     } else ok=false;
-    char text[224];snprintf(text,sizeof(text),"Infusions%s : sante %d / %d, pouvoirs %d / %d, bouclier %d / %d.%s",
-        ok?" au maximum":"",after[0],caps[0],after[1],caps[1],after[2],caps[2],ok?"":" Ajout interrompu, voir le journal.");
+    char text[224];snprintf(text,sizeof(text),"Infusions%s: health %d / %d, salts %d / %d, shield %d / %d.%s",
+        ok?" maxed":"",after[0],caps[0],after[1],caps[1],after[2],caps[2],ok?"":" Grant interrupted; see the log.");
     status(text);
 }

@@ -1,19 +1,27 @@
-# InfiniteMod 0.18.0
+# InfiniteMod 0.18.1 — English localization
 
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
-**BUILT and CHECKED. The player confirmed vitals refill and shortcut reassignment in-game.**
-It starts from the latest user-validated base, 0.15. The FOV fixes from
-0.16–0.17.1 were rejected and are kept on a separate branch.
+**0.18.1 is BUILT and CHECKED; its in-game result remains EXPERIMENTAL.**
+The verified installable release remains **0.18.0**.
+The localization starts from the accepted **0.18 controls base**. The player
+confirmed F1 vitals refill and shortcut reassignment in-game. Menus, shortcuts,
+weapon labels, and gameplay status messages are now in English. The retained
+tests and x86 compilation passed on October 12, 2026. Installation, package
+verification, release publication, and player confirmation remain pending.
 **Weapon/hand FOV and aiming zoom at high FOV still need correction.**
 
 ## Download
 
-[Installable v0.18 ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.0-experimental/InfiniteMod-v0.18.0.zip) ? [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.0-experimental)
+[Installable v0.18 ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.0-experimental/InfiniteMod-v0.18.0.zip) · [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.0-experimental)
 
 The downloaded ZIP was checked against SHA256 `19EB0A28136633554D38B91D749D37DAEA32760EF1F6DDA8658F33460B5BEE0D`.
 See [release verification](docs/DELIVERY-v018.md). The release is a preview; its F1/editor features are user-confirmed, while the FOV work remains unfinished.
+
+This link continues to deliver the accepted 0.18.0 package. A 0.18.1 link
+will be added only after its package, release, and downloaded contents are
+verified. See [the English localization objective](docs/BUILD-v0181.md).
 
 ## Installation
 
@@ -32,12 +40,16 @@ package files, and loader, then backs up the existing ASI and INI.
 installed. It refuses to replace a different `dinput8.dll`. After installation,
 it displays the backup path and rollback command.
 
+The English package uses `Rollback.ps1` for that command and retains
+`Retour.ps1` as a legacy compatibility entry. Use the command printed by the
+installer for the package you downloaded.
+
 The scripts do not replace the executable, save files, or native game INIs.
 At launch, the mod applies the HUD/logo preferences to the native INIs.
 Granted items may be stored by normal game saves; rolling back the module
 does not undo them.
 
-See [installation and rollback instructions](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/blob/experiment/v0.18.0-bindings/distribution/INSTALLATION.md)
+See [installation and rollback instructions](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/blob/main/distribution/INSTALLATION.md)
 in the repository; the ZIP provides that document at its root as
 `INSTALLATION.md`.
 Repository: [DeadneM/BioShock-Infinite-Enhanced-PC-Mod](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod).
@@ -138,10 +150,12 @@ Returning to x1 restores native speed. -/+ sets world FOV from 80 to 130,
 including keypad aliases while the default shortcut is retained.
 Preferences are saved in the INI.
 
-**This version does not fix weapon/hand perspective.** It keeps the camera
-and native aiming behavior from the 0.15 base; zoom may therefore remain
-too strong at high FOV. The next work targets two global FOVs, for the world
-and the character's complete first-person rendering, without per-weapon fixes.
+The English localization preserves the accepted 0.18 camera and native aiming
+behavior, inherited from 0.15. Weapon/hand perspective and zoom at high FOV
+remain unresolved. The 0.19 diagnostic did not produce a functional FOV fix;
+the 0.20 renderer experiment was **REJECTED** after HUD flicker and no weapon
+correction. The separate FOV goal remains two global views, for the world and
+the character's complete first-person rendering.
 
 ## Logos and configuration
 
@@ -174,15 +188,29 @@ settings; see the technical notebook and rollback instructions.
 
 ## Status and tracking
 
-0.18.0 is **BUILT** and **CHECKED**: x86 compilation and the integrated test
-suite passed, including new commands, conflicts/persistence, foreground guards,
-and regressions. The graphics fixture checks menus at 720p, 4K, and ultrawide.
-These checks remain distinct from testing in an actual game session.
+0.18.1 is **BUILT**, **CHECKED**, and **EXPERIMENTAL**. Its objective is English text throughout the mod and
+project documentation while preserving the accepted 0.18 behavior. The runtime
+changes are confined to string literals, the version label, and equivalent
+English fixture expectations. Default shortcuts, custom bindings, INI keys,
+native asset identifiers, formulas, and gameplay conditions are preserved.
 
-**USER-VALIDATED for F1 refill and shortcut reassignment.** Additional checks: F1 with a partially
-empty gauge, F2/F5/F6 for both weapons, then reassign commands and menu-opening
-shortcuts and confirm they persist after restarting.
+Success requires English menus and messages that fit, passing regression
+checks, a verified installable package, and player confirmation without losing
+accepted features. The checked ASI SHA256 is
+`B13DBE911E2A650A7A9308575214A0C9129DF1AEBD653CA5B11121E3F13EAFD9`.
+The retained suite passed, including native command guards, key reassignment,
+INI persistence, and the module's own D3D11 menu fixture at 720p/4K/ultrawide.
+The 720p main menu and shortcut menu images were also inspected. These checks
+and six isolated installer/rollback scenarios do not replace a player test.
+No new ZIP hash or release link is claimed yet.
 
+The accepted 0.18.0 is **BUILT**, **CHECKED**, and **USER-VALIDATED for F1 refill
+and shortcut reassignment**. Its integrated checks covered conflicts,
+INI reload, foreground guards, regressions, and menus at 720p/4K/ultrawide.
+The player has not separately confirmed persistence after restarting or every
+remapped action; those remain additional checks.
+
+- [Build 0.18.1 English objective, checks, and player test](docs/BUILD-v0181.md)
 - [Build 0.18 objective, results, and test](docs/BUILD-v018.md)
 - [Cumulative history and statuses](docs/HISTORY.md)
 - [Technical notebook](docs/TECHNICAL-NOTEBOOK.md)

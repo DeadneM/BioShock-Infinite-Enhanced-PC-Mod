@@ -42,7 +42,7 @@ static void grantVigorUpgrades(Obj pc,Obj pawn,Obj manager) {
     Obj db=progression_loot::database(),transaction=progression_loot::transaction(pc);
     if(GetCurrentThreadId()!=windowThread || ptr(pc+0x1fc)!=pawn || !db || !transaction
         || !inventoryLayout(manager) || !progression_loot::snapshot(pc,inventory)) {
-        status("Ameliorations des pouvoirs : inventaire indisponible, aucun ajout.");return;
+        status("Vigor upgrades: inventory unavailable; nothing added.");return;
     }
     unsigned present=0;bool missingVigors[8]={},catalogueOK=true;
     // Resolve every native item and its actual gameplay modifier before the
@@ -60,14 +60,14 @@ static void grantVigorUpgrades(Obj pc,Obj pawn,Obj manager) {
         if(quantity>0)present++;
         else if(!hasVigor(manager,choice.vigor))missingVigors[choice.vigor]=true;
     }
-    if(!catalogueOK){status("Ameliorations des pouvoirs : catalogue non reconnu, aucun ajout. Voir le journal.");return;}
-    if(present==count){status("Les 16 ameliorations des pouvoirs sont deja possedees.");return;}
+    if(!catalogueOK){status("Vigor upgrades: unrecognized catalog; nothing added. See the log.");return;}
+    if(present==count){status("All 16 Vigor upgrades are already owned.");return;}
     unsigned needed=0,freeSlots=0;
     for(bool missing:missingVigors)if(missing)needed++;
     for(unsigned i=1;i<36;i++)if(!ptr(manager+0x1fc+i*4))freeSlots++;
     // Applying a native modifier can acquire its vigor. Reserve one slot per
     // missing vigor, never one per upgrade, before issuing a transaction.
-    if(freeSlots<needed){status("Ameliorations des pouvoirs : inventaire plein, aucun objet remplace.");return;}
+    if(freeSlots<needed){status("Vigor upgrades: inventory full; no items replaced.");return;}
     unsigned added=0;
     for(unsigned i=0;i<count;i++) {
         if(ptr(pc+0x1fc)!=pawn || !progression_loot::snapshot(pc,inventory))break;
@@ -80,6 +80,6 @@ static void grantVigorUpgrades(Obj pc,Obj pawn,Obj manager) {
     if(progression_loot::snapshot(pc,inventory))
         for(unsigned i=0;i<count;i++)if(progression_loot::quantity(inventory,choices[i].id)>0)confirmed++;
     char text[192];
-    snprintf(text,sizeof(text),"Ameliorations des pouvoirs : %u / %u possedees, %u ajoutee(s), %u deja presentes.%s",
-        confirmed,count,added,present,confirmed==count?"":" Ajout interrompu, voir le journal.");status(text);
+    snprintf(text,sizeof(text),"Vigor upgrades: %u / %u owned, %u added, %u already present.%s",
+        confirmed,count,added,present,confirmed==count?"":" Grant interrupted; see the log.");status(text);
 }

@@ -114,7 +114,7 @@ static void testPowers() {
     for(unsigned i=0;i<8;i++)CHECK(e.acquired[i]==1);
     BYTE before[sizeof(e.manager)];memcpy(before,e.manager,sizeof(before));
     grant();CHECK(e.loads==16 && e.calls==8 && !memcmp(before,e.manager,sizeof(before)));e.allOwned();
-    CHECK(strstr(message,"deja possedes"));
+    CHECK(strstr(message,"already owned"));
     // Each archetype is independently found when owned and acquired when absent.
     for(unsigned missing=0;missing<8;missing++) {
         e.reset(255u^(1u<<missing));grant();CHECK(e.loads==8 && e.calls==1);e.allOwned();
@@ -129,14 +129,14 @@ static void testPowers() {
         e.reset(0);for(unsigned i=3;i<36-free;i++)e.slot(i)=e.fillers[i-3];
         memcpy(before,e.manager,sizeof(before));grant();
         CHECK(e.loads==8 && !e.calls && !memcmp(before,e.manager,sizeof(before)));
-        CHECK(strstr(message,"inventaire plein"));
+        CHECK(strstr(message,"inventory full"));
     }
     // A missing final archetype proves that the whole catalogue is checked
     // before any native acquisition. Exercise every earlier failure as well.
     for(int missing=7;missing>=0;missing--) {
         e.reset(0);e.missing=missing;memcpy(before,e.manager,sizeof(before));grant();
         CHECK(e.loads==missing+1 && !e.calls && !memcmp(before,e.manager,sizeof(before)));
-        CHECK(strstr(message,"catalogue incomplet"));
+        CHECK(strstr(message,"incomplete catalog"));
     }
     e.reset(0);*(unsigned *)(e.inventoryProperty+0x2c)=35;grant();CHECK(!e.loads && !e.calls);
     *(unsigned *)(e.inventoryProperty+0x2c)=36;
@@ -154,9 +154,9 @@ static void testPowers() {
     // acquisition stops immediately, then a retry adds only the remaining set.
     e.reset(0);e.refuse=4;grant();CHECK(e.calls==5);
     for(unsigned i=0;i<8;i++)CHECK(bool(progression_powers::ownedWeapon((Obj)e.manager,e.archetypes[i]))==(i<4));
-    CHECK(strstr(message,"acquisition interrompue"));
+    CHECK(strstr(message,"acquisition interrupted"));
     e.refuse=-1;grant();CHECK(e.calls==9);e.allOwned();
     current=nullptr;VirtualFree(host,0,MEM_RELEASE);host=nullptr;
-    strcpy(message,"Chargez une partie pour ajouter une arme.");
+    strcpy(message,"Load a game to add a weapon.");
     puts("PASS: all eight vigor loader paths and native ABI, real Bronco/Crows subclasses, invalid class chains, mixed/owned/missing grants, no-equip and selection preservation, no duplicates, capacity/catalogue preflight, schema rejection, interrupted acquisition and retry.");
 }

@@ -50,7 +50,7 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     // a held grant key during capture cannot execute the grant behind the UI.
     tapBinding(VK_RETURN);CHECK(overlayBindings.capturing());
     press(VK_F2);CHECK(bindingsError && overlayBindings.capturing() && pending==-1);
-    CHECK(strstr(bindingsNotice,"munitions") && overlayBindings.binding(keybinds::Action::MainMenu).key==VK_INSERT);release(VK_F2);
+    CHECK(strstr(bindingsNotice,"ammo") && overlayBindings.binding(keybinds::Action::MainMenu).key==VK_INSERT);release(VK_F2);
     press('K');CHECK(!overlayBindings.capturing() && !bindingsError && bindingsOpen && !menuOpen && modMenuOpen==1);
     CHECK(overlayBindings.binding(keybinds::Action::MainMenu).key=='K');frame();CHECK(bindingsOpen && !menuOpen);release('K');
     tapBinding(VK_ESCAPE);CHECK(menuOpen && !bindingsOpen);tapBinding(VK_INSERT);CHECK(menuOpen);

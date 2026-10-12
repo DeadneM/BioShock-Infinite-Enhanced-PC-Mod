@@ -32,7 +32,7 @@ static void grantPowers(Obj pc,Obj pawn,Obj manager) {
     static const Param acquireP[]={{"WeaponArchetype","ObjectProperty",0,4},{"EquipWeaponItems","ByteProperty",4,1}};
     Obj acquire=function(pawn,"AcquireWeapon",5,acquireP,2);
     if(!acquire || !inventoryLayout(manager)) {
-        status("Pouvoirs : inventaire non reconnu, aucun ajout.");return;
+        status("Vigors: unrecognized inventory; nothing added.");return;
     }
     Obj weaponClass=0;
     int freeSlots=0;
@@ -41,7 +41,7 @@ static void grantPowers(Obj pc,Obj pawn,Obj manager) {
         if(!item)freeSlots++;
         else if(Obj base=weaponBase(item))weaponClass=base;
     }
-    if(!weaponClass) {status("Pouvoirs : equipez d'abord une arme en jeu.");return;}
+    if(!weaponClass) {status("Vigors: equip a weapon in-game first.");return;}
     using LoadFn=void *(__cdecl *)(void *,void *,const wchar_t *,const wchar_t *,unsigned,void *,int);
     Obj archetypes[8]={};int present=0;
     // Resolve the complete catalogue before acquiring anything. The native
@@ -52,12 +52,12 @@ static void grantPowers(Obj pc,Obj pawn,Obj manager) {
         if(weaponBase(archetypes[i])!=weaponClass || !nameIs(archetypes[i],vigorNames[i])
             || !nameIs(ptr(archetypes[i]+0x14),"PreCoalescedItemAssets")) {
             modLog("Powers: catalogue missing %s",vigorNames[i]);
-            status("Pouvoirs : catalogue incomplet dans cette partie, aucun ajout.");return;
+            status("Vigors: incomplete catalog in this game; nothing added.");return;
         }
         if(ownedWeapon(manager,archetypes[i]))present++;
     }
-    if(present==8) {status("Les 8 pouvoirs sont deja possedes.");return;}
-    if(8-present>freeSlots) {status("Pouvoirs : inventaire plein, aucun objet remplace.");return;}
+    if(present==8) {status("All 8 Vigors are already owned.");return;}
+    if(8-present>freeSlots) {status("Vigors: inventory full; no items replaced.");return;}
     int added=0;
     for(unsigned i=0;i<8;i++) {
         if(ownedWeapon(manager,archetypes[i]))continue;
@@ -65,12 +65,12 @@ static void grantPowers(Obj pc,Obj pawn,Obj manager) {
         bool ok=dispatch(pawn,acquire,&args) && ownedWeapon(manager,archetypes[i]);
         modLog("Powers: acquire %s confirmed=%d",vigorNames[i],ok);
         if(!ok) {
-            char text[192];snprintf(text,sizeof(text),"Pouvoirs : %d ajout(s), acquisition interrompue. Voir le journal.",added);
+            char text[192];snprintf(text,sizeof(text),"Vigors: %d added; acquisition interrupted. See the log.",added);
             status(text);return;
         }
         added++;
     }
-    char text[192];snprintf(text,sizeof(text),"8 pouvoirs possedes : %d ajoute(s), %d deja present(s).",added,present);status(text);
+    char text[192];snprintf(text,sizeof(text),"8 Vigors owned: %d added, %d already present.",added,present);status(text);
 }
 
 namespace progression_gear {
@@ -230,7 +230,7 @@ static void grantGear(Obj pc,Obj pawn,Obj manager) {
     Obj transaction=progression_loot::transaction(pc),db=progression_loot::database();
     if(GetCurrentThreadId()!=windowThread || ptr(pc+0x1fc)!=pawn || !transaction || !db
         || !progression_loot::snapshot(pc,inventory)) {
-        status("Equipements : personnage ou inventaire indisponible, aucun ajout.");return;
+        status("Gear: character or inventory unavailable; nothing added.");return;
     }
     Obj noDynamic=component(db,"GearDynamicEffectComponents",0xec,0,"XGearDynamicEffectComponent");
     // GetItem dereferences each component without a native null check. Verify
@@ -243,7 +243,7 @@ static void grantGear(Obj pc,Obj pawn,Obj manager) {
     Obj objectClass=ptr(pc+0x20);
     for(unsigned depth=0;objectClass && !nameIs(objectClass,"Object") && depth<32;depth++)objectClass=ptr(objectClass+0x34);
     if(!baseComponents || !objectClass || !nameIs(objectClass,"Object") || !nameIs(noDynamic,"DynamicEffect_None")) {
-        status("Equipements : catalogue non reconnu, aucun ajout.");return;
+        status("Gear: unrecognized catalog; nothing added.");return;
     }
     Choice catalogue[count+2];memcpy(catalogue,choices,sizeof(choices));unsigned catalogueCount=count;
     unsigned present=0;
@@ -254,10 +254,10 @@ static void grantGear(Obj pc,Obj pawn,Obj manager) {
         uint64_t id=itemID(choice);
         if(!pickup || !authored(pickup,db,choice,noDynamic) || !classIs(progression_loot::getItem(db,id),"XGearItem")) {
             modLog("Gear: invalid authored pickup %s id=%08x:%08x",choice.pickup,(unsigned)(id>>32),(unsigned)id);
-            status("Equipements : catalogue incomplet ou non reconnu, aucun ajout. Voir le journal.");return;
+            status("Gear: incomplete or unrecognized catalog; nothing added. See the log.");return;
         }
         int quantity=progression_loot::quantity(inventory,id);
-        if(quantity<0){status("Equipements : inventaire incoherent, aucun ajout.");return;}
+        if(quantity<0){status("Gear: inconsistent inventory; nothing added.");return;}
         if(quantity>0)present++;
     }
     for(const Choice &candidate:optionalChoices) {
@@ -266,12 +266,12 @@ static void grantGear(Obj pc,Obj pawn,Obj manager) {
             modLog("Gear: optional pickup %s has no verified authored definition; skipped",candidate.pickup);continue;
         }
         uint64_t id=itemID(resolved);int quantity=progression_loot::quantity(inventory,id);
-        if(quantity<0){status("Equipements : inventaire incoherent, aucun ajout.");return;}
+        if(quantity<0){status("Gear: inconsistent inventory; nothing added.");return;}
         catalogue[catalogueCount++]=resolved;if(quantity>0)present++;
         modLog("Gear: optional authored pickup %s id=%08x:%08x",candidate.pickup,(unsigned)(id>>32),(unsigned)id);
     }
     if(present==catalogueCount) {
-        char text[192];snprintf(text,sizeof(text),"Les %u equipements du catalogue sont deja possedes.",catalogueCount);status(text);return;
+        char text[192];snprintf(text,sizeof(text),"All %u catalog gear items are already owned.",catalogueCount);status(text);return;
     }
     unsigned added=0;
     for(unsigned i=0;i<catalogueCount;i++) {
@@ -289,6 +289,6 @@ static void grantGear(Obj pc,Obj pawn,Obj manager) {
     if(progression_loot::snapshot(pc,inventory))
         for(unsigned i=0;i<catalogueCount;i++)if(progression_loot::quantity(inventory,itemID(catalogue[i]))>0)owned++;
     char text[192];
-    snprintf(text,sizeof(text),"Equipements : %u / %u du catalogue possedes, %u ajoute(s), %u deja present(s).%s",owned,catalogueCount,added,present,
-        owned==catalogueCount?"":" Ajout interrompu, voir le journal.");status(text);
+    snprintf(text,sizeof(text),"Gear: %u / %u catalog items owned, %u added, %u already present.%s",owned,catalogueCount,added,present,
+        owned==catalogueCount?"":" Grant interrupted; see the log.");status(text);
 }

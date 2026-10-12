@@ -8,11 +8,20 @@ Compatibility with other executables is not established. The project does not
 distribute the game executable. Native signatures are checked before adapters
 are installed; an unknown schema rejects the command.
 
-The latest expressly user-validated ASI is 0.15:
+The current accepted controls base is **0.18.0**, ASI SHA256
+`61F2C81E8E737F378B5BA7825249F517C59AACB8738DF5B7885FA6A583F86BA2`.
+Its F1 vitals refill and shortcut reassignment were confirmed by the player,
+who also confirmed the restored base was correct except for weapon/hand FOV.
+The accepted source checkpoint is
+`b54167ef6a0ed254b4ef9d52319f9be4e886e5fc`. Restart persistence and every
+remapped action have not been separately player-confirmed.
+
+The original user-validated predecessor is 0.15:
 `0901F21DBD06CD854EE8A4D3DAABFD03D2E0A1F2039F7BEED483A165A149B1EF`.
 The stable/v0.15 checkpoint contains recovered and checked sources, not a
 promise of binary identity with that ASI. Rejected FOV experiments remain in
-experiment/fov-v0.17.1. The new shortcut branch starts from the 0.15 camera base.
+experiment/fov-v0.17.1. The accepted 0.18 controls step keeps the 0.15 camera
+policy. English localization starts from 0.18, without rejected FOV hooks.
 
 ## Preserved architecture
 
@@ -110,8 +119,8 @@ After calls, the mod reads all three values, their capacities, and character
 identity again. A partial or unconfirmed effect keeps a warning instead of
 a success message.
 
-This new command remains **EXPERIMENTAL** before the player's in-game test,
-even if simulated checks pass.
+F1 current-value refill is **USER-VALIDATED** on 0.18. The English 0.18.1 binary
+preserves that implementation but still awaits its own in-game result.
 
 ## Why the FOV experiments are not retained
 
@@ -120,17 +129,17 @@ a satisfactory visual result. Weapons, reload parts, and firing effects were
 not all aligned. Player feedback and videos take precedence over “hook ready”
 messages or synthetic tests.
 
-The DPG2 foreground route and TranslatedViewProjection matrix are identified.
-RHI submission actually receives this matrix in passes 87C020 and C11DC0.
-Callbacks for the five inspected flash materials did not show an independent
-projection. Floating-section matrices are world transforms, not a second
-camera to replace.
+Earlier reads identified a DPG2 foreground route and a
+TranslatedViewProjection matrix supplied in passes 87C020 and C11DC0.
+Callbacks for the five inspected flash materials did not demonstrate an
+independent projection. Floating-section matrices are world transforms.
+These observations do not establish the projection consumed by every primary
+weapon/hand draw, nor do they prove a separate first-person camera.
 
-The next proposal is **an intact world view and a separate first-person view**,
-selected during preparation/submission of the player's DPG2 primitives, with
-the same coordinate frame for hands, weapons, accessories, and FX.
-This avoids mutating an entire pass that also contains post-processing.
-It is not yet a proven fix.
+The goal remains **an intact world view and a separate complete first-person
+view**, with consistent coordinates for hands, weapons, accessories, and FX.
+DPG2 also contains HUD Vigor effects; selecting an entire render group is
+insufficient to establish that complete first-person boundary.
 
 Before another visual trial, a bounded draw-time capture must connect DPG,
 material, mesh, anchors, and the projection actually consumed, at 80 then 120.
@@ -143,6 +152,23 @@ Boundary C5F880 is cdecl with seven arguments, view in argument1 and mesh in
 argument4. Coverage of all opaque meshes is not yet established.
 FSceneView copying involves owned containers: a raw copy must not be treated
 as an owning engine object.
+
+The 0.19 diagnostics did not deliver a functional FOV correction. The 0.20
+experiment changed foreground view fields around preparation and drawing,
+but the player reported HUD Vigor-effect flicker and no weapon correction.
+It is **REJECTED**, including its unconfirmed aiming changes. The accepted
+0.18 ASI was restored; the player confirmed that the other features were
+correct again. Synthetic matrix and ABI checks did not establish visual
+success and do not justify retaining those hooks.
+
+A subsequent code-path review distinguished the main skinned draw from the
+decal path that earlier vertex-factory reads followed. On the inspected
+player components, proxy virtual slot 0x08 enters `C28A10` for the main draw;
+slot 0x1C enters `7D8F90` for decals. The primary route reaches mesh-object
+virtual slot 0x24 (`A5D130`) and selects the LOD+0x2C factory before submission
+through `7C25B0`, with caller `B18B22`. The decal route's factory wrappers
+are not evidence for the main weapon/hand shader. This refines the next
+investigation target; it is not a new FOV feature or proof of a working fix.
 
 Future criterion: at world FOV 80/110/120/130, every weapon, hand, part, and
 effect remains proportionate and aligned during firing/reloading/aiming/weapon
@@ -188,7 +214,37 @@ Compiler/dependency warnings appeared while populating the fresh compiler cache;
 ## Player confirmation - October 11, 2026
 
 The player confirmed that current-value vitals refill and shortcut reassignment work in-game
-("Recharge et raccourcis OK", translated: "Vitals refill and shortcuts OK"). These two features
+(translated: "Vitals refill and shortcuts OK"). These two features
 are USER-VALIDATED. A restart-persistence test and every remapped action were not separately reported;
 those remain distinguished from the integrated routing/INI-reload checks. Weapon/hand FOV remains unresolved.
 The accepted controls build can serve as the next retained base without importing rejected FOV hooks.
+
+## English localization checkpoint — October 12, 2026
+
+0.18.1 uses the accepted 0.18 controls source. Runtime changes are limited
+to text, the version label, and matching fixture expectations. Native wide
+identifiers, format specifiers, INI keys, all 23 action identities, default
+bindings, formulas, and guards remain unchanged. Existing custom bindings
+and the user's complete INI must be preserved by installation.
+
+The checked x86 ASI SHA256 is
+`B13DBE911E2A650A7A9308575214A0C9129DF1AEBD653CA5B11121E3F13EAFD9`.
+The full retained suite passed, including command safety checks, rebinding,
+INI persistence, and the module's own D3D11 menu fixture at 720p/4K/ultrawide.
+The 720p main and shortcut menu images were inspected. Status is **BUILT**,
+**CHECKED**, **EXPERIMENTAL** pending installation, delivery verification,
+and the player's result. These checks supersede the earlier preparation-only
+state, without changing earlier game-session evidence.
+
+Six isolated installer/rollback scenarios also passed using the English
+rollback entry. They cover custom INI preservation, a rollback copy of later
+INI edits, unknown-loader and altered-package rejection, first-installation
+cleanup, shared-loader preservation, and refusal to replace a newer ASI.
+These fixture checks do not claim an installation in the player's game.
+
+The runtime, project documentation, and delivery text are now intended to be
+English. `Rollback.ps1` is the English rollback entry; `Retour.ps1` remains
+available for compatibility. English localization does not change native
+game text or supply an independent weapon/hand FOV fix. The next optical
+experiment stays separate and must cover complete first-person rendering
+and proportional aiming rather than per-weapon offsets.

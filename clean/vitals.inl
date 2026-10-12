@@ -75,7 +75,7 @@ bool reached(float value,float previous,float maximum) {
 bool fillUsing(Obj pc,Obj pawn,const Bindings &native) {
     Snapshot before;
     if(!native.health || !native.shield || !snapshot(pc,pawn,before)) {
-        status("Jauges : joueur ou structure non reconnus, aucune recharge.");return false;
+        status("Vitals: unrecognized player or structure; no refill.");return false;
     }
     bool invoked=true;
     if(before.health<before.healthMax) {
@@ -107,9 +107,9 @@ bool fillUsing(Obj pc,Obj pawn,const Bindings &native) {
         before.shield,observed?after.shield:-1.0f,before.shieldMax,
         before.salts,observed?after.salts:-1,before.saltsMax,observed,ok);
     char text[192];
-    if(ok)snprintf(text,sizeof(text),"Jauges rechargees : sante %.0f / %.0f, bouclier %.0f / %.0f, sels %d / %d.",
+    if(ok)snprintf(text,sizeof(text),"Vitals refilled: health %.0f / %.0f, shield %.0f / %.0f, salts %d / %d.",
         after.health,after.healthMax,after.shield,after.shieldMax,after.salts,after.saltsMax);
-    else snprintf(text,sizeof(text),"Jauges : recharge non confirmee, voir le journal.");
+    else snprintf(text,sizeof(text),"Vitals: refill unconfirmed; see the log.");
     status(text);return ok;
 }
 void refill(Obj pc,Obj pawn) {fillUsing(pc,pawn,bind());}

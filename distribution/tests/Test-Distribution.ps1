@@ -14,7 +14,7 @@ $package=Join-Path $fixture 'package';$game=Join-Path $fixture 'game'
 $source=Join-Path $package 'Binaries/Win32';$target=Join-Path $game 'Binaries/Win32'
 New-Item -ItemType Directory -Path $source,$target -Force | Out-Null
 Copy-ModVerified $ReferenceExecutable (Join-Path $target 'BioShockInfinite.exe') $script:InfiniteModGameSHA256
-foreach($name in @('Installer.ps1','Retour.ps1','Support.ps1')) {Copy-Item -LiteralPath (Join-Path $distribution $name) -Destination (Join-Path $package $name)}
+foreach($name in @('Installer.ps1','Retour.ps1','Rollback.ps1','Support.ps1')) {Copy-Item -LiteralPath (Join-Path $distribution $name) -Destination (Join-Path $package $name)}
 Copy-Item -LiteralPath $CandidateASI -Destination (Join-Path $source 'InfiniteMod.asi')
 Copy-Item -LiteralPath (Join-Path $repo 'clean/InfiniteMod.ini') -Destination (Join-Path $source 'InfiniteMod.ini')
 Copy-Item -LiteralPath (Join-Path $repo 'tools/asi-loader/dinput8.dll') -Destination (Join-Path $source 'dinput8.dll')
@@ -45,7 +45,7 @@ function Run-Installer([bool]$ShouldSucceed) {
 function Run-Return([string]$Backup,[bool]$ShouldSucceed) {
     $previousPreference=$ErrorActionPreference;$ErrorActionPreference='Continue'
     try {
-        $output=& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $package 'Retour.ps1') -GameDirectory $game -BackupDirectory $Backup 2>&1
+        $output=& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $package 'Rollback.ps1') -GameDirectory $game -BackupDirectory $Backup 2>&1
         $code=$LASTEXITCODE
     } finally {$ErrorActionPreference=$previousPreference}
     if(($code -eq 0) -ne $ShouldSucceed){$output | Out-Host;throw "Rollback unexpected exit $code"}

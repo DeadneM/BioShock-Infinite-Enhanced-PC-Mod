@@ -99,7 +99,7 @@ static void testInfusions() {
             f.entry(0,235,7);f.entry(1,329,7);f.entry(2,346,1);*(int *)(f.fallback()+12)=3;
         };
         reset();f.entry(2,346,0);grantInfusions(pc,(Obj)pawn);
-        CHECK(calls==0 && read<int>(f.fallback()+0x54)==2500 && strstr(message,"bouclier initial"));
+        CHECK(calls==0 && read<int>(f.fallback()+0x54)==2500 && strstr(message,"initial shield"));
         f.entry(2,346,-1);grantInfusions(pc,(Obj)pawn);CHECK(calls==0);
         reset();
         for(const auto &c:choices)CHECK(award(pc,(Obj)pawn,(Obj)f.fn,c,10));

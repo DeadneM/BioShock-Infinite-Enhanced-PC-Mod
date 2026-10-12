@@ -80,7 +80,7 @@ static DWORD WINAPI start(void *) {
     swprintf(modIni,MAX_PATH,L"%lsInfiniteMod.ini",path);
     wchar_t logPath[MAX_PATH];swprintf(logPath,MAX_PATH,L"%lsInfiniteMod.log",path);
     logFile=CreateFileW(logPath,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,nullptr,OPEN_ALWAYS,0,nullptr);
-    modLog("InfiniteMod clean 0.18.0 EXPERIMENTAL; v0.15 camera base, configurable keyboard menus and native health/shield/salts refill; preserved progression, reticle, UI, speed, weapons and ammo.");
+    modLog("InfiniteMod clean 0.18.1 EXPERIMENTAL; v0.15 camera base, configurable keyboard menus and native health/shield/salts refill; preserved progression, reticle, UI, speed, weapons and ammo.");
     if(!GetPrivateProfileIntW(L"General",L"Enabled",1,modIni)) {modLog("Disabled.");return 0;}
     BYTE *image=(BYTE *)GetModuleHandleW(nullptr);
     auto *dos=(IMAGE_DOS_HEADER *)image;

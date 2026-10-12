@@ -8,6 +8,7 @@ param(
     [string]$OutputPath,
     [string]$Objective='Configurable shortcuts and current-vitals refill on validated base 0.15.0.',
     [string]$SuccessCriterion='Test the new bindings, persistent remapping, F1 without capacity increases, and previously validated features.',
+    [string]$ValidatedBase='0.15.0',
     [switch]$ListOnly
 )
 . (Join-Path $PSScriptRoot 'Support.ps1')
@@ -32,6 +33,7 @@ $files=@(
     @{path='INSTALLATION.md';source=(Join-Path $PSScriptRoot 'INSTALLATION.md')},
     @{path='Installer.ps1';source=(Join-Path $PSScriptRoot 'Installer.ps1')},
     @{path='Retour.ps1';source=(Join-Path $PSScriptRoot 'Retour.ps1')},
+    @{path='Rollback.ps1';source=(Join-Path $PSScriptRoot 'Rollback.ps1')},
     @{path='Support.ps1';source=(Join-Path $PSScriptRoot 'Support.ps1')},
     @{path='Binaries/Win32/InfiniteMod.asi';source=$AsiPath},
     @{path='Binaries/Win32/InfiniteMod.ini';source=$IniPath},
@@ -40,6 +42,7 @@ $files=@(
     @{path='licenses/Dear-ImGui-MIT.txt';source=(Join-Path $PSScriptRoot 'licenses/Dear-ImGui-MIT.txt')},
     @{path='licenses/MinHook-BSD.txt';source=(Join-Path $PSScriptRoot 'licenses/MinHook-BSD.txt')}
 )
+if($Version -eq '0.18.1'){$files+=@{path='docs/BUILD-v0181.md';source=(Join-Path $repo 'docs/BUILD-v0181.md')}}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
 foreach($file in $files) {
@@ -47,7 +50,7 @@ foreach($file in $files) {
     Assert-NoReparse $file.source
     if($file.path.StartsWith('Binaries/Win32/')){$moduleFiles+=[pscustomobject]@{path=$file.path;sha256=(Get-ModHash $file.source);size=(Get-Item -LiteralPath $file.source).Length}}
 }
-$package=[ordered]@{schema=1;version=$Version;status='EXPERIMENTAL';validatedBase='0.15.0';objective=$Objective;successCriterion=$SuccessCriterion;files=$moduleFiles}
+$package=[ordered]@{schema=1;version=$Version;status='EXPERIMENTAL';validatedBase=$ValidatedBase;objective=$Objective;successCriterion=$SuccessCriterion;files=$moduleFiles}
 if($ListOnly){@($files | ForEach-Object {$_.path})+'package.json';return}
 $zipPath=Get-AbsolutePath $OutputPath
 if(Test-Path -LiteralPath $zipPath){throw 'ZIP already exists. Choose a new output path; existing releases are never overwritten.'}
@@ -81,5 +84,5 @@ $zipHash=Get-ModHash $zipPath
 [IO.File]::WriteAllText($zipPath+'.sha256',$zipHash+'  '+[IO.Path]::GetFileName($zipPath)+[Environment]::NewLine,[Text.UTF8Encoding]::new($false))
 Write-Output "Verified ZIP: $zipPath"
 Write-Output "SHA256 : $zipHash"
-Write-Output "ASI: $AsiSHA256; status EXPERIMENTAL; validated base 0.15.0."
+Write-Output "ASI: $AsiSHA256; status EXPERIMENTAL; validated base $ValidatedBase."
 Write-Output 'The ZIP and its contents were verified; this does not constitute in-game validation.'

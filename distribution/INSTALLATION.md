@@ -1,7 +1,7 @@
 # Install an experimental build
 
 This package supports the checksum-verified BioShock Infinite GOG x86 build.
-The validated gameplay base is v0.15.0. New features remain **EXPERIMENTAL**
+The retained gameplay and controls base is v0.18.0. New features remain **EXPERIMENTAL**
 until the user confirms their in-game test. The build objective and success
 criterion are recorded in `package.json`.
 
@@ -32,13 +32,16 @@ To restore the previous ASI and INI, close the game and use the backup path
 printed by the installer:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Retour.ps1 -GameDirectory 'C:\Games\BioShock Infinite' -BackupDirectory 'C:\Games\BioShock Infinite\InfiniteMod-Backups\install-YYYYMMDD-HHMMSS-fff-ID'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Rollback.ps1 -GameDirectory 'C:\Games\BioShock Infinite' -BackupDirectory 'C:\Games\BioShock Infinite\InfiniteMod-Backups\install-YYYYMMDD-HHMMSS-fff-ID'
 ```
 
 Rollback verifies checksums and preserves the removed state under
 `InfiniteMod-Backups/before-rollback-*`. It refuses to replace an ASI or an
 owned loader that changed after installation. The INI may have been edited
 during gameplay: it is copied before the previous INI is restored.
+
+The earlier `Retour.ps1` entry point is retained for existing rollback commands.
+Both entry points run the same checked rollback operation.
 
 To compile the source repository, the bootstrap downloads Zig 0.13.0 from
 [the official website](https://ziglang.org/download/index.json) and verifies

@@ -63,7 +63,7 @@ static void loadOverlayBindings() {
     keybinds::LoadReport result=overlayBindings.load(modIni);bindingsLoaded=true;
     if(result.invalid || result.conflicts) {
         bindingsError=true;
-        snprintf(bindingsNotice,sizeof(bindingsNotice),"Raccourcis invalides (%u) ou en conflit (%u) : valeurs par defaut restaurees.",result.invalid,result.conflicts);
+        snprintf(bindingsNotice,sizeof(bindingsNotice),"Invalid (%u) or conflicting (%u) shortcuts: defaults restored.",result.invalid,result.conflicts);
     }
     modLog("Keybinds loaded: invalid=%u, conflicts=%u",result.invalid,result.conflicts);
 }
@@ -87,19 +87,19 @@ static void updateMenuInput(bool focused) {
         keybinds::CaptureResult result=overlayBindings.pollCapture(focused,overlayKeyQuery);
         if(result.status==keybinds::CaptureStatus::Conflict) {
             bindingsError=true;
-            snprintf(bindingsNotice,sizeof(bindingsNotice),"%s est deja utilise pour : %s.",keybinds::chordLabel(result.candidate).c_str(),keybinds::definitions[static_cast<unsigned>(result.conflict)].label);
+            snprintf(bindingsNotice,sizeof(bindingsNotice),"%s is already assigned to: %s.",keybinds::chordLabel(result.candidate).c_str(),keybinds::definitions[static_cast<unsigned>(result.conflict)].label);
         } else if(result.status==keybinds::CaptureStatus::Invalid) {
-            bindingsError=true;snprintf(bindingsNotice,sizeof(bindingsNotice),"Appuie sur une seule touche, avec Ctrl, Alt ou Maj si souhaite.");
+            bindingsError=true;snprintf(bindingsNotice,sizeof(bindingsNotice),"Press one key, optionally with Ctrl, Alt, or Shift.");
         } else if(result.status==keybinds::CaptureStatus::Cancelled) {
-            bindingsError=false;snprintf(bindingsNotice,sizeof(bindingsNotice),"Modification annulee. Le raccourci precedent est conserve.");
+            bindingsError=false;snprintf(bindingsNotice,sizeof(bindingsNotice),"Edit canceled. Previous shortcut retained.");
         } else if(result.status==keybinds::CaptureStatus::Captured) {
             keybinds::RebindResult saved=overlayBindings.rebindAndSave(result.action,result.candidate,modIni);
             bindingsError=!saved.ok;
             if(saved.ok) {
-                snprintf(bindingsNotice,sizeof(bindingsNotice),"Enregistre : %s = %s.",keybinds::definitions[static_cast<unsigned>(result.action)].label,keybinds::chordLabel(result.candidate).c_str());
+                snprintf(bindingsNotice,sizeof(bindingsNotice),"Saved: %s = %s.",keybinds::definitions[static_cast<unsigned>(result.action)].label,keybinds::chordLabel(result.candidate).c_str());
                 modLog("Keybind saved: action=%ls, shortcut=%s",keybinds::definitions[static_cast<unsigned>(result.action)].iniName,keybinds::chordLabel(result.candidate).c_str());
                 overlayBindings.cancelCapture();
-            } else snprintf(bindingsNotice,sizeof(bindingsNotice),"Enregistrement impossible. Le raccourci precedent est conserve. Echap : annuler.");
+            } else snprintf(bindingsNotice,sizeof(bindingsNotice),"Save failed. Previous shortcut retained. Escape: cancel.");
         }
         return;
     }
@@ -169,8 +169,8 @@ static void updateMenuInput(bool focused) {
     }
 }
 static const char *aimKeyLabel(int key) {
-    switch(key){case VK_MBUTTON:return "bouton central";case VK_RBUTTON:return "clic droit";case 'Z':return "Z";
-    case VK_XBUTTON1:return "bouton lateral 1";case VK_XBUTTON2:return "bouton lateral 2";default:return "touche personnalisee (INI)";}
+    switch(key){case VK_MBUTTON:return "middle mouse";case VK_RBUTTON:return "right mouse";case 'Z':return "Z";
+    case VK_XBUTTON1:return "side button 1";case VK_XBUTTON2:return "side button 2";default:return "custom key (INI)";}
 }
 static unsigned long frames;
 static ID3D11Device *device;
@@ -202,73 +202,73 @@ static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,
 static void drawMainMenuContents() {
     using Action=keybinds::Action;
     drawMenuSection("INFINITEMOD");
-    ImGui::TextDisabled("%s : menu | %s : raccourcis",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
-    ImGui::TextDisabled("Commandes actives avec ce menu ouvert. Le jeu continue.");
+    ImGui::TextDisabled("%s: menu | %s: shortcuts",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
+    ImGui::TextDisabled("Commands are active with this menu open. The game continues.");
     ImGui::Separator();
     if(ImGui::BeginTable("mainColumns",2,ImGuiTableFlags_SizingStretchSame)) {
         ImGui::TableNextRow();ImGui::TableSetColumnIndex(0);
-        drawMenuSection("SANTE ET ARMES");
-        drawShortcut(Action::Vitals,"Remplir sante, bouclier et sels");
-        drawShortcut(Action::Ammo,"Remplir les munitions des deux armes");
-        ImGui::TextWrapped("%s / %s   Choisir : %s",shortcutLabel(Action::WeaponPrevious).c_str(),shortcutLabel(Action::WeaponNext).c_str(),weaponChoices[selectedWeapon].label);
-        drawShortcut(Action::GiveMain,"Donner l'arme selectionnee en main");
-        drawShortcut(Action::GiveSecondary,"Donner l'arme selectionnee en secondaire");
+        drawMenuSection("HEALTH AND WEAPONS");
+        drawShortcut(Action::Vitals,"Refill health, shield, and salts");
+        drawShortcut(Action::Ammo,"Refill ammo for both weapons");
+        ImGui::TextWrapped("%s / %s   Select: %s",shortcutLabel(Action::WeaponPrevious).c_str(),shortcutLabel(Action::WeaponNext).c_str(),weaponChoices[selectedWeapon].label);
+        drawShortcut(Action::GiveMain,"Give selected weapon in the main slot");
+        drawShortcut(Action::GiveSecondary,"Give selected weapon in the secondary slot");
         ImGui::Separator();drawMenuSection("PROGRESSION");
-        drawShortcut(Action::Powers,"Tous les pouvoirs");
-        drawShortcut(Action::Gear,"Tous les cadeaux (equipements)");
-        drawShortcut(Action::WeaponUpgrades,"Toutes les ameliorations d'armes");
-        drawShortcut(Action::VigorUpgrades,"Toutes les ameliorations de pouvoirs");
-        drawShortcut(Action::Infusions,"Infusions des trois jauges au maximum");
-        drawShortcut(Action::Money,"Argent au maximum");
-        drawShortcut(Action::Lockpicks,"Crochets au maximum");
+        drawShortcut(Action::Powers,"All Vigors");
+        drawShortcut(Action::Gear,"All gear");
+        drawShortcut(Action::WeaponUpgrades,"All weapon upgrades");
+        drawShortcut(Action::VigorUpgrades,"All Vigor upgrades");
+        drawShortcut(Action::Infusions,"Maximize health, salts, and shield infusions");
+        drawShortcut(Action::Money,"Maximize money");
+        drawShortcut(Action::Lockpicks,"Maximize lockpicks");
         ImGui::Separator();
         char weaponText[192];weaponStatus(weaponText,sizeof(weaponText));ImGui::TextWrapped("%s",weaponText);
         ImGui::TableSetColumnIndex(1);
-        drawMenuSection("DEPLACEMENT ET FOV");
-        ImGui::TextWrapped("%s   Vitesse : x%.2f",shortcutLabel(Action::Speed).c_str(),(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
-        ImGui::TextWrapped("%s / %s   FOV du monde : %ld deg",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),InterlockedCompareExchange(&fovDegrees,0,0));
+        drawMenuSection("MOVEMENT AND FOV");
+        ImGui::TextWrapped("%s   Speed: x%.2f",shortcutLabel(Action::Speed).c_str(),(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
+        ImGui::TextWrapped("%s / %s   World FOV: %ld deg",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),InterlockedCompareExchange(&fovDegrees,0,0));
         char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
-        ImGui::Separator();drawMenuSection("AFFICHAGE ET VISEE");
+        ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");
         bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();
-        ImGui::TextWrapped("%s   Masquer les reticules : %s",shortcutLabel(Action::Crosshair).c_str(),!hideCrosshair?"NON":reticleState>0?"OUI":reticleState<0?"INDISPONIBLE":"EN ATTENTE");
-        if(hideCrosshair && reticleState<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Masquage indisponible : voir le journal.");
+        ImGui::TextWrapped("%s   Hide crosshairs: %s",shortcutLabel(Action::Crosshair).c_str(),!hideCrosshair?"NO":reticleState>0?"YES":reticleState<0?"UNAVAILABLE":"PENDING");
+        if(hideCrosshair && reticleState<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Crosshair hiding unavailable: see the log.");
         LONG hud=InterlockedCompareExchange(&hudWanted,0,0),applied=InterlockedCompareExchange(&hudApplied,0,0);
-        if(hud==100)ImGui::TextWrapped("%s   Interface : compacte (native)",shortcutLabel(Action::HUD).c_str());
-        else ImGui::TextWrapped("%s   Interface : jusqu'a x%.2f",shortcutLabel(Action::HUD).c_str(),(double)hud/100);
-        if(InterlockedCompareExchange(&hudResult,0,0)<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Reglage HUD non applique : voir le journal.");
-        else if(InterlockedCompareExchange(&hudResult,0,0)==2)ImGui::TextDisabled("Verification de l'interface au demarrage...");
-        else if(hud!=applied)ImGui::TextDisabled("Interface : relancer pour appliquer le changement.");
-        else ImGui::TextDisabled("Interface : changement au prochain lancement.");
-        ImGui::TextWrapped("%s   Visee maintenue : %s",shortcutLabel(Action::HoldAim).c_str(),InterlockedCompareExchange(&aimWanted,0,0)?"ON":"OFF");
-        if(!aimReady())ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Visee maintenue indisponible : voir le journal.");
-        ImGui::TextWrapped("%s   Touche de visee : %s",shortcutLabel(Action::AimKey).c_str(),aimKeyLabel((int)InterlockedCompareExchange(&aimKey,0,0)));
-        ImGui::TextDisabled("Meme touche que dans les commandes du jeu.");
-        ImGui::Separator();drawMenuSection("DEMARRAGE");
+        if(hud==100)ImGui::TextWrapped("%s   Interface: compact (native)",shortcutLabel(Action::HUD).c_str());
+        else ImGui::TextWrapped("%s   Interface: up to x%.2f",shortcutLabel(Action::HUD).c_str(),(double)hud/100);
+        if(InterlockedCompareExchange(&hudResult,0,0)<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"HUD setting not applied: see the log.");
+        else if(InterlockedCompareExchange(&hudResult,0,0)==2)ImGui::TextDisabled("Checking interface settings at startup...");
+        else if(hud!=applied)ImGui::TextDisabled("Interface: restart to apply the change.");
+        else ImGui::TextDisabled("Interface: changes apply at the next launch.");
+        ImGui::TextWrapped("%s   Hold-to-aim: %s",shortcutLabel(Action::HoldAim).c_str(),InterlockedCompareExchange(&aimWanted,0,0)?"ON":"OFF");
+        if(!aimReady())ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Hold-to-aim unavailable: see the log.");
+        ImGui::TextWrapped("%s   Aim key: %s",shortcutLabel(Action::AimKey).c_str(),aimKeyLabel((int)InterlockedCompareExchange(&aimKey,0,0)));
+        ImGui::TextDisabled("Use the same key as in the game's controls.");
+        ImGui::Separator();drawMenuSection("STARTUP");
         bool wanted=InterlockedCompareExchange(&configWanted,0,0)!=0;
-        ImGui::TextWrapped("%s   Passer les logos : %s",shortcutLabel(Action::SkipIntros).c_str(),wanted?"OUI":"NON");
-        ImGui::TextDisabled("Au prochain lancement. Chargement conserve.");
+        ImGui::TextWrapped("%s   Skip logos: %s",shortcutLabel(Action::SkipIntros).c_str(),wanted?"YES":"NO");
+        ImGui::TextDisabled("At the next launch. Loading preserved.");
         LONG status=InterlockedCompareExchange(&configResult,0,0);
-        if(status<0 || settingError)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Enregistrement impossible : voir le journal.");
-        else if(status==2)ImGui::TextDisabled("Configuration enregistree. Relancer le jeu.");
-        else if(status==1)ImGui::TextDisabled("Configuration verifiee.");
-        else ImGui::TextDisabled("Verification de la configuration...");
+        if(status<0 || settingError)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Save failed: see the log.");
+        else if(status==2)ImGui::TextDisabled("Configuration saved. Restart the game.");
+        else if(status==1)ImGui::TextDisabled("Configuration verified.");
+        else ImGui::TextDisabled("Checking configuration...");
         ImGui::EndTable();
     }
 }
 static void drawBindingsMenuContents() {
     using Action=keybinds::Action;
-    drawMenuSection("INFINITEMOD / RACCOURCIS");
-    ImGui::TextDisabled("%s : fermer | %s : menu principal",shortcutLabel(Action::BindingsMenu).c_str(),shortcutLabel(Action::MainMenu).c_str());
+    drawMenuSection("INFINITEMOD / SHORTCUTS");
+    ImGui::TextDisabled("%s: close | %s: main menu",shortcutLabel(Action::BindingsMenu).c_str(),shortcutLabel(Action::MainMenu).c_str());
     if(overlayBindings.capturing()) {
-        ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"Nouvelle touche : %s",keybinds::definitions[selectedBinding].label);
-        ImGui::TextWrapped("Relache les touches, puis presse ton raccourci (Ctrl, Alt ou Maj possibles). Echap : annuler.");
-    } else ImGui::TextDisabled("Haut / Bas : choisir | Entree : modifier | Echap : retour");
+        ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"New shortcut: %s",keybinds::definitions[selectedBinding].label);
+        ImGui::TextWrapped("Release the keys, then press your shortcut (Ctrl, Alt, or Shift allowed). Escape: cancel.");
+    } else ImGui::TextDisabled("Up / Down: select | Enter: edit | Escape: back");
     ImGui::Separator();
     unsigned first=(selectedBinding/bindingsPageSize)*bindingsPageSize,last=first+bindingsPageSize;
     if(last>keybinds::count)last=keybinds::count;
     if(ImGui::BeginTable("bindingRows",2,ImGuiTableFlags_SizingStretchProp)) {
         ImGui::TableSetupColumn("Action",ImGuiTableColumnFlags_WidthStretch,0.70f);
-        ImGui::TableSetupColumn("Touche",ImGuiTableColumnFlags_WidthStretch,0.30f);
+        ImGui::TableSetupColumn("Shortcut",ImGuiTableColumnFlags_WidthStretch,0.30f);
         for(unsigned i=first;i<last;++i) {
             ImGui::TableNextRow();ImGui::TableSetColumnIndex(0);
             if(i==selectedBinding)ImGui::PushStyleColor(ImGuiCol_Text,ImVec4(0.96f,0.72f,0.3f,1));
@@ -279,14 +279,14 @@ static void drawBindingsMenuContents() {
         ImGui::EndTable();
     }
     ImGui::Separator();
-    ImGui::TextDisabled("Page %u / %u - %u raccourcis configurables",selectedBinding/bindingsPageSize+1,(keybinds::count+bindingsPageSize-1)/bindingsPageSize,keybinds::count);
+    ImGui::TextDisabled("Page %u / %u - %u configurable shortcuts",selectedBinding/bindingsPageSize+1,(keybinds::count+bindingsPageSize-1)/bindingsPageSize,keybinds::count);
     if(*bindingsNotice) {
         ImGui::PushStyleColor(ImGuiCol_Text,bindingsError?ImVec4(1,0.4f,0.35f,1):ImVec4(0.4f,0.86f,0.62f,1));
         ImGui::TextWrapped("%s",bindingsNotice);ImGui::PopStyleColor();
     }
-    ImGui::TextDisabled("Les modifications sont enregistrees automatiquement.");
-    ImGui::TextDisabled("Haut / Bas / Entree / Echap reserves dans cet editeur.");
-    ImGui::TextDisabled("Aucune commande du mod n'est executee pendant le reglage.");
+    ImGui::TextDisabled("Changes are saved automatically.");
+    ImGui::TextDisabled("Up / Down / Enter / Escape are reserved in this editor.");
+    ImGui::TextDisabled("Mod commands are disabled while editing shortcuts.");
 }
 static void drawMenu(IDXGISwapChain *chain) {
     if(!renderer(chain)) return;

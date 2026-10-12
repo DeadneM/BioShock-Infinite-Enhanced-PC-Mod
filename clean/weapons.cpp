@@ -8,10 +8,10 @@
 #include <math.h>
 
 const WeaponChoice weaponChoices[]={
-    {"Pistolet",L"PistolFounder"},{"Mitrailleuse",L"MachineGunFounder"},
-    {"Fusil a pompe",L"ShotgunFounder"},{"Carabine",L"CarbineFounder"},
-    {"Revolver",L"HandCannonFounder"},{"Fusil de precision",L"SniperRifleFounder"},
-    {"Lance-roquettes",L"RPGFounder"},{"Lance-grenades",L"FlakCannonFounder"}
+    {"Pistol",L"PistolFounder"},{"Machine Gun",L"MachineGunFounder"},
+    {"Shotgun",L"ShotgunFounder"},{"Carbine",L"CarbineFounder"},
+    {"Hand Cannon",L"HandCannonFounder"},{"Sniper Rifle",L"SniperRifleFounder"},
+    {"RPG",L"RPGFounder"},{"Volley Gun",L"FlakCannonFounder"}
 };
 const int weaponChoiceCount=sizeof(weaponChoices)/sizeof(*weaponChoices);
 namespace {
@@ -20,7 +20,7 @@ BYTE *host;
 using CameraFn=void (__thiscall *)(void *,void *,void *);
 CameraFn cameraOriginal;
 SRWLOCK stateLock=SRWLOCK_INIT;
-char message[192]="Chargez une partie pour ajouter une arme.";
+char message[192]="Load a game to add a weapon.";
 int pending=-1,pendingDestination=0;DWORD queuedAt,lastSeen,lastPoll,windowThread;
 HWND gameWindow;
 bool available,busy,grantsEnabled=true,progressionEnabled=true;
@@ -144,10 +144,10 @@ static AmmoResult refill(Obj weapon) {
     return result;
 }
 static void refillBoth(Obj manager) {
-    if(!inventoryLayout(manager)){status("Inventaire non reconnu : munitions inchangees.");return;}
+    if(!inventoryLayout(manager)){status("Unrecognized inventory: ammo unchanged.");return;}
     AmmoResult active=refill(slotWeapon(manager,0x2a0)),backup=refill(slotWeapon(manager,0x2a4));
-    char text[192];snprintf(text,sizeof(text),"En main %d / %d ; secondaire %d / %d (chargeur / reserve).%s",active.clip,active.reserve,backup.clip,backup.reserve,
-        active.verified && backup.verified?"":" Remplissage incomplet, voir le journal.");status(text);
+    char text[192];snprintf(text,sizeof(text),"Main %d / %d; secondary %d / %d (magazine / reserve).%s",active.clip,active.reserve,backup.clip,backup.reserve,
+        active.verified && backup.verified?"":" Refill incomplete; see the log.");status(text);
 }
 void give(Obj pawn,Obj manager,int selected,int destination) {
     static const Param acquireP[]={{"WeaponArchetype","ObjectProperty",0,4},{"EquipWeaponItems","ByteProperty",4,1}};
@@ -157,44 +157,44 @@ void give(Obj pawn,Obj manager,int selected,int destination) {
     Obj acquire=function(pawn,"AcquireWeapon",5,acquireP,2),equip=function(manager,"EquipWeapon",12,equipP,3);
     Obj get=function(pawn,"GetEquippedWeapon",8,getP,2);
     Obj setBackup=function(manager,"ClientSetBackupWeaponIndex",4,backupP,1);
-    if(!acquire || !equip || !get || !setBackup || !inventoryLayout(manager)) {status("Structure du jeu non reconnue : aucune arme ajoutee.");return;}
+    if(!acquire || !equip || !get || !setBackup || !inventoryLayout(manager)) {status("Unrecognized game structure: no weapon added.");return;}
     struct Equipped {unsigned selector;Obj weapon;} equipped={};
-    if(!dispatch(pawn,get,&equipped) || !classIs(equipped.weapon,"XWeapon")) {status("Equipez d'abord une arme classique en jeu.");return;}
+    if(!dispatch(pawn,get,&equipped) || !classIs(equipped.weapon,"XWeapon")) {status("Equip a standard weapon in-game first.");return;}
     Obj weaponClass=ptr(equipped.weapon+0x20);
     wchar_t path[128];swprintf(path,128,L"PreCoalescedItemAssets.%ls",weaponChoices[selected].asset);
     // StaticLoadObject signature derived from this build's execDynamicLoadObject.
     // Calling the native loader avoids handing a non-engine FString allocation to UE3.
     using LoadFn=void *(__cdecl *)(void *,void *,const wchar_t *,const wchar_t *,unsigned,void *,int);
     Obj archetype=(Obj)((LoadFn)(host+0x1066f0))((void *)weaponClass,nullptr,path,nullptr,0x2002,nullptr,1);
-    if(!classIs(archetype,"XWeapon") || !nameIs(ptr(archetype+0x14),"PreCoalescedItemAssets")) {status("Modele d'arme indisponible dans cette partie.");return;}
+    if(!classIs(archetype,"XWeapon") || !nameIs(ptr(archetype+0x14),"PreCoalescedItemAssets")) {status("Weapon model unavailable in this game.");return;}
     Obj prop=field(manager,"InventoryItems","ObjectProperty");
-    if(!prop || read<unsigned>(prop+0x2c)!=36 || read<unsigned>(prop+0x48)!=0x1fc) {status("Inventaire non reconnu : ajout annule.");return;}
+    if(!prop || read<unsigned>(prop+0x2c)!=36 || read<unsigned>(prop+0x48)!=0x1fc) {status("Unrecognized inventory: grant canceled.");return;}
     Obj weapon=carried(manager,archetype);
     if(!weapon) {
         bool room=false;for(unsigned i=1;i<36;i++)if(!ptr(manager+0x1fc+i*4)){room=true;break;}
-        if(!room){status("Inventaire plein : aucune arme remplacee.");return;}
+        if(!room){status("Weapon inventory full: no weapon replaced.");return;}
         struct Acquire {Obj archetype;unsigned char noEquip;unsigned char padding[3];} args={archetype,1,{}};
         modLog("Weapons: acquire %ls, pawn=%p manager=%p thread=%lu",path,(void *)pawn,(void *)manager,GetCurrentThreadId());
-        if(!dispatch(pawn,acquire,&args)){status("Appel d'acquisition refuse.");return;}
+        if(!dispatch(pawn,acquire,&args)){status("Weapon acquisition call rejected.");return;}
         weapon=carried(manager,archetype);
     }
-    if(!weapon){status("Le jeu n'a pas ajoute l'arme. Voir le journal.");return;}
+    if(!weapon){status("The game did not add the weapon. See the log.");return;}
     Obj previous=equipped.weapon,previousBackup=slotWeapon(manager,0x2a4);
     if(destination==1) {
-        if(weapon==previous){status("Cette arme est deja en main. Choisissez une autre arme pour le secondaire.");return;}
+        if(weapon==previous){status("This weapon is already in the main slot. Choose another for the secondary slot.");return;}
         int index=inventoryIndex(manager,weapon);
-        if(index<1 || !dispatch(manager,setBackup,&index)){status("Arme presente, emplacement secondaire non confirme.");return;}
+        if(index<1 || !dispatch(manager,setBackup,&index)){status("Weapon present; secondary slot unconfirmed.");return;}
     } else {
         // Replace the hand slot while retaining the secondary. Selecting the
         // existing secondary swaps the pair instead of duplicating its pointer.
         struct Equip {Obj weapon;int fullBody,backup;} args={weapon,0,weapon==previousBackup?1:0};
-        if(!dispatch(manager,equip,&args)){status("Arme presente, equipement non confirme.");return;}
+        if(!dispatch(manager,equip,&args)){status("Weapon present; equip result unconfirmed.");return;}
     }
     AmmoResult ammo=refill(weapon);
     equipped={};dispatch(pawn,get,&equipped);
     bool placed=destination==1?slotWeapon(manager,0x2a4)==weapon && equipped.weapon==previous:equipped.weapon==weapon;
-    char text[192];snprintf(text,sizeof(text),"%s : %s. Chargeur %d / reserve %d.%s",weaponChoices[selected].label,
-        placed?(destination==1?"secondaire":"en main"):"emplacement non confirme",ammo.clip,ammo.reserve,ammo.verified?"":" Remplissage non confirme.");status(text);
+    char text[192];snprintf(text,sizeof(text),"%s: %s. Magazine %d / reserve %d.%s",weaponChoices[selected].label,
+        placed?(destination==1?"secondary slot":"main slot"):"slot unconfirmed",ammo.clip,ammo.reserve,ammo.verified?"":" Refill unconfirmed.");status(text);
     modLog("Weapons: inventory instance=%p equipped=%p archetype=%p",(void *)weapon,(void *)equipped.weapon,(void *)archetype);
 }
 #include "progression_resources.inl"
@@ -228,7 +228,7 @@ void __fastcall camera(void *pc,void *,void *location,void *rotation) {
     if(changed)modLog("Weapons: player %s, game thread=%lu",ready?"ready":"unavailable",thread);
     if(selected!=-1) {
         if(!ready || age>2000 || GetForegroundWindow()!=window
-            || requestedPC!=(Obj)pc || requestedPawn!=pawn || (read<unsigned>((Obj)pc+0x248)&0x20000))status("Ajout annule : revenez dans une partie active.");
+            || requestedPC!=(Obj)pc || requestedPawn!=pawn || (read<unsigned>((Obj)pc+0x248)&0x20000))status("Grant canceled: return to active gameplay.");
         else if(selected==-2)refillBoth(manager);
         else if(selected==-3)grantPowers((Obj)pc,pawn,manager);
         else if(selected==-4)grantGear((Obj)pc,pawn,manager);
@@ -253,15 +253,15 @@ void weaponWindow(HWND window) {
 bool requestWeapon(int index,int destination) {
     AcquireSRWLockExclusive(&stateLock);DWORD now=GetTickCount();
     bool ok=grantsEnabled && index>=0 && index<weaponChoiceCount && (destination==0 || destination==1) && available && now-lastSeen<1500 && pending==-1 && !busy;
-    if(ok){pending=index;pendingDestination=destination;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;snprintf(message,sizeof(message),"Ajout demande...");}
-    else if(pending==-1 && !busy)snprintf(message,sizeof(message),"%s",grantsEnabled?"Chargez une partie active avec Booker et ses armes.":"Ajout d'armes desactive dans InfiniteMod.ini.");
+    if(ok){pending=index;pendingDestination=destination;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;snprintf(message,sizeof(message),"Grant requested...");}
+    else if(pending==-1 && !busy)snprintf(message,sizeof(message),"%s",grantsEnabled?"Load active gameplay with Booker and his weapons.":"Weapon grants disabled in InfiniteMod.ini.");
     ReleaseSRWLockExclusive(&stateLock);return ok;
 }
 bool requestAmmo() {
     AcquireSRWLockExclusive(&stateLock);DWORD now=GetTickCount();
     bool ok=grantsEnabled && available && now-lastSeen<1500 && pending==-1 && !busy;
-    if(ok){pending=-2;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;snprintf(message,sizeof(message),"Munitions demandees pour les deux armes...");}
-    else if(pending==-1 && !busy)snprintf(message,sizeof(message),"%s",grantsEnabled?"Chargez une partie active avec Booker et ses armes.":"Ajout d'armes desactive dans InfiniteMod.ini.");
+    if(ok){pending=-2;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;snprintf(message,sizeof(message),"Ammo requested for both weapons...");}
+    else if(pending==-1 && !busy)snprintf(message,sizeof(message),"%s",grantsEnabled?"Load active gameplay with Booker and his weapons.":"Weapon grants disabled in InfiniteMod.ini.");
     ReleaseSRWLockExclusive(&stateLock);return ok;
 }
 bool requestProgression(ProgressionAction action) {
@@ -271,29 +271,29 @@ bool requestProgression(ProgressionAction action) {
         && available && now-lastSeen<1500 && pending==-1 && !busy;
     if(ok) {
         pending=-3-index;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;
-        snprintf(message,sizeof(message),"Ajout demande...");
+        snprintf(message,sizeof(message),"Grant requested...");
     } else if(pending==-1 && !busy)snprintf(message,sizeof(message),"%s",progressionEnabled
-        ?"Chargez une partie active avec Booker.":"Ajouts de progression desactives dans InfiniteMod.ini.");
+        ?"Load active gameplay with Booker.":"Progression grants disabled in InfiniteMod.ini.");
     ReleaseSRWLockExclusive(&stateLock);return ok;
 }
 bool requestVitals() {
     AcquireSRWLockExclusive(&stateLock);DWORD now=GetTickCount();
     bool ok=available && now-lastSeen<1500 && pending==-1 && !busy;
-    if(ok){pending=-10;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;snprintf(message,sizeof(message),"Recharge sante, bouclier et sels demandee...");}
-    else if(pending==-1 && !busy)snprintf(message,sizeof(message),"Chargez une partie active avec Booker.");
+    if(ok){pending=-10;queuedAt=now;queuedController=latestController;queuedPawn=latestPawn;snprintf(message,sizeof(message),"Health, shield, and salts refill requested...");}
+    else if(pending==-1 && !busy)snprintf(message,sizeof(message),"Load active gameplay with Booker.");
     ReleaseSRWLockExclusive(&stateLock);return ok;
 }
 void weaponStatus(char *text,size_t capacity) {
     AcquireSRWLockExclusive(&stateLock);
-    if(pending!=-1 && GetTickCount()-queuedAt>2000){pending=-1;snprintf(message,sizeof(message),"Demande expiree : aucun ajout effectue.");}
+    if(pending!=-1 && GetTickCount()-queuedAt>2000){pending=-1;snprintf(message,sizeof(message),"Request expired: nothing added.");}
     snprintf(text,capacity,"%s",message);ReleaseSRWLockExclusive(&stateLock);
 }
 void playerOptionsStatus(char *text,size_t capacity) {
     LONG state=InterlockedCompareExchange(&player_options::optionState,0,0);
     snprintf(text,capacity,"%s",!player_options::speedInstalled || !player_options::fovInstalled
-        ?"Reglage indisponible : voir le journal.":state<0?"Joueur non reconnu : reglages non appliques."
-        :state==0?"Reglages memorises. Chargez une partie pour les appliquer."
-        :"Reglages actifs. Visee native conservee.");
+        ?"Settings unavailable: see the log.":state<0?"Unrecognized player: settings not applied."
+        :state==0?"Settings saved. Load a game to apply them."
+        :"Settings active. Native aiming preserved.");
 }
 LONG crosshairStatus(){return InterlockedCompareExchange(&reticle::state,0,0);}
 bool installWeapons(BYTE *image) {

@@ -94,6 +94,6 @@ static void testResources() {
     CHECK(calls==5 && lastType==6 && lastAmount==10 && *(int *)(selected+0x64)==50);
     grantLockpicks((Obj)pc,(Obj)pawn);CHECK(calls==5);
     player_options::speedInstalled=false;player_options::attributeOriginal=nullptr;
-    VirtualFree(host,0,MEM_RELEASE);host=nullptr;strcpy(message,"Chargez une partie pour ajouter une arme.");
+    VirtualFree(host,0,MEM_RELEASE);host=nullptr;strcpy(message,"Load a game to add a weapon.");
     puts("PASS: resources native-sized delta/parameter ABI, money/lockpick selectors, fallback/current character, repeated full inputs, dynamic/truncated capacities, no reduction above cap, invalid counts/caps/schema/native dispatch, stale pawn/cinematic/wrong thread.");
 }

@@ -46,27 +46,27 @@ bool maximum(Obj pawn,const char *name,unsigned offset,int &cap) {
     cap=(int)value;return cap>0;
 }
 void fill(Obj pc,Obj pawn,bool locks) {
-    const char *label=locks?"Crochets":"Argent";
+    const char *label=locks?"Lockpicks":"Money";
     const unsigned offset=locks?0x64:0x54;
     static const Param params[]={{"CurrencyType","ByteProperty",0,1},{"Cost","IntProperty",4,4}};
     if(GetCurrentThreadId()!=windowThread || !classIs(pc,"XPlayerController") || !classIs(pawn,"XHuman")
         || ptr(pc+0x1fc)!=pawn || ptr(pawn+0x218)!=pc || !(read<float>(pawn+0x2ac)>0)
         || (read<unsigned>(pc+0x248)&0x20000)) {
-        status("Ressources : joueur indisponible, aucune modification.");return;
+        status("Resources: player unavailable; no changes.");return;
     }
     Obj definition=characterDefinition(pc),adjust=function(pc,"ClientAdjustCurrency",8,params,2);
     int cap=0,current=0;
     if(!definition || !adjust || ptr(ptr(pc)+0x360)!=(Obj)host+0x6ce200
         || !copy(definition+offset,&current,sizeof(current)) || current<0
         || !maximum(pawn,locks?"MaxLockpicksAttrib":"WalletSizeAttrib",locks?0x4478:0x4454,cap)) {
-        status("Ressources : structure ou plafond non reconnu, aucune modification.");return;
+        status("Resources: unrecognized structure or cap; no changes.");return;
     }
     if(characterDefinition(pc)!=definition || ptr(pc+0x1fc)!=pawn) {
-        status("Ressources : changement de personnage, ajout annule.");return;
+        status("Resources: character changed; grant canceled.");return;
     }
     char text[192];
     if(current>=cap) {
-        snprintf(text,sizeof(text),"%s deja au maximum : %d / %d.",label,current,cap);
+        snprintf(text,sizeof(text),"%s already maxed: %d / %d.",label,current,cap);
         status(text);return; // No duplicate gain events/statistics on repeated inputs.
     }
     // Both operands are non-negative signed integers and current < cap.
@@ -76,8 +76,8 @@ void fill(Obj pc,Obj pawn,bool locks) {
     bool observed=invoked && characterDefinition(pc)==definition
         && copy(definition+offset,&after,sizeof(after));
     modLog("Resources: %s before=%d cap=%d requested=%d after=%d verified=%d",label,current,cap,args.amount,after,observed && after==cap);
-    if(observed && after==cap)snprintf(text,sizeof(text),"%s au maximum : %d / %d.",label,after,cap);
-    else snprintf(text,sizeof(text),"%s : remplissage incomplet (%d / %d), voir le journal.",label,after,cap);
+    if(observed && after==cap)snprintf(text,sizeof(text),"%s maxed: %d / %d.",label,after,cap);
+    else snprintf(text,sizeof(text),"%s: refill incomplete (%d / %d); see the log.",label,after,cap);
     status(text);
 }
 }

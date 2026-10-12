@@ -82,7 +82,7 @@ static void grantWeaponUpgrades(Obj pc,Obj pawn,Obj manager) {
     progression_loot::Inventory inventory;Obj db=progression_loot::database(),fn=progression_loot::transaction(pc);
     if(GetCurrentThreadId()!=windowThread || ptr(pc+0x1fc)!=pawn || !db || !fn
         || !inventoryLayout(manager) || !progression_loot::snapshot(pc,inventory)) {
-        status("Ameliorations : inventaire indisponible, aucun ajout.");return;
+        status("Weapon upgrades: inventory unavailable; nothing added.");return;
     }
     unsigned present=0,weaponCount=0;uint64_t packages[12]={},assets[12]={};bool catalogueOK=true;
     for(unsigned i=0;i<count;i++) {
@@ -95,27 +95,27 @@ static void grantWeaponUpgrades(Obj pc,Obj pawn,Obj manager) {
         if(choice.replacement && progression_loot::quantity(inventory,choice.replacement)>0) {
             Obj replacement=resolve(db,choice.replacement,choice.replacementName);
             if(!replacement || read<uint64_t>(replacement+0xe8)!=choice.id) {
-                status("Ameliorations : variante bonus non reconnue, aucun ajout.");return;
+                status("Weapon upgrades: unrecognized bonus variant; nothing added.");return;
             }
         }
         if(already){present++;continue;}
         uint64_t package=read<uint64_t>(item+0x94),asset=read<uint64_t>(item+0xa4);
         if(!package || !asset || read<uint64_t>(item+0x9c)!=0) {
-            status("Ameliorations : reference d'arme non reconnue, aucun ajout.");return;
+            status("Weapon upgrades: unrecognized weapon reference; nothing added.");return;
         }
         bool found=hasWeapon(manager,package,asset);
         for(unsigned j=0;j<weaponCount;j++)if(packages[j]==package && assets[j]==asset)found=true;
         if(!found) {
-            if(weaponCount==12){status("Ameliorations : catalogue d'armes incoherent.");return;}
+            if(weaponCount==12){status("Weapon upgrades: inconsistent weapon catalog.");return;}
             packages[weaponCount]=package;assets[weaponCount++]=asset;
         }
     }
-    if(!catalogueOK){status("Ameliorations : catalogue non reconnu, aucun ajout. Voir le journal.");return;}
-    if(present==count){status("Les 48 ameliorations d'armes sont deja possedees.");return;}
+    if(!catalogueOK){status("Weapon upgrades: unrecognized catalog; nothing added. See the log.");return;}
+    if(present==count){status("All 48 weapon upgrades are already owned.");return;}
     unsigned freeSlots=0;for(unsigned i=1;i<36;i++)if(!ptr(manager+0x1fc+i*4))freeSlots++;
     // The native modifier may acquire its associated weapon. Reserve room
     // before starting instead of silently replacing an existing inventory slot.
-    if(freeSlots<weaponCount){status("Ameliorations : inventaire plein, aucun objet remplace.");return;}
+    if(freeSlots<weaponCount){status("Weapon upgrades: inventory full; no items replaced.");return;}
     unsigned added=0;
     for(unsigned i=0;i<count;i++) {
         if(ptr(pc+0x1fc)!=pawn || !progression_loot::snapshot(pc,inventory))break;
@@ -126,6 +126,6 @@ static void grantWeaponUpgrades(Obj pc,Obj pawn,Obj manager) {
     unsigned confirmed=0;
     if(progression_loot::snapshot(pc,inventory))
         for(unsigned i=0;i<count;i++)if(owned(inventory,choices[i])==1)confirmed++;
-    char text[192];snprintf(text,sizeof(text),"Ameliorations : %u / %u possedees, %u ajoutee(s), %u deja presentes.%s",confirmed,count,added,present,
-        confirmed==count?"":" Ajout interrompu, voir le journal.");status(text);
+    char text[192];snprintf(text,sizeof(text),"Weapon upgrades: %u / %u owned, %u added, %u already present.%s",confirmed,count,added,present,
+        confirmed==count?"":" Grant interrupted; see the log.");status(text);
 }

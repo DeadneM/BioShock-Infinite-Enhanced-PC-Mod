@@ -20,7 +20,7 @@ static void testWeapons() {
     CHECK(!classIs(1,"XHuman"));CHECK(!dispatch((Obj)obj,(Obj)fn,nullptr));
     CHECK(!requestWeapon(0));available=true;lastSeen=GetTickCount();CHECK(requestWeapon(2));CHECK(!requestWeapon(3));
     CHECK(pending==2);queuedAt=GetTickCount()-3000;char text[192];weaponStatus(text,sizeof(text));CHECK(pending==-1);
-    CHECK(strstr(text,"expiree"));CHECK(!requestWeapon(-1));CHECK(!requestWeapon(weaponChoiceCount));
+    CHECK(strstr(text,"expired"));CHECK(!requestWeapon(-1));CHECK(!requestWeapon(weaponChoiceCount));
     CHECK(!requestWeapon(0,2));CHECK(requestWeapon(0,1));CHECK(pendingDestination==1);CHECK(!requestAmmo());pending=-1;
     CHECK(requestAmmo());CHECK(pending==-2);CHECK(!requestWeapon(0));queuedAt=GetTickCount()-3000;weaponStatus(text,sizeof(text));CHECK(pending==-1);
     CHECK(!requestProgression((ProgressionAction)-1));CHECK(!requestProgression(ProgressionAction::Count));
@@ -35,7 +35,7 @@ static void testWeapons() {
     busy=true;CHECK(!requestProgression(ProgressionAction::Gear));busy=false;
     lastSeen=GetTickCount()-2000;CHECK(!requestProgression(ProgressionAction::Powers));
     latestController=latestPawn=queuedController=queuedPawn=0;
-    available=false;lastSeen=0;strcpy(message,"Chargez une partie pour ajouter une arme.");
+    available=false;lastSeen=0;strcpy(message,"Load a game to add a weapon.");
     // Exercise the actual x86 MinHook trampoline and thiscall -> fastcall bridge
     // on synthetic code, never on a running game. Preserve both pointer arguments.
     const BYTE cameraCode[]={0x55,0x8b,0xec,0x83,0xe4,0xf0,0x81,0xec,0xa4,0,0,0,0x53,0x56,
