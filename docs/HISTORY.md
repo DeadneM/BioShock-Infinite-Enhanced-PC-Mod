@@ -1,5 +1,13 @@
 # Cumulative history
 
+## October 14 - 0.24 comparison reports native-looking aiming
+
+The player reports that aiming appears to stay native in every mode. 0.24
+is not validated or retained. The real INI and log establish option activation
+and converted target returns, but not the eventual rendered camera result.
+The next discriminating check is held-camera behavior in the current session,
+with per-sample weapon identity. No new runtime build or visible fix is claimed.
+
 ## October 14 - 0.24 target producer preparation
 
 Revisiting the existing 0.12.1 evidence located the native ordinary/TBar target

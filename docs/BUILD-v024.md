@@ -4,6 +4,11 @@ Base: user-accepted English 0.18.1, source `99a75aa9e1a47543c418b2dc37b43a888389
 Branch: `experiment/native-zoom-target`. Status: BUILT, CHECKED, EXPERIMENTAL;
 INSTALLED; not user-validated. See [installation receipt](DELIVERY-v024.md).
 
+Player test: reports no apparent effect, aiming stays native. Functional result
+is failed/unconfirmed and this candidate is not retained. Runtime option and
+target conversion are observed; final held-camera/rendering behavior still
+needs qualification. See the October14 notebook follow-up.
+
 ## One objective and success criterion
 
 Keep authored zoom magnification relative to the selected world FOV by adapting

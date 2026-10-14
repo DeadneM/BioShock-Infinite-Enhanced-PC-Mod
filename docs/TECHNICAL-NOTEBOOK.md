@@ -1,5 +1,26 @@
 # Cumulative technical notebook
 
+## October 14 - 0.24 player test does not establish a visual fix
+
+The player reports that aiming appears to stay native regardless of the mode.
+This is a failed/unconfirmed functional test; 0.24 is not retained or validated.
+The latest complete INI contains NativeAimZoom=1. Runtime log shows the qualified
+target hook actively returning97.5 for Hand Cannon native60/hip82.5/world120,
+and27.262 for sniper native14. A later Hand Cannon observation has hip90 and
+target90. These prove option activation and target conversion in those calls,
+not that the eventual rendered camera follows that target. No additional
+runtime build is justified solely by the existing getter/ABI fixtures.
+
+Current controller/camera changed during the session: PID11968, PC31497000,
+camera330BE700. A bounded QUERY_READ snapshot verifies current ownership,
+unlocked flags8/LockedFOV0/FrameDelayed120 and active sniper target14. This
+unzoomed snapshot cannot establish the held-aim result. Older addresses are
+stale. A trigger-based, read-only capture is prepared to record actual held
+camera values and per-sample weapon identities, avoiding the earlier fixed
+start-window and weapon-switch attribution limitations. Clarification is
+pending whether the menu label stays NATIVE or shows PROPORTIONAL with no
+visible change. No new fix, camera override or first-person success is claimed.
+
 ## October 14 - native authored target requalified for 0.24
 
 Accepted-runtime read-only capture collected 476 samples, including only ten

@@ -3,6 +3,11 @@
 October14,2026. Base: user-accepted English0.18.1. Candidate: BUILT, CHECKED,
 EXPERIMENTAL, INSTALLED; not user-validated. No GitHub release or push is claimed.
 
+Player reports no apparent aiming difference after the comparison. The technical
+checks below remain valid as checks; they do not establish the functional goal.
+Option activation and target conversion appear in the real log, so eventual
+camera/rendering behavior must be distinguished from the target hook result.
+
 Objective and visual criterion: [BUILD-v024.md](BUILD-v024.md).
 Final native/menu/configuration suite: tools/v024-tests.log.
 Final warning-free compilation receipts: tools/v024-build.log and
