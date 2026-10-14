@@ -1,20 +1,24 @@
-# InfiniteMod - Accepted English base and native FOV research
+# InfiniteMod - Native aiming experiment on the accepted English base
 
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
-**Current runtime/source:** accepted English0.18.1. The complete current INI
+**Installed runtime:** accepted English0.18.1. The complete current INI
 and custom keys are preserved. [Panini0.22](docs/REJECTED-v022.md) and the
 ineffective [CalcFOV aiming0.23](docs/REJECTED-v023.md) are rejected and removed.
 This branch starts directly from the accepted source, carrying cumulative
 documentation but no rejected runtime changes. All23 accepted actions remain
-available; the experimental Ctrl+F9 action is not retained.
+available. The new source candidate appends one editable Ctrl+F9 action.
 
-**Native zoom target research: PREPARED, no new build or functional fix.**
-The next objective is one native aiming target before interpolation. Existing
-world FOV/native Hor+ and commands are unchanged. No scene remap, GPU projection
-or per-weapon profile is introduced. Independent arms/weapon FOV and placement
-remain unfinished. See [the current objective](docs/NATIVE-ZOOM-TARGET.md).
+**0.24 candidate: BUILT, CHECKED, EXPERIMENTAL; not installed/user-validated.**
+Optional native authored aim target before interpolation.
+It keeps native zoom magnification relative to the selected world FOV and lets
+the game perform entry/release transitions. `Display.NativeAimZoom=0` defaults
+OFF; Ctrl+F9 toggles it with the main menu open and is editable in the shortcut
+menu. Existing hip-fire FOV, native Hor+ and commands remain intact. While ON,
+the native blend's hip endpoint stays at the selected world FOV. No scene remap,
+GPU projection or per-weapon profile is introduced. Independent arms/weapon FOV
+and placement remain unfinished. See [build status and test](docs/BUILD-v024.md).
 Rejected [0.21](docs/REJECTED-v021.md) GPU/ADS layers are also excluded.
 
 **0.18.1 is BUILT, CHECKED, and INSTALLED. English menus and preserved custom

@@ -14,7 +14,7 @@ enum class Action : unsigned {
     MainMenu, BindingsMenu, Vitals, Ammo, WeaponPrevious, WeaponNext, GiveMain,
     GiveSecondary, Speed, SkipIntros, Powers, Gear, WeaponUpgrades, VigorUpgrades,
     Infusions, Money, Lockpicks, Crosshair, HUD, HoldAim, AimKey, FovDecrease,
-    FovIncrease, Count
+    FovIncrease, NativeAimZoom, Count
 };
 constexpr unsigned count=static_cast<unsigned>(Action::Count);
 enum Modifier : unsigned { Control=1, Alt=2, Shift=4, Win=8 };
@@ -45,7 +45,8 @@ inline constexpr Definition definitions[count]={
     {L"HoldAim","Enable / disable hold-to-aim",{VK_F10,0},true},
     {L"AimKey","Change aim key",{VK_F11,0},true},
     {L"FovDecrease","Decrease world FOV",{VK_OEM_MINUS,0},true},
-    {L"FovIncrease","Increase world FOV",{VK_OEM_PLUS,0},true}
+    {L"FovIncrease","Increase world FOV",{VK_OEM_PLUS,0},true},
+    {L"NativeAimZoom","Enable / disable proportional aim zoom",{VK_F9,Control},true}
 };
 inline bool validAction(Action action) {return static_cast<unsigned>(action)<count;}
 struct ChordList {Chord chords[3];unsigned size;};

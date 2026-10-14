@@ -1,10 +1,11 @@
 # Native zoom target restart
 
-October14,2026. **PREPARED research, no new build or functional fix.**
+October14,2026. **0.24 candidate prepared, not user-validated.**
+Current qualification and build status: [BUILD-v024.md](BUILD-v024.md).
 
 Base: accepted English0.18.1 source99a75aa9e1a47543c418b2dc37b43a8883898c72
 on separate branch `experiment/native-zoom-target`. Cumulative records are
-retained, but runtime source is identical to the accepted base. Panini0.22,
+retained. The new candidate starts from the accepted base. Panini0.22,
 CalcFOV zoom0.23 and GPU/first-person0.21 adapters are excluded.
 
 ## One next objective
@@ -28,9 +29,9 @@ Do not implement per-weapon profiles or reshape a completed frame.
 
 ## Required evidence and success criterion
 
-- On accepted0.18.1, capture stable native aim and its transition using current
-  controller/camera identities. The prepared24-second capture did not run
-  because the old game process was closed; no samples are claimed.
+- The first capture did not run after process closure. A later accepted-runtime
+  capture collected476 samples, only10 locked, with a weapon change. It does
+  not establish a ten-second hold or one fixed target throughout the capture.
 - Qualify the producer of the native target and the consumer that performs
   interpolation. A SetFOV descriptor or interpreter layout alone is not proof
   of a universal usable hook.
@@ -44,4 +45,5 @@ Do not implement per-weapon profiles or reshape a completed frame.
 
 Current installed accepted ASI B13DBE..., retained current INI FDB4CB..., loader
 D5A059... are independently checked in [REJECTED-v023.md](REJECTED-v023.md).
-No fresh runtime compilation, ZIP, public release or live capture is claimed.
+No public release or in-game success is claimed. See BUILD-v024 for candidate
+qualification, tests and delivery state rather than the historical capture plan.

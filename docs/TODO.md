@@ -1,5 +1,14 @@
 # Cumulative TODO
 
+## Current candidate 0.24 - authored native target
+
+- [x] Requalify the original getter, native interpolation consumers and live owner/field schema.
+- [x] Prepare one optional target-return policy on the accepted English base.
+- [x] Pass native getter/blend/guard and retained tests; compile final x86 ASI.
+- [ ] Verify installable archive, accepted rollback and complete INI preservation.
+- [ ] Obtain visible ON/OFF zoom, release and weapon-change confirmation.
+- [ ] Qualify a separate whole first-person rendering/placement solution.
+
 ## Current native zoom target restart
 
 - [x] Reject0.23 after the player's no-difference result; identify actual LockedFOV coverage failure.

@@ -1,5 +1,15 @@
 # Cumulative history
 
+## October 14 - 0.24 target producer preparation
+
+Revisiting the existing 0.12.1 evidence located the native ordinary/TBar target
+getter and its three camera consumers. Fresh executable and live schema checks
+confirm the earlier target-before-blend route. 0.24 is prepared from accepted
+English 0.18.1 with one optional target-return adapter, preserving the accepted
+world policy and all prior actions. This differs from rejected 0.23's unused
+CalcFOV zoom path. No visual result or installation is claimed yet.
+See [the bounded objective](BUILD-v024.md).
+
 ## October 14 - 0.23 functional failure and accepted-base return
 
 The player reported no difference with proportional aiming ON/OFF. Logs show

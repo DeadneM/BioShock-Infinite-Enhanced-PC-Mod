@@ -1,5 +1,28 @@
 # Cumulative technical notebook
 
+## October 14 - native authored target requalified for 0.24
+
+Accepted-runtime read-only capture collected 476 samples, including only ten
+locked samples. It does not establish a ten-second held aim. Weapon targets
+were sampled once; a weapon change means their initial 65 cannot be correlated
+with every later camera value. A selected player/camera-mode script-reference
+search reviewed 1506 functions with zero hits, a negative limited to that scope.
+
+Rechecking NOTES-v0121 identifies the native getter at 508380. Fresh supported
+EXE disassembly confirms no-argument thiscall/x87 return, ordinary/TBar fields,
+and three qualified consumers. 51DB17 stores the target directly; 58296C and
+5829FE blend it with camera POV into LockedFOV. Fresh QUERY_READ confirms
+OwningPawn D88 equals the current pawn and target fields are scalar floats.
+This qualifies a target-return experiment without intercepting generic VM
+execution, scaling interpolated values, writing authored weapon fields or
+building per-weapon profiles. Details and boundaries: [BUILD-v024](BUILD-v024.md).
+
+Horizontal, vertical and diagonal FOV are interchangeable angle conventions
+for one rectilinear frustum. Equivalent conversion does not change perspective;
+independent H/V values must respect viewport aspect to keep square pixels.
+The accepted native Hor+ path must not receive another aspect multiplier.
+Viewmodel placement remains a separate, unqualified native-rendering goal.
+
 ## October 14 - actual aiming route rejects0.23
 
 Player ON/OFF comparison has no visible difference. Real logs identify native

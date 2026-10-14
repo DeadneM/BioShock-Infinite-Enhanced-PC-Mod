@@ -156,6 +156,7 @@ static void updateMenuInput(bool focused) {
         int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
         if(value<130)settingError=!saveFOVSetting(value>125?130:value+5);
     }
+    if(events.has(Action::NativeAimZoom))settingError=!saveNativeAimZoom(!InterlockedCompareExchange(&nativeAimZoom,0,0));
     if(events.has(Action::Crosshair))settingError=!saveCrosshairSetting(!InterlockedCompareExchange(&crosshairHidden,0,0));
     if(events.has(Action::HUD)) {
         int value=(int)InterlockedCompareExchange(&hudWanted,0,0);
@@ -227,6 +228,9 @@ static void drawMainMenuContents() {
         drawMenuSection("MOVEMENT AND FOV");
         ImGui::TextWrapped("%s   Speed: x%.2f",shortcutLabel(Action::Speed).c_str(),(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
         ImGui::TextWrapped("%s / %s   World FOV: %ld deg",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),InterlockedCompareExchange(&fovDegrees,0,0));
+        ImGui::TextWrapped("%s   Aim zoom: %s (experimental)",shortcutLabel(Action::NativeAimZoom).c_str(),InterlockedCompareExchange(&nativeAimZoom,0,0)?"PROPORTIONAL":"NATIVE");
+        if(InterlockedCompareExchange(&nativeAimZoom,0,0) && nativeAimZoomStatus()!=1)
+            ImGui::TextColored(ImVec4(1,0.7f,0.3f,1),"Aim adapter waiting for a supported player and weapon.");
         char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
         ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");
         bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();

@@ -11,7 +11,7 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     overlayBindings.resetDefaults();bindingsLoaded=false;bindingsOpen=false;menuOpen=false;bindingsReturnToMain=false;
     selectedWeapon=0;selectedBinding=0;*bindingsNotice=0;bindingsError=false;settingError=false;
     navigationFocused=false;for(bool &held:navigationHeld)held=false;
-    configWanted=1;hudWanted=hudApplied=100;aimWanted=0;aimKey=VK_MBUTTON;crosshairHidden=0;speedPercent=100;fovDegrees=80;
+    configWanted=1;hudWanted=hudApplied=100;aimWanted=0;aimKey=VK_MBUTTON;crosshairHidden=0;speedPercent=100;fovDegrees=80;nativeAimZoom=0;
     available=false;pending=-1;busy=false;grantsEnabled=progressionEnabled=true;lastSeen=0;publishMenuState();
     auto frame=[&]() {CHECK(SUCCEEDED(chain->Present(0,0)));};
     auto press=[&](int key) {keys[key]=static_cast<SHORT>(0x8000);frame();};
@@ -41,7 +41,7 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     release(VK_F8);keys[VK_CONTROL]=0;frame();
     for(int key:{VK_F1,VK_F2,VK_F5,VK_F6,VK_F7,VK_F12})tapBinding(key);
     CHECK(pending==-1 && speedPercent==100 && configWanted==1);
-    // Each of the 23 actions is reachable, with wraparound and three pages.
+    // Each accepted action and the appended experimental action is reachable.
     CHECK(selectedBinding==0);
     for(unsigned i=1;i<keybinds::count;++i){tapBinding(VK_DOWN);CHECK(selectedBinding==i);}
     CHECK(selectedBinding/bindingsPageSize==2);tapBinding(VK_DOWN);CHECK(selectedBinding==0);
@@ -75,6 +75,8 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     available=false;lastSeen=0;
     press(VK_F8);frame();CHECK(crosshairHidden==1);release(VK_F8);tapBinding(VK_F8);CHECK(crosshairHidden==0);
     for(int expected:{125,150,200,100}){tapBinding(VK_F9);CHECK(hudWanted==expected && hudApplied==100);}
+    keys[VK_CONTROL]=static_cast<SHORT>(0x8000);tapBinding(VK_F9);CHECK(nativeAimZoom==1 && hudWanted==100);
+    tapBinding(VK_F9);CHECK(nativeAimZoom==0 && hudWanted==100);keys[VK_CONTROL]=0;frame();
     tapBinding(VK_F10);CHECK(aimWanted==1);tapBinding(VK_F10);CHECK(aimWanted==0);tapBinding(VK_F11);CHECK(aimKey==VK_RBUTTON);
     tapBinding(VK_F12);CHECK(configWanted==0);tapBinding(VK_F12);CHECK(configWanted==1);
     for(int expected:{125,150,175,200,100}){tapBinding(VK_F7);CHECK(speedPercent==expected);}
