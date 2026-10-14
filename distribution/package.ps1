@@ -49,6 +49,14 @@ if($Version -in @('0.24.0','0.24.1')) {
     }
 }
 if($Version -eq '0.24.1'){$files+=@{path='docs/BUILD-v0241.md';source=(Join-Path $repo 'docs/BUILD-v0241.md')}}
+if($Version -eq '0.25.0') {
+    foreach($doc in @('BUILD-v025.md','DELIVERY-v025.md','BUILD-v0181.md','DELIVERY-v0181.md','BUILD-v0241.md','BUILD-v0242.md','DELIVERY-v0242.md','FIRSTPERSON-NATIVE-RESTART.md')) {
+        $files+=@{path=('docs/'+$doc);source=(Join-Path $repo ('docs/'+$doc))}
+    }
+    $nativeTool=Join-Path $repo 'tools/native-fov/NativeFOV.exe'
+    $files+=@{path='NativeFOV.exe';source=$nativeTool}
+    $files+=@{path='Launch-Mod.ps1';source=(Join-Path $PSScriptRoot 'Launch-Mod.ps1')}
+}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
 foreach($file in $files) {
@@ -57,6 +65,7 @@ foreach($file in $files) {
     if($file.path.StartsWith('Binaries/Win32/')){$moduleFiles+=[pscustomobject]@{path=$file.path;sha256=(Get-ModHash $file.source);size=(Get-Item -LiteralPath $file.source).Length}}
 }
 $package=[ordered]@{schema=1;version=$Version;status='EXPERIMENTAL';validatedBase=$ValidatedBase;objective=$Objective;successCriterion=$SuccessCriterion;files=$moduleFiles}
+if($Version -eq '0.25.0'){$package.nativeFOVToolSHA256=Get-ModHash $nativeTool}
 if($ListOnly){@($files | ForEach-Object {$_.path})+'package.json';return}
 $zipPath=Get-AbsolutePath $OutputPath
 if(Test-Path -LiteralPath $zipPath){throw 'ZIP already exists. Choose a new output path; existing releases are never overwritten.'}

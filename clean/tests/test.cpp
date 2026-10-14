@@ -1,5 +1,5 @@
 #include "../shared.h"
-#include "../aim_zoom_setting.h"
+#include "../native_fov_config.h"
 #include "../config.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -12,8 +12,8 @@ wchar_t modIni[MAX_PATH],gameIni[MAX_PATH];
 volatile LONG configWanted=1,configRequest=0,configResult=1;
 volatile LONG hudWanted=100,hudApplied=100,hudResult=1,aimWanted=0,aimKey=VK_MBUTTON,modMenuOpen=0;
 volatile LONG speedPercent=100,fovDegrees=80;
-volatile LONG nativeAimZoom=0;
-bool saveNativeAimZoom(bool value){return aim_zoom_setting::save(modIni,nativeAimZoom,value);}
+volatile LONG nativeAimZoom=0,nativeFovRequest=1,nativeFovResult=0;
+bool saveNativeAimZoom(bool){return false;}
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden){InterlockedExchange(&crosshairHidden,hidden);return true;}
 bool saveSpeedSetting(int value){if(value<100 || value>200 || value%25)return false;InterlockedExchange(&speedPercent,value);return true;}
@@ -38,7 +38,7 @@ static SHORT testKeys(int key){return keys[key];}
 #include "aim_fixture.h"
 #include "ui_fixture.h"
 #include "player_options_fixture.h"
-#include "native_aim_fixture.h"
+#include "native_fov_fixture.h"
 #include "resources_fixture.h"
 #include "vitals_fixture.h"
 #include "keybinds_fixture.h"
@@ -84,7 +84,7 @@ static void checkMenuBounds(UINT width,UINT height) {
 int main(int argc,char **argv) {
     testWeapons();
     testPlayerOptions();
-    testNativeAimTarget();
+    testNativeFOVConfig();
     testResources();
     testVitals();
     testKeybinds();

@@ -42,6 +42,12 @@ foreach($item in $entries) {
 }
 Write-ModJson (Join-Path $safety 'rollback-safety.json') ([ordered]@{schema=1;gameDirectory=$layout.Game;restoring=$backup;files=$saved})
 Assert-GameClosed
+if($record.version -eq '0.25.0' -and $record.nativeFOVApplied) {
+    $nativeTool=Join-Path $PSScriptRoot 'NativeFOV.exe';Assert-NoReparse $nativeTool
+    if($record.nativeFOVToolSHA256 -notmatch '^[0-9A-Fa-f]{64}$' -or (Get-ModHash $nativeTool) -ne $record.nativeFOVToolSHA256){throw 'Native FOV rollback utility checksum mismatch.'}
+    & $nativeTool restore $layout.Game
+    if($LASTEXITCODE -ne 0){throw 'Native range restore failed; module files left unchanged. Original native configuration backup remains available.'}
+}
 foreach($item in $entries) {
     if(-not $item.restore){continue}
     $entry=$item.entry;$target=Join-Path $layout.Target $entry.name
@@ -63,4 +69,6 @@ foreach($item in $entries) {
 }
 Write-Output "Previous ASI/INI restoration verified. Removed state preserved in: $safety"
 if($otherPlugins.Count -gt 0){Write-Output 'Loader preserved: other ASI plugins are present.'}
-Write-Output 'Progress saves and native game INI files are unchanged.'
+if($record.version -eq '0.25.0' -and $record.nativeFOVApplied) {
+    Write-Output 'Native FOV range restored. Current native slider and other settings preserved; progress saves unchanged.'
+} else {Write-Output 'Progress saves and native game INI files are unchanged.'}

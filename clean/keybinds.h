@@ -44,9 +44,9 @@ inline constexpr Definition definitions[count]={
     {L"HUD","Change interface size",{VK_F9,0},true},
     {L"HoldAim","Enable / disable hold-to-aim",{VK_F10,0},true},
     {L"AimKey","Change aim key",{VK_F11,0},true},
-    {L"FovDecrease","Decrease world FOV",{VK_OEM_MINUS,0},true},
-    {L"FovIncrease","Increase world FOV",{VK_OEM_PLUS,0},true},
-    {L"NativeAimZoom","Enable / disable proportional aim zoom",{VK_F9,Control},true}
+    {L"FovDecrease","Decrease native FOV range (restart)",{VK_OEM_MINUS,0},true},
+    {L"FovIncrease","Increase native FOV range (restart)",{VK_OEM_PLUS,0},true},
+    {L"NativeAimZoom","Reserved aim option (native zoom active)",{VK_F9,Control},true}
 };
 inline bool validAction(Action action) {return static_cast<unsigned>(action)<count;}
 struct ChordList {Chord chords[3];unsigned size;};

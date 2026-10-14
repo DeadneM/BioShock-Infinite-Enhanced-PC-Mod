@@ -1,35 +1,25 @@
-# InfiniteMod - Native aiming experiment on the accepted English base
+# InfiniteMod - English gameplay mod and native FOV experiment
 
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
-**Source candidate0.24.1: explicit ON/OFF aim control, installed and experimental.**
-The player has now confirmed ON/OFF switching and a visible aiming difference.
-These behaviors are retained. Exact proportional held zoom, independent
-arms/weapon lens and the remaining world perspective complaint are still open.
-The player previously reported the0.24 aim row stayed NATIVE. This revision adds a colored
-`Proportional aim zoom: ON/OFF` row and request/save/display logs, preserving
-the existing experimental lens policy. Ctrl+F9 remains the same editable key.
-Production persistence and restart reads run in the fixture, with failure
-coverage. The exact held-camera ratio is still unqualified. See [BUILD-v0241](docs/BUILD-v0241.md).
+**Current source candidate 0.25.0: native FOV slider experiment.** Retained
+controls checkpoint63f87fe / accepted English0.18.1 gameplay base. At the
+player's request, this candidate removes camera-result and aim-target overrides
+and all draw observation. It widens the native slider range through one native
+INI option. Independent weapon/hand FOV remains unresolved; no visual fix is
+claimed before player confirmation.
 
-**Installed runtime:** experimental0.24.1 on accepted English0.18.1. The complete current INI
-and custom keys are preserved. [Panini0.22](docs/REJECTED-v022.md) and the
-ineffective [CalcFOV aiming0.23](docs/REJECTED-v023.md) are rejected and removed.
-This branch starts directly from the accepted source, carrying cumulative
-documentation but no rejected runtime changes. All23 accepted actions remain
-available. The new source candidate appends one editable Ctrl+F9 action.
+The existing mod INI and bindings are preserved. Plus/minus now save the native
+range; the game's own FOV slider controls framing. After changing the range,
+restart with the included `Launch-Mod.ps1`, which prepares the native option
+before launch. Aiming uses the native calculation; the old experimental aim
+shortcut is reserved and its saved preference is retained for rollback.
 
-**0.24 candidate: BUILT, CHECKED, INSTALLED, EXPERIMENTAL; not user-validated.**
-Optional native authored aim target before interpolation.
-It keeps native zoom magnification relative to the selected world FOV and lets
-the game perform entry/release transitions. `Display.NativeAimZoom=0` defaults
-OFF; Ctrl+F9 toggles it with the main menu open and is editable in the shortcut
-menu. Existing hip-fire FOV, native Hor+ and commands remain intact. While ON,
-the native blend's hip endpoint stays at the selected world FOV. No scene remap,
-GPU projection or per-weapon profile is introduced. Independent arms/weapon FOV
-and placement remain unfinished. See [build status and test](docs/BUILD-v024.md).
-Rejected [0.21](docs/REJECTED-v021.md) GPU/ADS layers are also excluded.
+See [objective, changes, test and rollback](docs/BUILD-v025.md) and the current
+[delivery checkpoint](docs/DELIVERY-v025.md). Build/ZIP checks, actual installation
+and user validation are separate statuses. Public accepted downloads below are
+unchanged; no new GitHub release is claimed.
 
 **0.18.1 is BUILT, CHECKED, and INSTALLED. English menus and preserved custom
 menu keys are USER-VALIDATED.** The v0.18.1 public prerelease and downloaded
@@ -83,7 +73,9 @@ The English package uses `Rollback.ps1` for that command and retains
 `Retour.ps1` as a legacy compatibility entry. Use the command printed by the
 installer for the package you downloaded.
 
-The scripts do not replace the executable, save files, or native game INIs.
+The scripts do not replace the executable or save files. In0.25 they edit only
+the existing native FOV range option, with backup/restore and preserved slider.
+Use the included mod launcher after changing the range.
 At launch, the mod applies the HUD/logo preferences to the native INIs.
 Granted items may be stored by normal game saves; rolling back the module
 does not undo them.
@@ -122,7 +114,7 @@ the menu is displayed. **Ctrl+F8 opens the shortcut menu directly.**
 | F9 | Interface size for the next launch |
 | F10 | Enable/disable hold-to-aim |
 | F11 | Select the aim key matching the game's controls |
-| - / + | World FOV -/+5, from 80 to 130 |
+| - / + | Save native FOV range preference; restart through mod launcher |
 
 F5 and F6 select their destination slot directly; the old slot-switching key
 is no longer needed. Ctrl combinations are distinct from their unmodified
@@ -185,12 +177,14 @@ Close the menu and release the key before testing. Aiming ends when the key
 is released, a menu is opened, or the game loses foreground focus.
 
 F7 changes the local player's walking/running and sprint speed.
-Returning to x1 restores native speed. -/+ sets world FOV from 80 to 130,
-including keypad aliases while the default shortcut is retained.
-Preferences are saved in the INI.
+Returning to x1 restores native speed. -/+ saves the native slider range
+preference, including keypad aliases while the default shortcut is retained.
+Preferences are saved in the INI. Restart with the mod launcher to apply a
+new range, then use the native game slider to select the framing.
 
-The English localization preserves the accepted 0.18 camera and native aiming
-behavior, inherited from 0.15. Weapon/hand perspective and zoom at high FOV
+The accepted English0.18.1 package retains its earlier camera behavior; the
+current0.25 candidate deliberately removes that FOV override and uses native
+aiming and slider calculations. Weapon/hand perspective at high FOV
 remain unresolved. The 0.19 diagnostic did not produce a functional FOV fix;
 the 0.20 renderer experiment was **REJECTED** after HUD flicker and no weapon
 correction. The separate FOV goal remains two global views, for the world and
@@ -213,7 +207,7 @@ Log: `Binaries/Win32/InfiniteMod.log`.
 | [Progression] Enabled | 0 disables progression grants |
 | [Display] HideCrosshair | 0 shown, 1 requests hiding |
 | [Display] HUDScale | 1.00 compact, 1.25, 1.50, or 2.00 |
-| [Display] FOV | 80 to 130 degrees |
+| [Display] FOV | 80 to 130 range preference against native75 reference; actual angle stays native |
 | [Player] SpeedMultiplier | 1.00, 1.25, 1.50, 1.75, or 2.00 |
 | [Controls] HoldAim | 0 disabled, 1 enabled |
 | [Controls] AimKey | Windows key code matching the game's aim key |

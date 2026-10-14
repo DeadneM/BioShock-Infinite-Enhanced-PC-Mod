@@ -1,5 +1,40 @@
 # Cumulative TODO
 
+## 0.25 native slider experiment
+
+- [x] Branch from retained63f87fe and explicitly retire experimental aim/camera adapters.
+- [x] Preserve gameplay, speed, keys and INI; exclude draw observation from the build.
+- [x] Implement single-key native range preparation and immutable backup/restore.
+- [x] Preserve native slider/other settings, including later edits during rollback.
+- [x] Build and run final retained/configuration checks.
+- [x] Verify27-entry installable ZIP and extracted payloads.
+- [x] Run final installer/rollback checks after normal closure, including native range/helper paths.
+- [x] Install with current settings preserved and launch through native preparation.
+- [ ] Obtain one native slider/aim/reload/HUD comparison; no diagnostic capture.
+- [ ] Record proportion assessment without claiming an independent weapon lens.
+
+## 0.24.2 finite draw observation
+
+- [x] Build opt-in observer without changing retained controls or rendering values.
+- [x] Qualify opaque native ABI, mid-function callsites and real offscreen draw/pixel equivalence.
+- [x] Run retained gameplay/UI/persistence suite and check default runtime sections.
+- [x] Verify 27-entry installable ZIP, extracted payload hashes and x86 format.
+- [x] Run final payload installer/rollback fixtures after normal closure.
+- [x] Install after normal closure, preserving the complete latest INI and 0.24.1 backup.
+- [x] Run one bounded actual game request:204160 calls,zero owned rows; inconclusive and abandoned at the player's request.
+- [ ] Use correlated evidence to select a coherent whole-first-person native view approach.
+- [ ] Deliver and obtain user confirmation of an actual first-person FOV correction.
+
+## Whole first-person restart
+
+- [x] Preserve the confirmed0.24.1 control/visible-effect checkpoint63f87fe.
+- [x] Create a separate first-person branch with initially identical runtime.
+- [x] Compare immutable primary Infinite source; distinguish one-lens Steam evidence from GOG proof.
+- [x] Record the failed held-aim capture without claiming a measured result.
+- [ ] Establish actual shared native draw/preparation boundary for the entire rig and effects.
+- [ ] Qualify a single lens policy with world/HUD exclusion before a new functional build.
+- [ ] Confirm visible all-weapon/prop/effect behavior before retention.
+
 ## Current control candidate0.24.1
 
 - [x] Preserve the current lens experiment; prepare explicit colored ON/OFF feedback.

@@ -19,3 +19,10 @@ $sources+=@('imgui.cpp','imgui_draw.cpp','imgui_tables.cpp','imgui_widgets.cpp',
 & $zig c++ -target x86-windows-gnu -O2 -Wall -Wextra @kind @sources -I $imgui -I (Join-Path $minhook 'include') -o $output @libs
 if($LASTEXITCODE -ne 0){throw 'Compilation failed'}
 Get-FileHash $output
+if(-not $Test) {
+    $nativeTool=Join-Path $root 'tools/native-fov/NativeFOV.exe'
+    New-Item -ItemType Directory -Path (Split-Path $nativeTool -Parent) -Force | Out-Null
+    & $zig c++ -target x86-windows-gnu -O2 -Wall -Wextra -Wno-unused-function (Join-Path $PSScriptRoot 'native_fov_tool.cpp') -o $nativeTool -lkernel32 -lshell32 -luser32
+    if($LASTEXITCODE -ne 0){throw 'Native FOV configuration utility compilation failed'}
+    Get-FileHash $nativeTool
+}

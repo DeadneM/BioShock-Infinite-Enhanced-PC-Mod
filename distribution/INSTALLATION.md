@@ -22,8 +22,14 @@ A compatible existing loader is reused and left intact during rollback.
 A loader added by this installation is also retained during rollback if
 other ASI plugins are present.
 
-These scripts do not replace saves, the game executable or native game INI
-files. During gameplay, the module can change progression through the chosen
+For0.25, the installer configures only the existing native FOV range option,
+with an immutable original backup; native slider position and unrelated values
+are preserved. See docs/BUILD-v025.md. After range changes, close the game and
+run `Launch-Mod.ps1 -GameDirectory ...` to prepare the option before launch.
+Rollback also restores the original native range for0.25 transactions.
+
+These scripts never replace saves or the game executable. During gameplay,
+the module can change progression through the chosen
 commands and apply HUD/logo options to native INI files, as described in the
 README. Rolling back the module does not undo an autosave already made by
 the game.

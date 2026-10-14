@@ -1,5 +1,63 @@
 # Cumulative technical notebook
 
+## October 14 - native option route instead of observation
+
+0.24.2 game capture:204160 common calls, rows0, commits0, invalid0, started0.
+Publication metadata was current/coherent in bounded read-only checks; these
+do not isolate the failed owned start gate. Retained TLS metadata contained
+an unknown/HUD foreground record, not a qualified owned-rig draw. No corrected
+capture or rendering functionality is inferred. The player ends this approach.
+
+0.25 starts from63f87fe. CalcFOV and weapon aim-target hooks are removed; only
+the retained speed hook remains in player_options. The native option comment
+defines slider0..1 and a percentage of the current base. Historical75 ->82.5
+does not prove the complete live law. DefaultEngine's70 is in the editor section.
+
+The helper edits one existing MaxUserFOVOffsetPercent token, with immutable
+original backup and atomic checked replacement. FieldOfView remains untouched.
+The runtime saves the mod FOV preference and reads native configuration for
+feedback, but never writes camera/aim/render state or the native option. The
+installer/launcher applies the cap before the game starts, avoiding cached
+option overwrite/timing ambiguity. The75 reference only converts the saved
+angle preference into a range; actual framing remains native.
+
+## October 14 - native API callsite observer qualification
+
+The separate DrawAudit build now observes common submission RVA3C25B0,
+native commit RVA47F740 and seven checked engine API callsites. Mid-function
+stubs preserve native argument layout and original CALL/epilogue; no Direct3D
+function entrypoint hooks or caller return-slot rewriting are used. Full CPU
+state and opaque native RET0C behavior pass own-process comparisons.
+
+The abandoned context-vtable prototype missed real calls in an own-process WARP
+fixture because entrypoint pointers changed during state operations. This is
+a fixture finding, not attribution for game FOV defects. Native callsites instead
+produce actual draw/vertex-shader/cb1 observations and the last full queued
+80-byte upload source. The source is not GPU readback. COM getter references
+are balanced; upload resource references are released after the bounded capture.
+An 8x8 constant-buffer-dependent render produces byte-identical pixels with and
+without observation. Ownership, stale-view, nesting, world/HUD exclusion and
+bounded marker/timeout checks pass; report schema has 123 columns.
+
+Final diagnostic ASI is EE0A2AAB880DDDFDF115BB925B3439DB08D17BAE0406DA0A519A4D0902B50F54.
+No game installation or runtime capture is claimed at packaging. Default build
+runtime sections match installed 0.24.1; whole-file hashes differ in metadata.
+Installed ASI61523562 remains untouched. Latest configuration checked is
+C37882D3ACF974517A0F7E0022BCA8A690FB8945B263683E95B3F68F728C53ED:
+world FOV is now110, HoldAim1, NativeAimZoom1; preserve this newer user setting.
+Earlier snapshots are historical, not restoration targets.
+
+## October 14 - final unchanged-runtime check
+
+PID23884 is still running. Installed ASI61523562... and loaderD5A059AA...
+remain unchanged. Current INI SHA256 is
+F34CCAC51492ECC06D66220D5EAEE3E13A42FB7F2403C1D7A83E332BB4F15072.
+Compared with the saved installation INI94C231D..., its only line change is
+HoldAim0 ->1. Preserve this current preference. NativeAimZoom remains ON.
+The log at13:24:00 records a new Hand Cannon entry-target conversion60 ->97.5;
+this confirms another adapter invocation, not the ten-second held lens.
+Research changes documentation only; runtime source matches checkpoint63f87fe.
+
 ## October 14 - user-confirmed controls and visible aiming effect
 
 The player confirms green ON/grey OFF switching and a radical visible aiming
@@ -21,9 +79,46 @@ No second aspect multiplier or axis stretch is supported by these inputs.
 At high physical FOV, rectilinear perspective can itself change apparent
 depth/edge proportions; the player's remaining world complaint is not thereby
 resolved or dismissed. Independent first-person rendering remains open.
-A triggered read-only held-aim capture is armed, with per-sample weapon targets,
-to distinguish proportional zoom from effectively unchanged hip lens before
-claiming the exact zoom objective. No new runtime build is introduced.
+A triggered read-only held-aim capture completed without triggering: 5,986
+reads, zero captured samples. The player completed the requested aiming test,
+but this file cannot establish its held lens. Timing or the combined
+camera/controller trigger gate may explain the missing capture; neither cause
+is proven. Do not repeat the same capture or present the requested ten seconds
+as measured. A subsequent unlocked snapshot has delayed FOV120 and a retained
+LockedFOV113.3414; that retained field is not evidence of the held camera.
+No new runtime build is introduced.
+
+## October 14 - primary source comparison and first-person restart
+
+The separate `experiment/firstperson-native` branch starts from retained
+checkpoint63f87fe. The ON/OFF control and player-reported visible aiming effect
+remain intact; their confirmation is narrower than exact proportional zoom.
+The functional objective and required ownership/preparation/binding evidence
+are recorded in [FIRSTPERSON-NATIVE-RESTART](FIRSTPERSON-NATIVE-RESTART.md).
+
+The public Infinite VR source was inspected at immutable commit
+41f004bc6a1e4fa8be0d0e0749f9ac5a0453e75e. Its Infinite engine notes report one
+gameplay lens in their Steam test (5,645 valid samples), unlike the separate
+foreground lens described for BioShock1. Its fixed16:9 horizontal-reference /
+Hor+ law agrees with our GOG native-builder evidence. This is corroboration,
+not proof of every draw in our GOG session or a ready independent-lens patch.
+Its hands implementation drives bone atoms; effects have another origin lane,
+including documented unsolved frozen-position cases. No source or addresses
+are transplanted into InfiniteMod. A pistol-only scale result is not universal
+reload/effect validation and does not meet our whole-first-person requirement.
+See the immutable references in FIRSTPERSON-NATIVE-RESTART.
+
+A bounded selected-module inventory finds one InfiniteMod ASI and Windows
+SysWOW64 DXGI/D3D11 modules; no other ASI or ReShade appears in that inventory
+or the matching Binaries file search. This does not exclude every possible
+overlay/manual-mapped injector and does not attribute the visual complaint to
+a stock module. Raw enumeration count141 includes duplicate EXE entries.
+
+These checks exclude a justified extra aspect multiplier, a BioShock1/2
+foreground-field transplant, and copying the VR bone implementation as the
+next fix. The unresolved requirement is a coherent owned first-person
+preparation/submission path, with world/HUD exclusion and actual bound-state
+evidence. Another broad DPG2 or final-buffer substitution is not promoted.
 
 ## October 14 - distinguish UI state from camera behavior
 

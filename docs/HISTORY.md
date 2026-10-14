@@ -1,5 +1,43 @@
 # Cumulative history
 
+## October 14 - 0.25 native option experiment
+
+The player stops observations after0.24.2 records204160 common calls but zero
+usable owned-rig rows. That observer is not a functional result. The new branch
+starts at retained63f87fe and intentionally retires its camera-result/aim-target
+adapters, as authorized. Gameplay/speed/controls remain; only the native
+MaxUserFOVOffsetPercent range is managed before launch. Native slider position
+and unrelated native/mod settings are preserved. No independent weapon FOV or
+improved proportions are claimed. See BUILD-v025.md.
+
+The27-entry candidate ZIP and final ASI/helper were checked. Installation is
+verified after normal closure, with exact mod INI preservation and a one-token
+native cap change backed by the original file. The mod launcher starts the
+game; logs confirm native range and removal of the retired hooks. The single
+native-slider/revolver comparison is pending player feedback. No public release.
+
+## October 14 - 0.24.2 bounded draw observer built and checked
+
+Retain the player-confirmed 0.24.1 control and visible aiming effect, with English
+0.18.1 as the broader accepted fallback. Add an opt-in compile-time observer at
+checked native submission, commit and seven API callsites. One finite marker
+request records ownership, native upload source and actual draw bindings without
+rendering changes. Opaque CPU/ABI and real offscreen Direct3D pixel comparisons
+pass, as does the retained suite. Diagnostic output is not a FOV functionality.
+Installation and real game capture remain pending at packaging. No public release
+is claimed. See BUILD-v0242.md; no keys or default settings were changed.
+
+## October 14 - isolated first-person restart, no new build
+
+Checkpoint63f87fe preserves the player-confirmed0.24.1 controls and visible aim
+effect. A separate first-person branch initially keeps identical runtime code.
+The requested held-aim test completed, but the bounded trigger capture contains
+zero samples: exact held zoom is unmeasured. Immutable primary Infinite Steam
+source corroborates a shared gameplay lens and reference-aspect law; it does
+not provide a GOG independent viewmodel fix. Its bone/effect intervention is
+not adopted. Record world/rig defects as unresolved; preserve ASI/INI/loader and
+the accepted18.1 rollback. No new package, installation or release is claimed.
+
 ## October 14 - 0.24.1 menu and visible aiming change confirmed
 
 The player confirms that the ON/OFF row alternates and the aiming effect works

@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][string]$ReferenceExecutable,[string]$CandidateASI)
+param([Parameter(Mandatory=$true)][string]$ReferenceExecutable,[string]$CandidateASI,[string]$NativeHelper)
 # Filesystem integration fixture, never a game launch. Private copies remain
 # below this test's private/ directory and must not be tracked or distributed.
 . (Join-Path (Split-Path $PSScriptRoot -Parent) 'Support.ps1')
@@ -23,7 +23,13 @@ foreach($name in $script:InfiniteModNames) {
     $path=Join-Path $source $name
     $moduleFiles+=[pscustomobject]@{path=('Binaries/Win32/'+$name);sha256=(Get-ModHash $path);size=(Get-Item -LiteralPath $path).Length}
 }
-Write-ModJson (Join-Path $package 'package.json') ([ordered]@{schema=1;version='fixture';status='EXPERIMENTAL';objective='Filesystem fixture only';successCriterion='Preserve settings and restore verified files';files=$moduleFiles})
+$manifest=[ordered]@{schema=1;version='fixture';status='EXPERIMENTAL';objective='Filesystem fixture only';successCriterion='Preserve settings and restore verified files';files=$moduleFiles}
+if($NativeHelper) {
+    Copy-Item -LiteralPath $NativeHelper -Destination (Join-Path $package 'NativeFOV.exe')
+    $manifest.version='0.25.0';$manifest.nativeFOVToolSHA256=Get-ModHash (Join-Path $package 'NativeFOV.exe')
+    [IO.File]::WriteAllText((Join-Path $game 'native-options.ini'),"[XCore.XUserOptionsManager]`r`nMaxUserFOVOffsetPercent=15.000000`r`nFieldOfView=0.625000`r`nDisplayMode=1`r`n",[Text.UTF8Encoding]::new($false))
+}
+Write-ModJson (Join-Path $package 'package.json') $manifest
 $candidateHash=Get-ModHash (Join-Path $source 'InfiniteMod.asi')
 $defaultINI=[IO.File]::ReadAllBytes((Join-Path $source 'InfiniteMod.ini'))
 $originalINI="[General]`r`nEnabled=1`r`n[Display]`r`nFOV=120`r`nHUDScale=1.50`r`n[Keybinds]`r`nMainMenu=Home`r`nVitals=Shift+F1`r`nBindingsMenu=Alt+F8`r`n"
@@ -41,6 +47,11 @@ function Run-Installer([bool]$ShouldSucceed) {
         $code=$LASTEXITCODE
     } finally {$ErrorActionPreference=$previousPreference}
     if(($code -eq 0) -ne $ShouldSucceed){$output | Out-Host;throw "Installer unexpected exit $code"}
+    if($ShouldSucceed -and $NativeHelper) {
+        $native=Get-Content -LiteralPath (Join-Path $game 'native-options.ini') -Raw
+        Check ($native.Contains('FieldOfView=0.625000') -and $native.Contains('DisplayMode=1')) 'Native slider/unrelated options preserved by versioned installer'
+        Check (-not $native.Contains('MaxUserFOVOffsetPercent=15.000000')) 'Native helper invoked by versioned installer'
+    }
 }
 function Run-Return([string]$Backup,[bool]$ShouldSucceed) {
     $previousPreference=$ErrorActionPreference;$ErrorActionPreference='Continue'
@@ -49,6 +60,10 @@ function Run-Return([string]$Backup,[bool]$ShouldSucceed) {
         $code=$LASTEXITCODE
     } finally {$ErrorActionPreference=$previousPreference}
     if(($code -eq 0) -ne $ShouldSucceed){$output | Out-Host;throw "Rollback unexpected exit $code"}
+    if($ShouldSucceed -and $NativeHelper) {
+        $native=Get-Content -LiteralPath (Join-Path $game 'native-options.ini') -Raw
+        Check ($native.Contains('MaxUserFOVOffsetPercent=15.000000') -and $native.Contains('FieldOfView=0.625000')) 'Versioned rollback restores native cap while preserving slider'
+    }
 }
 function Latest-Backup([string]$Prefix) {
     $folders=@(Get-ChildItem -LiteralPath (Join-Path $game 'InfiniteMod-Backups') -Directory | Where-Object {$_.Name.StartsWith($Prefix)} | Sort-Object LastWriteTime -Descending)
@@ -124,6 +139,17 @@ $newerASI=Get-ModHash (Join-Path $target 'InfiniteMod.asi')
 Run-Return $backup $false
 Check ((Get-ModHash (Join-Path $target 'InfiniteMod.asi')) -eq $newerASI) 'Changed ASI refused without overwrite'
 $report+='PASS: rollback rejects changed ASI without overwriting it.'
+if($NativeHelper) {
+    Set-Original
+    $tool=Join-Path $package 'NativeFOV.exe';$toolBytes=[IO.File]::ReadAllBytes($tool)
+    $beforeASI=Get-ModHash (Join-Path $target 'InfiniteMod.asi');$beforeNative=Get-ModHash (Join-Path $game 'native-options.ini')
+    [IO.File]::WriteAllText($tool,'tampered-private-helper')
+    Run-Installer $false
+    Check ((Get-ModHash (Join-Path $target 'InfiniteMod.asi')) -eq $beforeASI) 'Altered native helper refused before module writes'
+    Check ((Get-ModHash (Join-Path $game 'native-options.ini')) -eq $beforeNative) 'Altered native helper leaves native configuration unchanged'
+    [IO.File]::WriteAllBytes($tool,$toolBytes)
+    $report+='PASS: version0.25 invokes the shared native config editor and restores its cap with slider preservation; altered helper rejected before mutation.'
+}
 Check ((Get-ModHash (Join-Path $target 'BioShockInfinite.exe')) -eq $script:InfiniteModGameSHA256) 'Private reference EXE remains unchanged'
 $report | Write-Output
 Write-Output "Private fixture only: $fixture"

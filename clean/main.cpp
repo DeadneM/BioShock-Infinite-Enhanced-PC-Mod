@@ -3,7 +3,7 @@
 #include "weapons.h"
 #include "aim.h"
 #include "ui_config.h"
-#include "aim_zoom_setting.h"
+#include "native_fov_config.h"
 #include <shlobj.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -12,9 +12,8 @@ volatile LONG configWanted=1,configRequest=0,configResult=0;
 volatile LONG hudWanted=100,hudApplied=0,hudResult=0,aimWanted=0,aimKey=VK_MBUTTON,modMenuOpen=0;
 volatile LONG speedPercent=100,fovDegrees=80;
 volatile LONG nativeAimZoom=0;
-bool saveNativeAimZoom(bool enabled) {
-    return aim_zoom_setting::save(modIni,nativeAimZoom,enabled);
-}
+volatile LONG nativeFovRequest=1,nativeFovResult=0;
+bool saveNativeAimZoom(bool) { return false; } // Reserved binding; old INI preference retained.
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden) {
     if(!WritePrivateProfileStringW(L"Display",L"HideCrosshair",hidden?L"1":L"0",modIni))return false;
@@ -33,7 +32,7 @@ bool saveFOVSetting(int degrees) {
     if(degrees<80 || degrees>130)return false;
     wchar_t value[16];swprintf(value,16,L"%d",degrees);
     if(!WritePrivateProfileStringW(L"Display",L"FOV",value,modIni))return false;
-    InterlockedExchange(&fovDegrees,degrees);return true;
+    InterlockedExchange(&fovDegrees,degrees);InterlockedExchange(&nativeFovRequest,1);return true;
 }
 static void loadPlayerSettings() {
     wchar_t value[32],*end=nullptr;
@@ -50,7 +49,7 @@ static void loadPlayerSettings() {
     }
     InterlockedExchange(&speedPercent,speed);InterlockedExchange(&fovDegrees,fov);
     // New key: a rejected experiment's ProportionalAim setting cannot enable this.
-    InterlockedExchange(&nativeAimZoom,aim_zoom_setting::load(modIni));
+    InterlockedExchange(&nativeAimZoom,0); // Native zoom only; do not rewrite the retained preference.
 }
 bool saveHUDSetting(int percent) {
     if(!nativeUIScale(percent))return false;
@@ -87,7 +86,7 @@ static DWORD WINAPI start(void *) {
     swprintf(modIni,MAX_PATH,L"%lsInfiniteMod.ini",path);
     wchar_t logPath[MAX_PATH];swprintf(logPath,MAX_PATH,L"%lsInfiniteMod.log",path);
     logFile=CreateFileW(logPath,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,nullptr,OPEN_ALWAYS,0,nullptr);
-    modLog("InfiniteMod clean 0.24.1 EXPERIMENTAL; accepted English 0.18.1 base, explicit ON/OFF aim control; aiming experiment still unvalidated.");
+    modLog("InfiniteMod 0.25.0 NATIVE FOV EXPERIMENTAL; retained gameplay; no camera/aim/render overrides.");
     if(!GetPrivateProfileIntW(L"General",L"Enabled",1,modIni)) {modLog("Disabled.");return 0;}
     BYTE *image=(BYTE *)GetModuleHandleW(nullptr);
     auto *dos=(IMAGE_DOS_HEADER *)image;
@@ -130,7 +129,19 @@ static DWORD WINAPI start(void *) {
         modLog("Native UI startup: requested=%ld%%, result=%d; no live changes",hudWanted,result);
     }
     InterlockedExchange(&configRequest,1);
+    wchar_t optionsPath[MAX_PATH]={};wcscpy(optionsPath,gameIni);
+    wchar_t *optionsSlash=wcsrchr(optionsPath,L'\\');
+    if(optionsSlash)wcscpy(optionsSlash+1,L"XUserOptions.ini");
     for(;;) {
+        if(InterlockedExchange(&nativeFovRequest,0)) {
+            std::string raw,text,value;bool wide=false;size_t begin=0,length=0;
+            bool valid=optionsSlash && readConfigBytes(optionsPath,raw) && decodeUIConfig(raw,text,wide)
+                && nativeFOVToken(text,value,begin,length);
+            double requested=nativeFOVPercent((int)InterlockedCompareExchange(&fovDegrees,0,0));
+            bool configured=valid && fabs(strtod(value.c_str(),nullptr)-requested)<0.00001;
+            InterlockedExchange(&nativeFovResult,!valid?-1:configured?1:2);
+            modLog("Native FOV range: requested +%.6f%%; config=%s. No live camera/config writes; use mod launcher for changed range.",requested,valid?value.c_str():"unavailable");
+        }
         if(uiCheck) {
             float current=0;SIZE_T read=0;
             if(ReadProcessMemory(GetCurrentProcess(),image+0x135aca0,&current,sizeof(current),&read)

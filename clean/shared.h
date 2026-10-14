@@ -18,3 +18,5 @@ bool saveAimSetting(bool enabled);
 bool saveAimKey(int key);
 bool saveSpeedSetting(int percent);
 bool saveFOVSetting(int degrees);
+
+extern volatile LONG nativeFovRequest,nativeFovResult;

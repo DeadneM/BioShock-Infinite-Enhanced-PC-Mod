@@ -75,17 +75,12 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     available=false;lastSeen=0;
     press(VK_F8);frame();CHECK(crosshairHidden==1);release(VK_F8);tapBinding(VK_F8);CHECK(crosshairHidden==0);
     for(int expected:{125,150,200,100}){tapBinding(VK_F9);CHECK(hudWanted==expected && hudApplied==100);}
-    keys[VK_CONTROL]=static_cast<SHORT>(0x8000);tapBinding(VK_F9);CHECK(nativeAimZoom==1 && hudWanted==100);
-    CHECK(!strcmp(aimZoomLabel(),"ON") && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==1);
-    CHECK(aim_zoom_setting::load(fixtureIni)==1);
-    // Held presses cannot toggle twice; read back the real persisted state.
-    press(VK_F9);frame();CHECK(nativeAimZoom==0 && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==0);release(VK_F9);
-    CHECK(!strcmp(aimZoomLabel(),"OFF") && hudWanted==100);
-    CHECK(aim_zoom_setting::load(fixtureIni)==0);
-    // A failed persistence request retains the old live state and label.
-    wcscpy(modIni,L"");tapBinding(VK_F9);CHECK(settingError && nativeAimZoom==0 && !strcmp(aimZoomLabel(),"OFF"));
-    wcscpy(modIni,directory);tapBinding(VK_F9);CHECK(settingError && nativeAimZoom==0 && aim_zoom_setting::load(fixtureIni)==0);
-    wcscpy(modIni,fixtureIni);tapBinding(VK_F9);CHECK(!settingError && nativeAimZoom==1);tapBinding(VK_F9);CHECK(nativeAimZoom==0);
+    CHECK(WritePrivateProfileStringW(L"Display",L"NativeAimZoom",L"1",fixtureIni));
+    keys[VK_CONTROL]=static_cast<SHORT>(0x8000);tapBinding(VK_F9);
+    CHECK(nativeAimZoom==0 && hudWanted==100 && !strcmp(aimZoomLabel(),"NATIVE"));
+    CHECK(GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==1);
+    press(VK_F9);frame();release(VK_F9);
+    CHECK(nativeAimZoom==0 && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==1);
     keys[VK_CONTROL]=0;frame();
     tapBinding(VK_F10);CHECK(aimWanted==1);tapBinding(VK_F10);CHECK(aimWanted==0);tapBinding(VK_F11);CHECK(aimKey==VK_RBUTTON);
     tapBinding(VK_F12);CHECK(configWanted==0);tapBinding(VK_F12);CHECK(configWanted==1);
