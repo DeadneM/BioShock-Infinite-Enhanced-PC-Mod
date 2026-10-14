@@ -21,6 +21,12 @@ start-window and weapon-switch attribution limitations. Clarification is
 pending whether the menu label stays NATIVE or shows PROPORTIONAL with no
 visible change. No new fix, camera override or first-person success is claimed.
 
+A fresh exact direct-call scan also finds99C55D in addition to the three camera
+consumers. Its bounded caller review uses actor vectors, angle comparison and
+boolean return; it is not qualified as a camera writer. Do not broaden the
+adapter to that angular predicate as a speculative zoom fix. Runtime source
+remains unchanged while the final-camera test is pending.
+
 ## October 14 - native authored target requalified for 0.24
 
 Accepted-runtime read-only capture collected 476 samples, including only ten
