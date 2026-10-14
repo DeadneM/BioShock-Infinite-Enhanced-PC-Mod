@@ -1,5 +1,75 @@
 # Cumulative history
 
+## October 14 - 0.23 functional failure and accepted-base return
+
+The player reported no difference with proportional aiming ON/OFF. Logs show
+ordinary aiming uses LockedFOV, which the candidate explicitly bypasses.
+0.23 is REJECTED as a functional fix. A bounded camera/target read establishes
+the scripted SetFOV descriptor and distinct locked/target values; it does not
+qualify a replacement or justify blindly scaling an interpolated field.
+The game was later found closed; the planned24-second capture did not run.
+Checked rollback restored accepted English0.18.1, preserving the complete
+current INI and custom keys. No crash causality or new functional build is
+claimed. See [REJECTED-v023.md](REJECTED-v023.md).
+
+## October 14 - native aiming candidate 0.23
+
+The new branch starts from accepted English 0.18.1, retaining cumulative
+experiment history but excluding rejected runtime layers. One optional
+CalcFOV policy preserves native optical zoom magnification relative to the
+selected hip-fire FOV. Ctrl+F9 compares modes and is rebindable; default OFF.
+Native Hor+, hip-fire FOV and all prior commands are retained. Locked-camera
+routes are bypassed. Whole first-person placement remains unfinished; the
+player must confirm the aiming result. See [BUILD-v023.md](BUILD-v023.md).
+
+The final ASI and integrated/native/optical/menu checks pass, as do six private
+install/rollback scenarios. The root-layout23-entry ZIP was verified and
+installed while closed, with accepted-ASI backup and complete INI/loader
+preservation independently checked. The game was relaunched for comparison.
+Status: BUILT, CHECKED, INSTALLED, EXPERIMENTAL; not USER-VALIDATED.
+See [DELIVERY-v023.md](DELIVERY-v023.md).
+
+## October 14 - Panini rejected, accepted English base restored
+
+The player declined the 0.22 lens effect as the FOV solution, requested native
+FOV work, paused, then explicitly resumed. Process inventory confirmed normal
+closure. The checked rollback restored accepted English 0.18.1; independent
+ASI/complete INI/loader hashes agree. Removed 0.22/preferences remain saved
+for recovery. No public 0.22 release exists. Native Hor+ aspect handling is
+already established; proportional aiming and independent whole first-person
+placement remain unfinished. See [REJECTED-v022.md](REJECTED-v022.md).
+
+## October13 - selected Panini experiment0.22
+
+The player's video at FOV100 was examined; its distant NPC/large nearby grip
+contrast did not establish an axis-ratio error. The player selected the stronger
+Panini numerical preview. A separate experiment starts from accepted English
+0.18.1, without rejected0.21 layers. Its optional scene composite, configurable
+Ctrl+F9 and full Direct3D-state restoration are built and checked in the
+retained suite, including real WARP output and swapchain resizing. Status:
+**INSTALLED, EXPERIMENTAL**, not player-validated. The final package passed six
+isolated installation/rollback scenarios and was installed after normal game
+closure, with accepted-ASI backup and complete INI/loader preservation verified.
+Fresh startup confirms the scene adapter and native 4K swapchain. The visual
+ON/OFF result remains pending. First-person placement remains
+unfinished. See [BUILD-v022.md](BUILD-v022.md) and [video review](VIDEO-REVIEW-20261013.md).
+
+## October 13, 2026 - rejected 0.21 and verified restoration
+
+The shared first-person projection/ADS experiment 0.21 was built, checked and
+installed, then **REJECTED** by the player for severe world/character distortion.
+After normal game closure, accepted English 0.18.1 was restored; the ASI,
+complete existing INI and loader hashes match the checked accepted backup.
+No 0.21 public release was created. The rejected work remains on
+`archive/rejected-fov-v0.21` at `bbfe04c67e9f929ab2419e8354a0f3d22a7cd46a`.
+See [the retained verdict](REJECTED-v021.md).
+
+Fresh `experiment/physical-fov` starts from accepted checkpoint
+`99a75aa9e1a47543c418b2dc37b43a8883898c72`. Its first objective is to establish
+the actual horizontal/vertical world lens and viewport contract, before a new
+first-person change. No rejected GPU/ADS layers are carried forward. This is
+**PREPARED** work; no fresh binary or player validation is claimed.
+
 This notebook separates behavior confirmed in a game session from compilation
 and simulation checks. Validating one feature does not automatically validate
 the entire build containing it.

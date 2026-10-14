@@ -1,5 +1,69 @@
 # Cumulative TODO
 
+## Current native zoom target restart
+
+- [x] Reject0.23 after the player's no-difference result; identify actual LockedFOV coverage failure.
+- [x] Verify closure and restore accepted English0.18.1, preserving the complete current INI/keys.
+- [x] Verify camera SetFOV descriptor and native target/locked values in a bounded read.
+- [ ] Qualify the native target before interpolation; do not rescale an already adapted/interpolated lens.
+- [ ] Capture the stable native aiming target and its transition on the accepted base; previous PID is stale.
+- [ ] Build only after a single common native input/target path and rollback are qualified.
+- [ ] Keep the independent whole first-person placement/lens goal separate and unclaimed.
+
+The0.23 build/test/delivery checklist below is historical and superseded by
+its rejection. No proportional aiming feature is retained from that build.
+
+## October 14 - native camera restart
+
+- [x] Record the player's rejection of the 0.22 lens effect and resumption.
+- [x] Verify closure and restore accepted English 0.18.1; preserve removed state for recovery.
+- [x] Prepare one optional proportional native aiming policy from accepted 0.18.1, excluding rejected runtime layers.
+- [x] Compile the final x86 ASI and pass native optical/ABI checks plus the retained suite.
+- [x] Check all24 controls and main/shortcut menu bounds/state/resize at720p/4K/ultrawide.
+- [x] Pass all six isolated installation/rollback scenarios with the final0.23 payload.
+- [x] Verify the final23-entry archive and extracted payload hashes.
+- [x] Install0.23 after closure; independently check accepted-ASI backup and unchanged complete INI/loader.
+- [x] Relaunch the game for one ON/OFF native aiming comparison.
+- [ ] Obtain the player's ON/OFF aiming and return-to-hip-fire result before retaining 0.23.
+- [ ] Preserve native aspect handling and every accepted command, INI preference and shortcut.
+- [ ] Keep the whole first-person placement/lens correction separate and unclaimed until proven.
+
+## Rejected candidate0.22 - stronger Panini (historical)
+
+- [x] Review the supplied NPC/grip video and record its FOV100 provenance and limits.
+- [x] Prepare a numerical comparison; player selects stronger base Panini(d1).
+- [x] Isolate the candidate from accepted English0.18.1 and rejected0.21 layers.
+- [x] Build opt-in scene composite and configurable Ctrl+F9, preserving the23 prior actions.
+- [x] Check real shader output, complete context restoration, native buffer bytes, feature level and resize.
+- [x] Pass the retained command/controls/configuration regression suite.
+- [x] Verify package/archive and all six installation/rollback scenarios on the final payload.
+- [x] Install after normal closure; independently verify accepted-ASI backup and complete INI/loader preservation.
+- [x] Verify fresh 0.22 startup, scene adapter, native 4K swapchain and keybind parsing without conflicts.
+- [ ] Obtain player confirmation of the world change and immediate OFF return.
+- [ ] Confirm native HUD,3D Vigor HUD effects, menus, aiming and window transitions remain correct.
+- [ ] Correct whole first-person placement/lens independently after the world result is accepted.
+
+The selected offline preview is not validation of this candidate in-game.
+
+## Current restart - October 13, 2026
+
+- [x] Record 0.21 as REJECTED after the player's visual failure.
+- [x] Restore accepted English 0.18.1 after normal closure and verify ASI/INI/loader.
+- [x] Archive the rejected source and start `experiment/physical-fov` from accepted 0.18.1.
+- [x] Define the coherent horizontal/vertical lens objective and first success criterion.
+- [x] Establish native input convention: horizontal 16:9 reference, native Hor+ and verified current 4K viewport methods.
+- [x] Read native cb1 shadow agreeing with H120/V88.507/aspect16:9; keep GPU/draw-ownership limits explicit.
+- [x] Obtain the requested 100 player comparison: stretching/flattening still reported, log confirms actual change.
+- [x] Obtain and examine the October 13 NPC/grip video; record the optical and measurement limits.
+- [ ] Qualify the rendering boundary before changing it; an external callback is not automatically a matrix override.
+- [ ] Implement one backwards-compatible world-lens change supported by that evidence.
+- [ ] Check native aspect handling before adding any automatic aspect correction.
+- [ ] Obtain the player's confirmation of world/NPC proportions before another first-person build.
+
+This restart checkpoint is historical and superseded by the current 0.22
+candidate above. The local build, ZIP and installation are checked; no public
+0.22 release or player visual validation is claimed.
+
 ## Validated features to preserve
 
 - [x] Overlay on the game's swapchain and access to the main menu.

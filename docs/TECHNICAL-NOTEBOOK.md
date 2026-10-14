@@ -1,5 +1,122 @@
 # Cumulative technical notebook
 
+## October 14 - actual aiming route rejects0.23
+
+Player ON/OFF comparison has no visible difference. Real logs identify native
+LockedFOV during normal aiming; the candidate's CalcFOV policy does not control
+that source. This is a coverage failure, not evidence that the optical equation
+or compiled ABI fixture establishes a game correction. Qualified202-read
+snapshot verifies scripted camera SetFOV(NewFOV), one input float and generic
+interpreter9D9FA0 at UFunction+8C. An unlocked snapshot retains LockedFOV99.848518
+with delayed120, while active Hand Cannon target is60 and native hip is82.5.
+The source/interpolation formula remains unqualified; blindly converting that
+locked value risks expanding the view. Target the native zoom input before
+interpolation. Planned24-second capture did not run after game closure.
+Accepted English0.18.1 is restored with the complete current FDB4CB... INI,
+custom keys and compatible loader preserved. All earlier game addresses are
+stale. See [the actual verdict/rollback](REJECTED-v023.md).
+
+## October 14 - native aiming 0.23 objective
+
+The accepted CalcFOV adapter receives an unmodified native result but passes
+it through during aiming. The optional new policy composes native optical
+magnification with the requested hip-fire tangent at that same camera callsite.
+It never derives its native baseline from the modified cache and discards it
+on lost gameplay/camera identity. Missing settings default OFF; Ctrl+F9 is an
+appended 24th editable action. Native world/aspect behavior is unchanged.
+Offline GOG source review confirms camera interpolation at D38CA0 feeds this
+callsite; AdvanceFOV separately selects LockedFOV when camera+20C bit0 is set.
+That locked route is explicitly bypassed, not advertised as controlled.
+No scene shader, render buffer or first-person transform changes are introduced.
+The visible aiming result and the independent first-person problem remain
+unconfirmed. See [BUILD-v023.md](BUILD-v023.md).
+
+Final ASI67B8E723113C969C0B55496031B23646DBD2C77F92ACFA79C3DC502244B490F3
+is compiled and checked. The retained suite passes, including2000 native x87
+trampoline returns under proportional zoom, optical magnification invariance,
+baseline recovery/reset, unrelated/locked-camera bypass and OFF return. Controls
+and real graphics/menu/state/resize checks pass at720p/4K/ultrawide; the720p
+image is inspected. Six private install/rollback scenarios pass. No game
+visual result or first-person correction follows from these checks alone.
+
+ZIP80BC7623FA3DC0B67971CEF6EA0629D278C7B787E22AC9DBC128D0A3B997A626 has23
+verified root entries. It was installed from the checked extracted stage while
+closed; independent hashes and the transaction verify only ASI replacement,
+with accepted B13DBE... backup and unchanged complete EBE952... INI/D5A059... loader.
+The game was relaunched PID16896; all older session addresses are stale.
+The player ON/OFF result remains pending. See [delivery](DELIVERY-v023.md).
+
+## October 14 - return to native camera work
+
+The player rejected Panini as the solution despite real-game submission.
+Process inventory confirmed closure; checked rollback and independent hashes
+restore accepted English 0.18.1. The updated Panini INI is recoverable.
+The accepted CalcFOV adapter sets the requested hip-fire lens at its qualified
+camera callsite, but returns the unmodified native lens while aiming. Thus it
+does not implement the previously requested proportional aiming zoom. This is
+a code fact; it does not identify the cause of all first-person visual defects.
+The next native experiment must not inherit scene-composite or GPU/ADS layers
+from rejected builds. See [the recorded verdict](REJECTED-v022.md).
+
+## October13 - stronger Panini candidate
+
+The player selected distance1 from a numerical comparison at native H100.
+The candidate uses the primary view's actual pure projection and a separate
+fullscreen composite after native scene-render6E6F40, with viewport/actor/
+single-view guards. This is a new scene boundary experiment; native HUD ordering
+and actual game output remain to be confirmed. Native camera/projection/bone/
+constant-buffer data are not changed. SwapDeviceContextState restores the
+complete compatible D3D11 state; feature level/creation threading flags match
+the existing device. ClearState applies only to the temporary state before
+restoration so it cannot retain the back buffer. Real WARP/state/byte tests
+and swapchain resize checks pass. First-person placement remains separate.
+See [the exact objective, limits and test](BUILD-v022.md).
+
+Final source is 1c28bb1d5a92d91ac5627c01776db353c1a97b85; checked ASI
+69A860A631BBA67C438EAD9A8111C2499CBD2155C7A9C612E5E2D670662082B9.
+The final root-layout ZIP and all six installation/rollback scenarios passed.
+Normal closure was confirmed before installation. The transaction and
+independent hashes verify only the ASI was replaced, with accepted B13DBE...
+backed up and the complete INI/loader retained. Fresh 0.22 startup reports the
+scene adapter, native 3840x2160 swapchain, and no keybind conflicts. Panini
+initializes OFF because the retained INI has no WorldProjection key. This is
+installation/startup evidence, not a submitted composite or visual success.
+The player comparison remains pending; see [delivery receipt](DELIVERY-v022.md).
+
+During that comparison, real-game composite submission is logged at native
+horizontal100 and120 (16:55-16:56). The eligible native scene boundary is reached
+in this session. Player visual/HUD/aiming/window-transition confirmation remains
+pending; submission alone does not establish visual success.
+
+## October 13, 2026 - current FOV boundary
+
+The restarted accepted session still looks deformed to the player at 120.
+The current native viewport is 3840x2160 with width/height methods F32420 /
+F9B3D0, aspect method A3C340 and projection method 46DCA0. Static builder
+conversion is unconditional Hor+ from a horizontal 16:9 reference, before
+optional view-rect constraint. Current camera constraint bit is clear.
+The accepted camera caches 120 and a read native cb1 shadow agrees with
+H120/V88.507/aspect16:9 under rigid-view decoding. CPU shadow is not actual
+bound GPU state or draw ownership. Therefore do not introduce another aspect
+correction; no source/runtime modification has been made. The player also
+reports stretching at 100, and the log confirms that change. The player then
+selected 80. A subsequent reader rejected stale camera identity; no matrix
+at either lower value is claimed. Obtain a visual example before another build.
+See [the current contract](FOV-RESTART.md).
+
+0.21 is **REJECTED**. Its fixtures and native adapter checks passed, but the
+player observed severe world/character distortion. An attached-effect GPU
+transaction was logged; a restored hands/gun transaction was not established.
+Possible ADS double correction and GPU-state leakage remain hypotheses,
+without demonstrated runtime causality. See [REJECTED-v021.md](REJECTED-v021.md).
+
+Accepted English 0.18.1 is restored, with ASI/INI/loader hashes verified.
+`experiment/physical-fov` starts from its accepted source, without the rejected
+GPU/ADS layers. Establish the actual pure world projection and viewport aspect
+before modifying angles. Preserve existing saved FOV semantics and all
+accepted controls. [FOV-RESTART.md](FOV-RESTART.md) defines the objective and
+success criterion; it is not an implemented or visually validated fix.
+
 Latest delivery: v0.18.1 English is installed and published. English main and
 shortcut menus plus preserved opening keys are player-confirmed. The public
 ZIP and checksum were downloaded and verified, including every entry and

@@ -1,7 +1,21 @@
-# InfiniteMod 0.18.1 — English localization
+# InfiniteMod - Accepted English base and native FOV research
 
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
+
+**Current runtime/source:** accepted English0.18.1. The complete current INI
+and custom keys are preserved. [Panini0.22](docs/REJECTED-v022.md) and the
+ineffective [CalcFOV aiming0.23](docs/REJECTED-v023.md) are rejected and removed.
+This branch starts directly from the accepted source, carrying cumulative
+documentation but no rejected runtime changes. All23 accepted actions remain
+available; the experimental Ctrl+F9 action is not retained.
+
+**Native zoom target research: PREPARED, no new build or functional fix.**
+The next objective is one native aiming target before interpolation. Existing
+world FOV/native Hor+ and commands are unchanged. No scene remap, GPU projection
+or per-weapon profile is introduced. Independent arms/weapon FOV and placement
+remain unfinished. See [the current objective](docs/NATIVE-ZOOM-TARGET.md).
+Rejected [0.21](docs/REJECTED-v021.md) GPU/ADS layers are also excluded.
 
 **0.18.1 is BUILT, CHECKED, and INSTALLED. English menus and preserved custom
 menu keys are USER-VALIDATED.** The v0.18.1 public prerelease and downloaded
@@ -14,9 +28,9 @@ ZIP and installation backup were verified, and the complete existing INI was
 preserved. The player then confirmed both English menus and existing menu keys.
 Unreported gameplay/restart checks remain separate from those confirmations.
 See [the verified delivery](docs/DELIVERY-v0181.md).
-**Weapon/hand FOV and aiming zoom at high FOV still need correction.**
+**Weapon/hand FOV and proportional aiming remain unfinished.**
 
-## Download
+## Accepted download and rollback
 
 [Installable v0.18.1 English ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.1-experimental/InfiniteMod-v0.18.1-English.zip) · [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.1-experimental)
 
