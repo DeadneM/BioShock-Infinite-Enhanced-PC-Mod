@@ -156,7 +156,11 @@ static void updateMenuInput(bool focused) {
         int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
         if(value<130)settingError=!saveFOVSetting(value>125?130:value+5);
     }
-    if(events.has(Action::NativeAimZoom))settingError=!saveNativeAimZoom(!InterlockedCompareExchange(&nativeAimZoom,0,0));
+    if(events.has(Action::NativeAimZoom)) {
+        bool requested=!InterlockedCompareExchange(&nativeAimZoom,0,0);
+        modLog("Aim zoom shortcut: %s; requested=%s",shortcutLabel(Action::NativeAimZoom).c_str(),requested?"ON":"OFF");
+        settingError=!saveNativeAimZoom(requested);
+    }
     if(events.has(Action::Crosshair))settingError=!saveCrosshairSetting(!InterlockedCompareExchange(&crosshairHidden,0,0));
     if(events.has(Action::HUD)) {
         int value=(int)InterlockedCompareExchange(&hudWanted,0,0);
@@ -200,6 +204,9 @@ static void drawShortcut(keybinds::Action action,const char *description) {
     ImGui::TextWrapped("%s   %s",shortcutLabel(action).c_str(),description);
 }
 static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"%s",label);}
+static const char *aimZoomLabel() {
+    return InterlockedCompareExchange(&nativeAimZoom,0,0)?"ON":"OFF";
+}
 static void drawMainMenuContents() {
     using Action=keybinds::Action;
     drawMenuSection("INFINITEMOD");
@@ -228,9 +235,17 @@ static void drawMainMenuContents() {
         drawMenuSection("MOVEMENT AND FOV");
         ImGui::TextWrapped("%s   Speed: x%.2f",shortcutLabel(Action::Speed).c_str(),(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
         ImGui::TextWrapped("%s / %s   World FOV: %ld deg",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),InterlockedCompareExchange(&fovDegrees,0,0));
-        ImGui::TextWrapped("%s   Aim zoom: %s (experimental)",shortcutLabel(Action::NativeAimZoom).c_str(),InterlockedCompareExchange(&nativeAimZoom,0,0)?"PROPORTIONAL":"NATIVE");
+        bool aimZoomOn=InterlockedCompareExchange(&nativeAimZoom,0,0)!=0;
+        ImGui::PushStyleColor(ImGuiCol_Text,aimZoomOn?ImVec4(0.45f,0.95f,0.6f,1):ImVec4(0.8f,0.8f,0.8f,1));
+        ImGui::TextWrapped("%s   Proportional aim zoom: %s",shortcutLabel(Action::NativeAimZoom).c_str(),aimZoomLabel());
+        ImGui::PopStyleColor();
+        static LONG lastZoomShown=-1;
+        if(lastZoomShown!=(LONG)aimZoomOn) {
+            lastZoomShown=aimZoomOn;
+            modLog("Aim zoom UI: %s; adapter=%ld",aimZoomLabel(),nativeAimZoomStatus());
+        }
         if(InterlockedCompareExchange(&nativeAimZoom,0,0) && nativeAimZoomStatus()!=1)
-            ImGui::TextColored(ImVec4(1,0.7f,0.3f,1),"Aim adapter waiting for a supported player and weapon.");
+            ImGui::TextColored(ImVec4(1,0.7f,0.3f,1),"Load gameplay with a weapon to apply.");
         char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
         ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");
         bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();

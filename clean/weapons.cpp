@@ -293,7 +293,7 @@ void playerOptionsStatus(char *text,size_t capacity) {
     snprintf(text,capacity,"%s",!player_options::speedInstalled || !player_options::fovInstalled
         ?"Settings unavailable: see the log.":state<0?"Unrecognized player: settings not applied."
         :state==0?"Settings saved. Load a game to apply them."
-        :"Settings active. Native camera retained.");
+        :"Player settings active.");
 }
 LONG crosshairStatus(){return InterlockedCompareExchange(&reticle::state,0,0);}
 LONG nativeAimZoomStatus(){return InterlockedCompareExchange(&player_options::aimState,0,0);}

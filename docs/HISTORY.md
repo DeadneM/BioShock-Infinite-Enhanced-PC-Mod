@@ -1,5 +1,13 @@
 # Cumulative history
 
+## October 14 - 0.24.1 control-feedback preparation
+
+The player clarifies that the aim row stays NATIVE. An explicit colored ON/OFF
+row, unambiguous generic player status and request/save/display logs are prepared
+without changing the native lens policy. Production persistence now also runs
+in the menu fixture, with real INI readback and failed-save state preservation.
+This is not a proven explanation or a new camera fix. See BUILD-v0241.md.
+
 ## October 14 - 0.24 comparison reports native-looking aiming
 
 The player reports that aiming appears to stay native in every mode. 0.24

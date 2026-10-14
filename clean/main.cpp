@@ -3,6 +3,7 @@
 #include "weapons.h"
 #include "aim.h"
 #include "ui_config.h"
+#include "aim_zoom_setting.h"
 #include <shlobj.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -12,8 +13,7 @@ volatile LONG hudWanted=100,hudApplied=0,hudResult=0,aimWanted=0,aimKey=VK_MBUTT
 volatile LONG speedPercent=100,fovDegrees=80;
 volatile LONG nativeAimZoom=0;
 bool saveNativeAimZoom(bool enabled) {
-    if(!WritePrivateProfileStringW(L"Display",L"NativeAimZoom",enabled?L"1":L"0",modIni))return false;
-    InterlockedExchange(&nativeAimZoom,enabled);return true;
+    return aim_zoom_setting::save(modIni,nativeAimZoom,enabled);
 }
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden) {
@@ -50,7 +50,7 @@ static void loadPlayerSettings() {
     }
     InterlockedExchange(&speedPercent,speed);InterlockedExchange(&fovDegrees,fov);
     // New key: a rejected experiment's ProportionalAim setting cannot enable this.
-    InterlockedExchange(&nativeAimZoom,GetPrivateProfileIntW(L"Display",L"NativeAimZoom",0,modIni)==1);
+    InterlockedExchange(&nativeAimZoom,aim_zoom_setting::load(modIni));
 }
 bool saveHUDSetting(int percent) {
     if(!nativeUIScale(percent))return false;
@@ -87,7 +87,7 @@ static DWORD WINAPI start(void *) {
     swprintf(modIni,MAX_PATH,L"%lsInfiniteMod.ini",path);
     wchar_t logPath[MAX_PATH];swprintf(logPath,MAX_PATH,L"%lsInfiniteMod.log",path);
     logFile=CreateFileW(logPath,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,nullptr,OPEN_ALWAYS,0,nullptr);
-    modLog("InfiniteMod clean 0.24 EXPERIMENTAL; accepted English 0.18.1 base, optional native authored aim target; retained world camera, HUD, progression and shortcuts.");
+    modLog("InfiniteMod clean 0.24.1 EXPERIMENTAL; accepted English 0.18.1 base, explicit ON/OFF aim control; aiming experiment still unvalidated.");
     if(!GetPrivateProfileIntW(L"General",L"Enabled",1,modIni)) {modLog("Disabled.");return 0;}
     BYTE *image=(BYTE *)GetModuleHandleW(nullptr);
     auto *dos=(IMAGE_DOS_HEADER *)image;

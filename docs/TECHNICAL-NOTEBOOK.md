@@ -1,5 +1,21 @@
 # Cumulative technical notebook
 
+## October 14 - distinguish UI state from camera behavior
+
+The player clarifies that the line remains NATIVE after the shortcut. Current
+ASI is independently A70E72..., current INI NativeAimZoom=1 and previous target
+hook activity prove activation at those observations, not the contemporaneous
+on-screen text. Source reads one shared atomic flag for the aim row and adapter;
+the generic status nearby also says Native camera retained. That wording is a
+possible ambiguity, not a demonstrated cause. No COFF symbols are available for
+the prepared external global reader, so no live scalar value is claimed from it.
+
+0.24.1 separates feedback from lens changes: explicit ON/OFF row and logs,
+same native policy, and actual production persistence exercised by the menu
+fixture. The earlier always-successful test stub did not cover disk failure;
+successful key polling alone could not establish the saved/live/rendered state
+contract. Player confirmation remains necessary before proceeding to held FOV.
+
 ## October 14 - 0.24 player test does not establish a visual fix
 
 The player reports that aiming appears to stay native regardless of the mode.

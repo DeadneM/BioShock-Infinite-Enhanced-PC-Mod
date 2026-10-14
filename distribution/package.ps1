@@ -43,11 +43,12 @@ $files=@(
     @{path='licenses/MinHook-BSD.txt';source=(Join-Path $PSScriptRoot 'licenses/MinHook-BSD.txt')}
 )
 if($Version -eq '0.18.1'){$files+=@{path='docs/BUILD-v0181.md';source=(Join-Path $repo 'docs/BUILD-v0181.md')}}
-if($Version -eq '0.24.0') {
+if($Version -in @('0.24.0','0.24.1')) {
     foreach($doc in @('BUILD-v024.md','NATIVE-ZOOM-TARGET.md','BUILD-v0181.md','DELIVERY-v0181.md','REJECTED-v021.md','REJECTED-v022.md','REJECTED-v023.md')) {
         $files+=@{path=('docs/'+$doc);source=(Join-Path $repo ('docs/'+$doc))}
     }
 }
+if($Version -eq '0.24.1'){$files+=@{path='docs/BUILD-v0241.md';source=(Join-Path $repo 'docs/BUILD-v0241.md')}}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
 foreach($file in $files) {

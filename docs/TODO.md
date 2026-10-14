@@ -1,5 +1,15 @@
 # Cumulative TODO
 
+## Current control candidate0.24.1
+
+- [x] Preserve the current lens experiment; prepare explicit colored ON/OFF feedback.
+- [x] Share production persistence with the menu test instead of an always-successful stub.
+- [x] Pass real INI/state/failure checks and retained suite; compile final ASI.
+- [x] Build and verify the25-entry ZIP and extracted payloads.
+- [ ] Run final-payload installer fixtures after normal closure.
+- [ ] Install after closure with complete current INI/key preservation and accepted rollback.
+- [ ] Confirm visible ON/OFF feedback before a new held-aim rendering comparison.
+
 ## Current candidate 0.24 - authored native target
 
 - [x] Requalify the original getter, native interpolation consumers and live owner/field schema.

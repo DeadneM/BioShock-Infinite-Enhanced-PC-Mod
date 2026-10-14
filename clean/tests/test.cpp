@@ -1,4 +1,5 @@
 #include "../shared.h"
+#include "../aim_zoom_setting.h"
 #include "../config.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -12,7 +13,7 @@ volatile LONG configWanted=1,configRequest=0,configResult=1;
 volatile LONG hudWanted=100,hudApplied=100,hudResult=1,aimWanted=0,aimKey=VK_MBUTTON,modMenuOpen=0;
 volatile LONG speedPercent=100,fovDegrees=80;
 volatile LONG nativeAimZoom=0;
-bool saveNativeAimZoom(bool value){InterlockedExchange(&nativeAimZoom,value);return true;}
+bool saveNativeAimZoom(bool value){return aim_zoom_setting::save(modIni,nativeAimZoom,value);}
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden){InterlockedExchange(&crosshairHidden,hidden);return true;}
 bool saveSpeedSetting(int value){if(value<100 || value>200 || value%25)return false;InterlockedExchange(&speedPercent,value);return true;}
@@ -155,6 +156,11 @@ int main(int argc,char **argv) {
         ID3D11RenderTargetView *after=nullptr;ctx->OMGetRenderTargets(1,&after,nullptr);CHECK(after==target);after->Release();
         ID3D11ComputeShader *afterShader=nullptr;ctx->CSGetShader(&afterShader,nullptr,nullptr);CHECK(afterShader==compute);afterShader->Release();
         char path[64];snprintf(path,sizeof(path),"clean-%ux%u.bmp",size[0],size[1]);capture(chain,path);
+        if(size[0]==1280) {
+            nativeAimZoom=1;ctx->ClearRenderTargetView(target,background);drawMenu(chain);
+            ctx->ClearRenderTargetView(target,background);drawMenu(chain);checkMenuBounds(size[0],size[1]);
+            capture(chain,"aim-on-1280x720.bmp");nativeAimZoom=0;
+        }
         for(unsigned page:{0u,2u}) {
             menuOpen=false;bindingsOpen=true;selectedBinding=page*bindingsPageSize;publishMenuState();
             ctx->ClearRenderTargetView(target,background);drawMenu(chain);ctx->ClearRenderTargetView(target,background);drawMenu(chain);
