@@ -3,14 +3,14 @@
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
-**Installed runtime:** accepted English0.18.1. The complete current INI
+**Installed runtime:** experimental0.24 on accepted English0.18.1. The complete current INI
 and custom keys are preserved. [Panini0.22](docs/REJECTED-v022.md) and the
 ineffective [CalcFOV aiming0.23](docs/REJECTED-v023.md) are rejected and removed.
 This branch starts directly from the accepted source, carrying cumulative
 documentation but no rejected runtime changes. All23 accepted actions remain
 available. The new source candidate appends one editable Ctrl+F9 action.
 
-**0.24 candidate: BUILT, CHECKED, EXPERIMENTAL; not installed/user-validated.**
+**0.24 candidate: BUILT, CHECKED, INSTALLED, EXPERIMENTAL; not user-validated.**
 Optional native authored aim target before interpolation.
 It keeps native zoom magnification relative to the selected world FOV and lets
 the game perform entry/release transitions. `Display.NativeAimZoom=0` defaults

@@ -2,7 +2,7 @@
 
 Base: user-accepted English 0.18.1, source `99a75aa9e1a47543c418b2dc37b43a8883898c72`.
 Branch: `experiment/native-zoom-target`. Status: BUILT, CHECKED, EXPERIMENTAL;
-not installed or user-validated.
+INSTALLED; not user-validated. See [installation receipt](DELIVERY-v024.md).
 
 ## One objective and success criterion
 
@@ -57,10 +57,11 @@ the target is 97.5 degrees. The engine still owns animation timing and blends.
 - Final x86 ASI compilation and test compilation finish without warnings/errors.
 - ASI SHA256 `A70E724FDB14E7FC3A4ED755A191B7655B944E3E0D9BB94250ACD6260F178E19`.
   Private receipts: tools/v024-tests-build.log, v024-tests.log, v024-build.log.
-- Build and verify a root-layout ZIP and rollback with accepted ASI backup.
-- Install only after normal closure, preserve the complete INI and keys.
+- The24-entry root-layout ZIP and extracted payloads are checked. All six
+  installer/rollback scenarios pass with the final candidate. Actual installation
+  after confirmed closure preserves the complete INI/keys/loader and has a
+  verified accepted0.18.1 ASI backup. See DELIVERY-v024 for exact hashes/paths.
 - Obtain the player's visual ON/OFF, recovery and weapon-change verdict.
 
-No in-game correction or public release is claimed. Accepted 0.18.1 remains
-installed during development; full installer/rollback fixtures need normal
-game closure before they can run.
+No in-game correction or public release is claimed. The installed candidate
+needs the player's aiming ON/OFF comparison before any retention decision.

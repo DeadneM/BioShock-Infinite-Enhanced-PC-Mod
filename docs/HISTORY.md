@@ -7,7 +7,10 @@ getter and its three camera consumers. Fresh executable and live schema checks
 confirm the earlier target-before-blend route. 0.24 is prepared from accepted
 English 0.18.1 with one optional target-return adapter, preserving the accepted
 world policy and all prior actions. This differs from rejected 0.23's unused
-CalcFOV zoom path. No visual result or installation is claimed yet.
+CalcFOV zoom path. All native/retained tests and six final-payload installation
+fixtures pass. The checked ZIP is installed after confirmed normal closure,
+with the accepted ASI backed up and whole INI/loader preserved. No visual
+result is claimed yet; see DELIVERY-v024.md for actual transaction details.
 See [the bounded objective](BUILD-v024.md).
 
 ## October 14 - 0.23 functional failure and accepted-base return
