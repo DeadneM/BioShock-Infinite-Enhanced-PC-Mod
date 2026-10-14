@@ -10,8 +10,11 @@
 - [x] Verify27-entry installable ZIP and extracted payloads.
 - [x] Run final installer/rollback checks after normal closure, including native range/helper paths.
 - [x] Install with current settings preserved and launch through native preparation.
-- [ ] Obtain one native slider/aim/reload/HUD comparison; no diagnostic capture.
-- [ ] Record proportion assessment without claiming an independent weapon lens.
+- [x] Obtain player feedback: native slider changes framing; proportions remain unsatisfactory.
+- [x] Record the narrow result without claiming a visual fix or independent weapon lens.
+- [x] Compare UE3/UDK primary source for component FOV and particle coordination.
+- [ ] Establish an Infinite equivalent offline before selecting any new implementation.
+- [ ] Ask before every game launch/relaunch; no further draw observations.
 
 ## 0.24.2 finite draw observation
 

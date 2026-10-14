@@ -1,5 +1,15 @@
 # Cumulative history
 
+## Native slider result and UE3 research
+
+The player confirms0.25 slider operation while proportions remain bad. No
+visual correction is validated. The user requires asking before every game
+launch/relaunch. UE3/UDK public source research identifies coordinated custom
+mesh FOV, arm/overlay propagation and explicit particle-FOV support. This is
+a concrete design reference, not an Infinite implementation. One camera lens
+does not disprove per-component compensation. No build/install/launch occurs
+for this source comparison; see UE3-FIRSTPERSON-FOV.md.
+
 ## October 14 - 0.25 native option experiment
 
 The player stops observations after0.24.2 records204160 common calls but zero

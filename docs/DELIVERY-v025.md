@@ -1,6 +1,6 @@
 # 0.25.0 delivery checkpoint
 
-October 14, 2026. **BUILT / CHECKED / INSTALLED / EXPERIMENTAL. Player validation pending.**
+October 14, 2026. **BUILT / CHECKED / INSTALLED / EXPERIMENTAL. Player confirms native slider operation; proportions remain unsatisfactory. Visual fix NOT VALIDATED.**
 
 Branch: `experiment/native-fov-slider`. Base: retained controls63f87fe, accepted English0.18.1 gameplay. User-authorized changes retire the camera result/weapon target adapters and abandon draw observation. The replacement manages only the native FOV slider range before launch. See BUILD-v025.md for the precise scope, native75 migration convention and visual limitations.
 

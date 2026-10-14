@@ -1,5 +1,20 @@
 # Cumulative technical notebook
 
+## UE3 source comparison and new launch constraint
+
+The player confirms0.25 native slider operation but reports unsatisfactory
+proportions. Record the method working, not visual success. No game launch or
+relaunch is permitted without asking the user first; the repo AGENTS records
+this explicit instruction. Further draw observations are stopped.
+
+Public UDK declarations show a dedicated UDKSkeletalMeshComponent FOV/SetFOV
+and specialized scene proxy. UT propagates that FOV to both arms, overlays and
+muzzle particles. UDKParticleSystemComponent also overrides its transform for
+custom-FOV handling. This makes one inference obsolete: one camera frustum
+does not exclude an effective component-specific FOV. Infinite's saved rig
+uses XSkeletalMeshComponent; UDK facilities are not automatically available.
+See UE3-FIRSTPERSON-FOV.md for primary links, limits and the next offline decision.
+
 ## October 14 - native option route instead of observation
 
 0.24.2 game capture:204160 common calls, rows0, commits0, invalid0, started0.
