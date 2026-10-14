@@ -6,7 +6,11 @@ The player clarifies that the aim row stays NATIVE. An explicit colored ON/OFF
 row, unambiguous generic player status and request/save/display logs are prepared
 without changing the native lens policy. Production persistence now also runs
 in the menu fixture, with real INI readback and failed-save state preservation.
-This is not a proven explanation or a new camera fix. See BUILD-v0241.md.
+This is not a proven explanation or a new camera fix. All retained tests and
+six final-payload installer/rollback scenarios pass. After confirmed closure,
+the candidate is installed with the exact current INI preserved and a direct
+verified accepted18.1 ASI backup. Menu feedback still needs player confirmation.
+See BUILD-v0241.md and DELIVERY-v0241.md.
 
 ## October 14 - 0.24 comparison reports native-looking aiming
 

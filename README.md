@@ -3,14 +3,14 @@
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
-**Source candidate0.24.1: explicit ON/OFF aim control, not yet installed.**
+**Source candidate0.24.1: explicit ON/OFF aim control, installed and experimental.**
 The player reports the0.24 aim row stays NATIVE. This revision adds a colored
 `Proportional aim zoom: ON/OFF` row and request/save/display logs, preserving
 the existing experimental lens policy. Ctrl+F9 remains the same editable key.
 Production persistence and restart reads run in the fixture, with failure
 coverage. The camera effect is still unvalidated. See [BUILD-v0241](docs/BUILD-v0241.md).
 
-**Installed runtime:** experimental0.24 on accepted English0.18.1. The complete current INI
+**Installed runtime:** experimental0.24.1 on accepted English0.18.1. The complete current INI
 and custom keys are preserved. [Panini0.22](docs/REJECTED-v022.md) and the
 ineffective [CalcFOV aiming0.23](docs/REJECTED-v023.md) are rejected and removed.
 This branch starts directly from the accepted source, carrying cumulative

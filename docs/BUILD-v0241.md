@@ -3,7 +3,7 @@
 Base: accepted English0.18.1. This remains the same isolated native aiming
 experiment as0.24; its lens behavior has not been accepted. Branch:
 `experiment/native-zoom-target`. Status: BUILT, CHECKED, EXPERIMENTAL;
-not installed/user-validated.
+INSTALLED; not user-validated. See [actual delivery](DELIVERY-v0241.md).
 
 ## One objective
 
@@ -49,4 +49,7 @@ reads, held-key behavior, plainF9 separation, empty/directory-path save refusal
 and unchanged live state after failure. Main and shortcut menus fit720p/4K/
 ultrawide; ON/OFF720p previews are visually inspected. Private receipts:
 tools/v0241-build.log, v0241-tests-build.log and v0241-tests.log.
-Archive verification and installer/rollback fixtures are recorded separately.
+The25-entry root-layout ZIP and extracted payloads are checked. All six final
+installer/rollback fixtures pass after confirmed closure. Actual installation
+preserves the complete current INI and has an independently verified accepted
+18.1 ASI backup. See DELIVERY-v0241 for the exact receipt and rollback command.

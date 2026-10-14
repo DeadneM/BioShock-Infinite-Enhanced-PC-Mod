@@ -1,7 +1,7 @@
 # 0.24.1 control revision delivery
 
 Base: accepted English0.18.1, separate experiment/native-zoom-target branch.
-Status: BUILT, CHECKED, EXPERIMENTAL; not installed/user-validated.
+Status: BUILT, CHECKED, INSTALLED, EXPERIMENTAL; not user-validated.
 The0.24 lens experiment is unchanged and remains unvalidated. Objective and
 visual criterion: [BUILD-v0241.md](BUILD-v0241.md).
 
@@ -20,20 +20,31 @@ count/extracted ASI/INI checks agree. Stage:`releases/install-v0241-checked`.
 The package contains the pre-installation objective/status, not this later receipt.
 No public push/release is claimed.
 
-Actual installed runtime remains0.24 A70E724F..., PID11968. Complete current
-INI94C231D77A3DDDE30D223DBCA13DFF36BAA4B92356747DA52C204F52B901DE6F
-contains NativeAimZoom1 and current user prefs. These files are unchanged by
-preparation. The final installer fixture attempt stopped at Assert-GameClosed
-before modifications. A mixed PowerShell table obscured the process row in the
-earlier inventory; explicit JSON reconfirmed the same live session. Normal
-closure has been requested. Do not claim successful fixtures or installation.
+The first fixture attempt stopped at Assert-GameClosed before modifications.
+The player then confirmed normal closure; explicit authoritative inventory
+confirms zero game processes. All six final-payload installer/rollback scenarios
+now pass: tools/v0241-distribution-tests.log. Technical success still does not
+establish the player's real menu or rendered-camera result.
 
-After closure: run all six final-payload installer fixtures. For a direct
-accepted18.1 rollback reference, preserve the complete CURRENT INI, use the
-checked0.24 rollback from install-20261014-113404-373-950f43fd, reapply the exact
-preserved current INI, verify accepted B13DBE... and loader D5A059..., then install
-only the new checked stage. Verify the new transaction/accepted backup and
-unchanged complete INI before relaunch. Record actual receipt here.
+For a direct accepted18.1 rollback, the entire current INI was copied and checked:
+`tools/v0241-current-settings-33e28c9b0a9b418bb063c6283dfa60e7.ini`, SHA256
+94C231D77A3DDDE30D223DBCA13DFF36BAA4B92356747DA52C204F52B901DE6F.
+The checked0.24 rollback restored accepted B13DBE..., then that exact current
+INI was reapplied. Removed0.24 state is preserved in
+`C:\Games\BioShock Infinite\InfiniteMod-Backups\before-rollback-20261014-125422-085-97632fa6`.
+0.24.1 was installed only from its checked stage. Receipt: tools/v0241-install.log.
+The actual transaction is INSTALLED; candidate615235..., full current INI94C...
+and loaderD5A059... hashes match independent post-installation checks.
+Only the ASI is replaced in the new installation; the complete current INI,
+keys and loader are preserved. Native configuration files and saves are not replaced.
+
+New accepted-ASI rollback backup, independently B13DBE...:
+`C:\Games\BioShock Infinite\InfiniteMod-Backups\install-20261014-125423-265-d8a64c09`.
+After normal closure, from the checked extracted stage:
+
+```powershell
+.\Rollback.ps1 -GameDirectory 'C:\Games\BioShock Infinite' -BackupDirectory 'C:\Games\BioShock Infinite\InfiniteMod-Backups\install-20261014-125423-265-d8a64c09'
+```
 
 Player test: Backtick, Ctrl+F9 with the main menu open; fully release between
 presses. The aim row must alternate green ON/grey OFF, with matching save/UI

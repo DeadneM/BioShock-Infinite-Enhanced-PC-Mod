@@ -6,8 +6,8 @@
 - [x] Share production persistence with the menu test instead of an always-successful stub.
 - [x] Pass real INI/state/failure checks and retained suite; compile final ASI.
 - [x] Build and verify the25-entry ZIP and extracted payloads.
-- [ ] Run final-payload installer fixtures after normal closure.
-- [ ] Install after closure with complete current INI/key preservation and accepted rollback.
+- [x] Run final-payload installer fixtures after normal closure.
+- [x] Install after closure with complete current INI/key preservation and accepted rollback.
 - [ ] Confirm visible ON/OFF feedback before a new held-aim rendering comparison.
 
 ## Current candidate 0.24 - authored native target
