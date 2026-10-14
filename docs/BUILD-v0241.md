@@ -3,7 +3,13 @@
 Base: accepted English0.18.1. This remains the same isolated native aiming
 experiment as0.24; its lens behavior has not been accepted. Branch:
 `experiment/native-zoom-target`. Status: BUILT, CHECKED, EXPERIMENTAL;
-INSTALLED; not user-validated. See [actual delivery](DELIVERY-v0241.md).
+INSTALLED; partial user validation below. See [actual delivery](DELIVERY-v0241.md).
+
+Player confirmation October14: ON/OFF alternates and aiming changes visibly,
+with a radical difference on ON. Menu control and visible ON/OFF effect are
+USER-VALIDATED. The player also says ON appears to retain the same FOV; exact
+held zoom and recovery are not yet qualified. Arms/weapon and world distortion
+remain reported and are not claimed fixed by this control build.
 
 ## One objective
 

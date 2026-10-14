@@ -1,5 +1,15 @@
 # Cumulative history
 
+## October 14 - 0.24.1 menu and visible aiming change confirmed
+
+The player confirms that the ON/OFF row alternates and the aiming effect works
+with a radical visible difference. Retain the control/feedback improvement.
+Exact held zoom remains to be qualified because ON appears to keep the same
+FOV. Arms/weapon and world proportions remain unresolved. Fresh native viewport
+inputs and CPU shadow agree with horizontal120/vertical88.507/aspect16:9;
+no final-draw correction is claimed. Future first-person work must stay isolated
+and preserve this confirmed behavior.
+
 ## October 14 - 0.24.1 control-feedback preparation
 
 The player clarifies that the aim row stays NATIVE. An explicit colored ON/OFF

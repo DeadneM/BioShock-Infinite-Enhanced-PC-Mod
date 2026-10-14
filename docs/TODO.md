@@ -8,7 +8,8 @@
 - [x] Build and verify the25-entry ZIP and extracted payloads.
 - [x] Run final-payload installer fixtures after normal closure.
 - [x] Install after closure with complete current INI/key preservation and accepted rollback.
-- [ ] Confirm visible ON/OFF feedback before a new held-aim rendering comparison.
+- [x] Confirm visible ON/OFF feedback; player also confirms a visible aiming effect.
+- [ ] Qualify the exact held-aim camera result; ON appears nearly unchanged in FOV.
 
 ## Current candidate 0.24 - authored native target
 

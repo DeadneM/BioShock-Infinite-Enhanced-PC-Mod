@@ -1,7 +1,10 @@
 # 0.24.1 control revision delivery
 
 Base: accepted English0.18.1, separate experiment/native-zoom-target branch.
-Status: BUILT, CHECKED, INSTALLED, EXPERIMENTAL; not user-validated.
+Status: BUILT, CHECKED, INSTALLED, EXPERIMENTAL; partial user validation below.
+Scope update: the player validates ON/OFF menu switching and confirms a visible
+aiming difference. This is partial USER-VALIDATION, not validation of independent
+first-person projection, world perspective or the exact held zoom ratio.
 The0.24 lens experiment is unchanged and remains unvalidated. Objective and
 visual criterion: [BUILD-v0241.md](BUILD-v0241.md).
 

@@ -1,5 +1,30 @@
 # Cumulative technical notebook
 
+## October 14 - user-confirmed controls and visible aiming effect
+
+The player confirms green ON/grey OFF switching and a radical visible aiming
+difference. Preserve this command/feedback behavior and the selected optional
+policy. They report that ON appears to keep the same FOV and that arms/weapon
+and world proportions still look deformed. Do not equate a visible difference
+with a measured proportional held lens or a full first-person correction.
+
+Real log13:09:35..13:09:52 records each shortcut request, saved state and UI
+label consistently. At13:09:53 the Hand Cannon target is60 ->97.5 for native
+hip82.5/world120; sniper14 ->27.262 is also recorded. The fresh23884 session
+has PC025CC400/pawn023A0000/camera3126E000. Current read-only snapshot uses54
+reads, verifies native viewport3840x2160 and native projection methods, with
+unlocked delayed/cache120. Predicted horizontal120/vertical88.507 and the
+last cb1 CPU shadow agree, including aspect1.777777775. This is not a proof of
+actual GPU consumption/ownership by every world or first-person draw.
+
+No second aspect multiplier or axis stretch is supported by these inputs.
+At high physical FOV, rectilinear perspective can itself change apparent
+depth/edge proportions; the player's remaining world complaint is not thereby
+resolved or dismissed. Independent first-person rendering remains open.
+A triggered read-only held-aim capture is armed, with per-sample weapon targets,
+to distinguish proportional zoom from effectively unchanged hip lens before
+claiming the exact zoom objective. No new runtime build is introduced.
+
 ## October 14 - distinguish UI state from camera behavior
 
 The player clarifies that the line remains NATIVE after the shortcut. Current
