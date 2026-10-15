@@ -1,5 +1,21 @@
 # Cumulative technical notebook
 
+## October 15 - X/base proxy factory comparison
+
+Fresh disk identity matches CE469D44... and installed0.25 ASI48B3CF39.... No
+process access/launch or rendering change. Native constructors establish
+X component table01619590 over base0159A298. Their125 executable entries differ
+only at00 andA8; proxy factory188 is shared00476F10. Its0xE0 allocation calls
+007201F0 and produces saved proxy table01599FB8. The A8 override is a small
+counter gate forwarding to00B4DA60, not a demonstrated lens facility.
+
+No UDK component class literals appear in ASCII/UTF-16 on disk. Scoped saved
+reflection has no mesh FOV member; this is not proof of binary-wide absence.
+The direct UDK extension is not a usable INI/SetFOV shortcut on this route.
+Retain primary00C28A10 ->00B188D0 for further offline work, not the old decal
+7D8F90/44B240 path. Mesh/effect coherence is still unqualified; no functional
+build follows from these code checks. See UE3-OFFLINE-APPLICABILITY.md.
+
 ## UE3 source comparison and new launch constraint
 
 The player confirms0.25 native slider operation but reports unsatisfactory

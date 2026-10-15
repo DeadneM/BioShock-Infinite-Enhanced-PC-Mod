@@ -1,5 +1,14 @@
 # Cumulative history
 
+## October 15 - offline native proxy comparison
+
+Check the supported original executable and installed0.25 ASI without opening
+a process. Native constructors and125-entry tables establish that Infinite's
+X/base skeletal components share their proxy factory. No direct UDK-style
+specialization is identified there. Correct the implementation target to the
+known primary skin route and retain separate particle handling as necessary.
+No new build, capture, installation, launch or visual success is claimed.
+
 ## Native slider result and UE3 research
 
 The player confirms0.25 slider operation while proportions remain bad. No

@@ -13,7 +13,8 @@
 - [x] Obtain player feedback: native slider changes framing; proportions remain unsatisfactory.
 - [x] Record the narrow result without claiming a visual fix or independent weapon lens.
 - [x] Compare UE3/UDK primary source for component FOV and particle coordination.
-- [ ] Establish an Infinite equivalent offline before selecting any new implementation.
+- [x] Compare X/base component construction and native proxy factory offline; no direct UDK-style specialized factory identified.
+- [ ] Qualify shared primary mesh transform and particle counterpart before selecting a functional implementation.
 - [ ] Ask before every game launch/relaunch; no further draw observations.
 
 ## 0.24.2 finite draw observation

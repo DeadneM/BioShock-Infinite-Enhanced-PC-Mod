@@ -1,5 +1,10 @@
 # UE3 / UDK first-person FOV research
 
+October15 offline follow-up: [Infinite component/proxy applicability](UE3-OFFLINE-APPLICABILITY.md).
+The X/base components share the inspected proxy factory; no UDK-style native
+extension is enabled by a simple setting. The primary mesh path and separate
+particle handling remain the implementation qualification targets.
+
 October 14, 2026. **SOURCE RESEARCH / NOT IMPLEMENTED / NOT GAME-VALIDATED.**
 The user requires permission before every game launch/relaunch and ends further
 draw observations. This investigation reads public source and saved local
