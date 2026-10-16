@@ -8,6 +8,11 @@ Retain global shortcuts; restore only the retained camera/target policy and add
 XInput input to the hold state machine. No optical/viewmodel experiment returns.
 New behavior remains EXPERIMENTAL until player testing; see BUILD-v028.md.
 
+0.28 package installed with unchanged user INI/loader/native options and verified
+0.27 rollback. Experimental GitHub release414838404 and tag0113895 are public;
+downloaded ZIP/checksum match checked local artifacts. No game launch or renewed
+player validation. See DELIVERY-v028.md for immutable hashes and exact source.
+
 ## October 16 - abandon optical correction; add global shortcuts
 
 At the player's request abandon the FOV/lens correction project. Preserve gameplay

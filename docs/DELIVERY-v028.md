@@ -57,3 +57,22 @@ After normal closure, from releases/install-v028-checked:
 
 ZIP documents preserve their pre-install checkpoint; this cumulative source
 record supersedes pending text without modifying the immutable archive.
+
+## Verified GitHub prerelease
+
+Source/tag commit:0113895c3c1cec20b331efd2636f32b0df05414f.
+Branch:experiment/live-fov-controller-aim. Tag:v0.28.0-experimental.
+GitHub release414838404 is public and marked prerelease (not draft).
+Both ZIP and SHA256 assets were uploaded. The public downloaded archive matches
+the complete checked local ZIP byte-for-byte; the public checksum also matches.
+Remote branch and lightweight tag were checked against the source commit before
+publication. Accepted main/stable were not pushed or replaced.
+
+Release:https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.28.0-experimental
+
+ZIP:https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.28.0-experimental/InfiniteMod-v0.28.0-live-FOV-controller-experimental.zip
+
+Private verification receipt:releases/release-v028-verified.json. This later
+documentation checkpoint does not move the release tag or alter its ZIP/source.
+Status remains BUILT / CHECKED / INSTALLED / EXPERIMENTAL. Actual0.28 FOV/ADS
+and controller hardware behavior still await player validation. No game launch.

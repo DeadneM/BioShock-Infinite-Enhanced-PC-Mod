@@ -8,7 +8,7 @@
 - [x] Final build, restored ABI/target, input/persistence and UI checks.
 - [x] Verify package and installer/rollback with exact final payload.
 - [x] Install after normal closure, preserving all current settings.
-- [ ] Publish branch/tag/prerelease and verify downloaded ZIP/hash/source.
+- [x] Publish branch/tag/prerelease and verify downloaded ZIP/hash/source.
 - [ ] Obtain player confirmation of live FOV, proportional ADS and controller.
 
 ## 0.27 global shortcuts / native settings
