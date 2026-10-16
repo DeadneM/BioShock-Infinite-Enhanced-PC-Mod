@@ -1,5 +1,6 @@
 #include "../shared.h"
 #include "../native_fov_config.h"
+#include "../aim_zoom_setting.h"
 #include "../config.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -20,7 +21,9 @@ bool saveNativeSliderSetting(int percent){
     if(!WritePrivateProfileStringW(L"Display",L"NativeFOVSlider",value,modIni))return false;
     InterlockedExchange(&nativeSliderPercent,percent);return true;
 }
-bool saveNativeAimZoom(bool){return false;}
+bool saveNativeAimZoom(bool enabled){return aim_zoom_setting::save(modIni,nativeAimZoom,enabled);}
+volatile LONG controllerAimButton=0,controllerAimThreshold=30;
+bool saveControllerAimButton(int index){return controller_aim::save(modIni,controllerAimButton,index);}
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden){InterlockedExchange(&crosshairHidden,hidden);return true;}
 bool saveSpeedSetting(int value){if(value<100 || value>200 || value%25)return false;InterlockedExchange(&speedPercent,value);return true;}
@@ -43,8 +46,10 @@ static SHORT testKeys(int key){return keys[key];}
 #define CHECK(x) do{if(!(x)){fprintf(stderr,"FAIL %d: %s\n",__LINE__,#x);exit(1);}}while(0)
 #include "weapons_fixture.h"
 #include "aim_fixture.h"
+#include "controller_aim_fixture.h"
 #include "ui_fixture.h"
 #include "player_options_fixture.h"
+#include "native_aim_fixture.h"
 #include "native_fov_fixture.h"
 #include "resources_fixture.h"
 #include "vitals_fixture.h"
@@ -91,6 +96,7 @@ static void checkMenuBounds(UINT width,UINT height) {
 int main(int argc,char **argv) {
     testWeapons();
     testPlayerOptions();
+    testNativeAimTarget();
     testNativeFOVConfig();
     testResources();
     testVitals();
@@ -103,6 +109,7 @@ int main(int argc,char **argv) {
     testVigorUpgrades();
     testInfusions();
     testAim();
+    testControllerAim();
     testUIScale();
     if(argc==3 && (!strcmp(argv[1],"--apply-config") || !strcmp(argv[1],"--skip-logos"))) {
         wchar_t path[1024];CHECK(MultiByteToWideChar(CP_UTF8,0,argv[2],-1,path,1024));

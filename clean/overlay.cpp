@@ -3,6 +3,7 @@
 #include "aim.h"
 #include "keybinds.h"
 #include "hotkey_setting.h"
+#include "controller_aim.h"
 #include <d3d11.h>
 #include <stdio.h>
 #include "imgui.h"
@@ -158,15 +159,19 @@ static void updateMenuInput(bool focused) {
         settingError=!saveSpeedSetting(value>=100 && value<200 && value%25==0?value+25:100);
     }
     if(events.has(Action::FovDecrease)) {
-        int value=(int)InterlockedCompareExchange(&nativeSliderPercent,0,0);
-        if(value>0)settingError=!saveNativeSliderSetting(value<5?0:value-5);
+        int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
+        if(value>80)settingError=!saveFOVSetting(value<85?80:value-5);
     }
     if(events.has(Action::FovIncrease)) {
-        int value=(int)InterlockedCompareExchange(&nativeSliderPercent,0,0);
-        if(value>=0 && value<100)settingError=!saveNativeSliderSetting(value>95?100:value+5);
+        int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
+        if(value<130)settingError=!saveFOVSetting(value>125?130:value+5);
     }
     if(events.has(Action::NativeAimZoom)) {
-        modLog("Reserved aim shortcut: native aiming remains active; saved preference unchanged.");
+        settingError=!saveNativeAimZoom(!InterlockedCompareExchange(&nativeAimZoom,0,0));
+    }
+    if(events.has(Action::ControllerAimKey)) {
+        int value=(int)InterlockedCompareExchange(&controllerAimButton,0,0);
+        settingError=!saveControllerAimButton(controller_aim::valid(value)?(value+1)%controller_aim::count:0);
     }
     if(events.has(Action::Crosshair))settingError=!saveCrosshairSetting(!InterlockedCompareExchange(&crosshairHidden,0,0));
     if(events.has(Action::HUD)) {
@@ -211,10 +216,10 @@ static void drawShortcut(keybinds::Action action,const char *description) {
     ImGui::TextWrapped("%s   %s",shortcutLabel(action).c_str(),description);
 }
 static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"%s",label);}
-static const char *aimZoomLabel() { return "NATIVE"; }
+static const char *aimZoomLabel() { return InterlockedCompareExchange(&nativeAimZoom,0,0)?"ON":"OFF"; }
 static void drawMainMenuContents() {
     using Action=keybinds::Action;
-    drawMenuSection("INFINITEMOD 0.27");
+    drawMenuSection("INFINITEMOD 0.28");
     ImGui::TextDisabled("%s: menu | %s: shortcuts",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
     ImGui::TextWrapped("%s   Hotkeys without menu: %s",shortcutLabel(Action::GlobalHotkeys).c_str(),globalHotkeys?"ON":"OFF");
     ImGui::Separator();
@@ -239,11 +244,9 @@ static void drawMainMenuContents() {
         ImGui::TableSetColumnIndex(1);
         drawMenuSection("MOVEMENT AND FOV");
         ImGui::TextWrapped("%s   Speed: x%.2f",shortcutLabel(Action::Speed).c_str(),(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
-        LONG slider=InterlockedCompareExchange(&nativeSliderPercent,0,0);
-        if(slider<0)ImGui::TextWrapped("Native FOV slider unavailable: leave the native configuration intact.");
-        else ImGui::TextWrapped("%s / %s   Native FOV slider: %ld%%",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),slider);
-        ImGui::TextWrapped("Saved preference, not degrees or live FOV. Apply at next start with Launch-Mod.ps1.");
-        ImGui::TextWrapped("Aim zoom: %s.",aimZoomLabel());
+        ImGui::TextWrapped("%s / %s   Live world FOV: %ld",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),InterlockedCompareExchange(&fovDegrees,0,0));
+        ImGui::TextWrapped("%s   Proportional aim zoom: %s",shortcutLabel(Action::NativeAimZoom).c_str(),aimZoomLabel());
+        if(InterlockedCompareExchange(&nativeAimZoom,0,0) && nativeAimZoomStatus()<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Aim zoom hook unavailable: native zoom retained.");
         char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
         ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");
         bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();
@@ -259,6 +262,8 @@ static void drawMainMenuContents() {
         ImGui::TextWrapped("%s   Hold-to-aim: %s",shortcutLabel(Action::HoldAim).c_str(),InterlockedCompareExchange(&aimWanted,0,0)?"ON":"OFF");
         if(!aimReady())ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Hold-to-aim unavailable: see the log.");
         ImGui::TextWrapped("%s   Aim key: %s",shortcutLabel(Action::AimKey).c_str(),aimKeyLabel((int)InterlockedCompareExchange(&aimKey,0,0)));
+        int pad=(int)InterlockedCompareExchange(&controllerAimButton,0,0);
+        ImGui::TextWrapped("%s   Controller aim: %s",shortcutLabel(Action::ControllerAimKey).c_str(),controller_aim::valid(pad)?controller_aim::labels[pad]:"Unavailable");
         ImGui::TextDisabled("Use the same key as in the game's controls.");
         ImGui::Separator();drawMenuSection("STARTUP");
         bool wanted=InterlockedCompareExchange(&configWanted,0,0)!=0;

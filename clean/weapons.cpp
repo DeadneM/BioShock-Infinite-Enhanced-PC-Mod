@@ -290,13 +290,13 @@ void weaponStatus(char *text,size_t capacity) {
 }
 void playerOptionsStatus(char *text,size_t capacity) {
     LONG state=InterlockedCompareExchange(&player_options::optionState,0,0);
-    snprintf(text,capacity,"%s",!player_options::speedInstalled
+    snprintf(text,capacity,"%s",!player_options::speedInstalled || !player_options::fovInstalled
         ?"Settings unavailable: see the log.":state<0?"Unrecognized player: settings not applied."
         :state==0?"Settings saved. Load a game to apply them."
         :"Player settings active.");
 }
 LONG crosshairStatus(){return InterlockedCompareExchange(&reticle::state,0,0);}
-LONG nativeAimZoomStatus(){return 0;}
+LONG nativeAimZoomStatus(){return !player_options::aimTargetInstalled?-1:InterlockedCompareExchange(&player_options::aimState,0,0);}
 bool installWeapons(BYTE *image) {
     // Exact GOG 1.1.25.5165 signatures; no rendering code is detoured.
     const BYTE signature[]={0x55,0x8b,0xec,0x83,0xe4,0xf0,0x81,0xec,0xa4,0,0,0,0x53,0x56};

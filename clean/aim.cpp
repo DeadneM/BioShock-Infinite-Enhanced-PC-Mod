@@ -1,5 +1,6 @@
 #include "aim.h"
 #include "shared.h"
+#include "controller_aim.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -7,6 +8,8 @@ namespace aim_detail {
 using ZoomFn=int (__thiscall *)(void *);
 ZoomFn startZoom,stopZoom;
 volatile LONG installed;
+controller_aim::Query controllerQuery;
+HMODULE controllerModule;
 constexpr unsigned heldMask=0x20000,zoomMask=0x70000;
 const BYTE startSignature[]={
     0x56,0x8b,0xf1,0x80,0xbe,0x86,0,0,0,3,0x73,5,0xe8,0xaf,0x80,0xd4,0xff,
@@ -69,6 +72,16 @@ bool installAim(BYTE *image) {
     using namespace aim_detail;
     InterlockedExchange(&installed,0);
     startZoom=nullptr;stopZoom=nullptr;state={};
+    if(!controllerQuery) {
+        const wchar_t *libraries[]={L"xinput1_4.dll",L"xinput1_3.dll",L"xinput9_1_0.dll"};
+        for(const wchar_t *dll:libraries) {
+            HMODULE module=LoadLibraryExW(dll,nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);
+            if(!module)continue;
+            auto query=(controller_aim::Query)GetProcAddress(module,"XInputGetState");
+            if(query){controllerModule=module;controllerQuery=query;break;}
+            FreeLibrary(module);
+        }
+    }
     BYTE start[sizeof(startSignature)],stop[sizeof(stopSignature)];
     bool valid=image && copy((uintptr_t)image+0x4e4990,start,sizeof(start))
         && copy((uintptr_t)image+0x649e60,stop,sizeof(stop))
@@ -89,6 +102,7 @@ void updateAim(void *currentPC,HWND window,bool playerReady) {
     // The engine owns destruction/reset of an actor after world transitions.
     if(!aimReady() || !startZoom || !stopZoom || !playerReady || !currentPC) {state={};return;}
     int key=(int)InterlockedCompareExchange(&aimKey,0,0);
+    int padButton=(int)InterlockedCompareExchange(&controllerAimButton,0,0);
     bool wanted=InterlockedCompareExchange(&aimWanted,0,0)!=0 && key>=1 && key<=254;
     if(!wanted && !state.enabled) {state={};return;}
     uintptr_t pc=(uintptr_t)currentPC,pawn=0;unsigned flags=0;
@@ -97,9 +111,10 @@ void updateAim(void *currentPC,HWND window,bool playerReady) {
     uintptr_t owner=0;float health=0;
     if(!copy(pawn+0x218,&owner,sizeof(owner)) || owner!=pc
         || !copy(pawn+0x2ac,&health,sizeof(health)) || !(health>0 && health<100000)) {state={};return;}
-    bool down=key>=1 && key<=254 && (GetAsyncKeyState(key)&0x8000)!=0;
+    bool down=(key>=1 && key<=254 && (GetAsyncKeyState(key)&0x8000)!=0)
+        || controller_aim::down(controllerQuery,padButton,(unsigned)InterlockedCompareExchange(&controllerAimThreshold,0,0));
     bool allowed=window && GetForegroundWindow()==window && !InterlockedCompareExchange(&modMenuOpen,0,0);
-    Action action=state.sample(pc,pawn,key,wanted,allowed,down,flags);
+    Action action=state.sample(pc,pawn,key+((padButton+1)<<8),wanted,allowed,down,flags);
     if(action==Action::Start)startZoom(currentPC);
     else if(action==Action::Stop)stopZoom(currentPC);
 }

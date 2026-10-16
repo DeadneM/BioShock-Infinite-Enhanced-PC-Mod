@@ -61,6 +61,8 @@ static void testNativeAimTarget() {
     FovFn volatile hip=(FovFn)(host+0x938d78);CHECK(hip(pc,75)==120);
     nativeAimZoom=1;float expected=opticalAimTarget(60,82.5f,120);
     *(unsigned *)(pc+0x690)=0x20000;
+    fovDegrees=100;CHECK(fabsf(instant(weapon)-opticalAimTarget(60,82.5f,100))<0.0001f && hip(pc,75)==100);
+    fovDegrees=120;
     for(int i=0;i<2000;++i) {
         CHECK(fabsf(instant(weapon)-expected)<0.0001f && direct(weapon)==60);
         CHECK(hip(pc,75)==120 && hipLens.angle==82.5f);

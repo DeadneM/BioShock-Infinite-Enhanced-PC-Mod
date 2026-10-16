@@ -79,23 +79,24 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     for(int expected:{125,150,200,100}){tapBinding(VK_F9);CHECK(hudWanted==expected && hudApplied==100);}
     CHECK(WritePrivateProfileStringW(L"Display",L"NativeAimZoom",L"1",fixtureIni));
     keys[VK_CONTROL]=static_cast<SHORT>(0x8000);tapBinding(VK_F9);
-    CHECK(nativeAimZoom==0 && hudWanted==100 && !strcmp(aimZoomLabel(),"NATIVE"));
+    CHECK(nativeAimZoom==1 && hudWanted==100 && !strcmp(aimZoomLabel(),"ON"));
     CHECK(GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==1);
     press(VK_F9);frame();release(VK_F9);
-    CHECK(nativeAimZoom==0 && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==1);
+    CHECK(nativeAimZoom==0);
+    CHECK(nativeAimZoom==0 && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==0);
     keys[VK_CONTROL]=0;frame();
     tapBinding(VK_F10);CHECK(aimWanted==1);tapBinding(VK_F10);CHECK(aimWanted==0);tapBinding(VK_F11);CHECK(aimKey==VK_RBUTTON);
     tapBinding(VK_F12);CHECK(configWanted==0);tapBinding(VK_F12);CHECK(configWanted==1);
     for(int expected:{125,150,175,200,100}){tapBinding(VK_F7);CHECK(speedPercent==expected);}
     press(VK_F7);frame();CHECK(speedPercent==125);release(VK_F7);
-    nativeSliderPercent=0;
-    tapBinding(VK_SUBTRACT);CHECK(nativeSliderPercent==0);press(VK_ADD);frame();CHECK(nativeSliderPercent==5);release(VK_ADD);
-    for(int i=0;i<22;++i)tapBinding(VK_ADD);CHECK(nativeSliderPercent==100);
-    for(int i=0;i<22;++i)tapBinding(VK_SUBTRACT);CHECK(nativeSliderPercent==0);
-    tapBinding(VK_OEM_PLUS);CHECK(nativeSliderPercent==5);tapBinding(VK_OEM_MINUS);CHECK(nativeSliderPercent==0);
-    keys[VK_SHIFT]=static_cast<SHORT>(0x8000);tapBinding(VK_OEM_PLUS);CHECK(nativeSliderPercent==5);keys[VK_SHIFT]=0;frame();tapBinding(VK_OEM_MINUS);CHECK(nativeSliderPercent==0);
-    CHECK(GetPrivateProfileIntW(L"Display",L"NativeFOVSlider",-1,fixtureIni)==0);
-    focus=nullptr;tapBinding(VK_ADD);tapBinding(VK_F7);CHECK(nativeSliderPercent==0 && speedPercent==125);focus=window;frame();
+    keys[VK_CONTROL]=(SHORT)0x8000;frame();tapBinding(VK_F11);keys[VK_CONTROL]=0;frame();
+    CHECK(controllerAimButton==1 && controller_aim::load(fixtureIni)==1);
+    tapBinding(VK_SUBTRACT);CHECK(fovDegrees==80);press(VK_ADD);frame();CHECK(fovDegrees==85);release(VK_ADD);
+    for(int i=0;i<12;++i)tapBinding(VK_ADD);CHECK(fovDegrees==130);
+    for(int i=0;i<12;++i)tapBinding(VK_SUBTRACT);CHECK(fovDegrees==80);
+    tapBinding(VK_OEM_PLUS);CHECK(fovDegrees==85);tapBinding(VK_OEM_MINUS);CHECK(fovDegrees==80);
+    keys[VK_SHIFT]=static_cast<SHORT>(0x8000);tapBinding(VK_OEM_PLUS);CHECK(fovDegrees==85);keys[VK_SHIFT]=0;frame();tapBinding(VK_OEM_MINUS);CHECK(fovDegrees==80);
+    focus=nullptr;tapBinding(VK_ADD);tapBinding(VK_F7);CHECK(fovDegrees==80 && speedPercent==125);focus=window;frame();
     // Cancelled capture keeps the key and doesn't close its menu on the same
     // Escape; saving failure leaves the old binding functional and visible.
     tapBinding('J');CHECK(bindingsOpen);selectedBinding=0;tapBinding(VK_RETURN);tapBinding(VK_ESCAPE);

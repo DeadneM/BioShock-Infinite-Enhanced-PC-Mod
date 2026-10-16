@@ -1,5 +1,13 @@
 # Cumulative history
 
+## October16 -0.28 live FOV and XInput hold aim
+
+The player accepts remaining0.27 behavior, requests proportional ADS restored,
+FOV without restart, configurable controller hold aim/LT, and GitHub publication.
+Retain global shortcuts; restore only the retained camera/target policy and add
+XInput input to the hold state machine. No optical/viewmodel experiment returns.
+New behavior remains EXPERIMENTAL until player testing; see BUILD-v028.md.
+
 ## October 16 - abandon optical correction; add global shortcuts
 
 At the player's request abandon the FOV/lens correction project. Preserve gameplay

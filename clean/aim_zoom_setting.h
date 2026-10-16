@@ -3,7 +3,7 @@
 
 namespace aim_zoom_setting {
 inline LONG load(const wchar_t *path) {
-    return path && *path && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",0,path)==1?1:0;
+    return path && *path && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",1,path)==1?1:0;
 }
 inline bool save(const wchar_t *path,volatile LONG &state,bool enabled) {
     // Empty paths must not fall back to the Windows default profile file.

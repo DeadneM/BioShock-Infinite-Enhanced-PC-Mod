@@ -1,5 +1,17 @@
 # InfiniteMod - English gameplay mod and native FOV experiment
 
+**0.28 experimental: live world FOV, proportional ADS and XInput hold aim.**
+Minus/Plus adjusts world FOV immediately; Ctrl+F9 toggles proportional zoom.
+F10 enables hold aim for mouse/controller; Ctrl+F11 changes the controller button
+(LT default). Global shortcuts, progression and custom bindings are retained.
+HUD scaling still applies next launch. No special FOV launcher or viewmodel lens.
+See [scope and controls](docs/BUILD-v028.md) and [verification](docs/DELIVERY-v028.md).
+Build/fixture checks do not establish new player validation. Older candidate
+sections below are historical and do not override0.28 behavior.
+
+[Experimental release](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.28.0-experimental)
+
+
 **Current branch candidate0.27: global hotkeys and native display preferences.**
 Ctrl+F10 toggles commands without the menu (default ON). Minus/Plus save the native
 FOV slider; F9 cycles HUD scale. Display changes apply at the next launch; use

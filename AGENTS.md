@@ -5,6 +5,10 @@
   user's explicit instruction; a general request to continue work is not launch
   permission.
 - Keep the mod UI, repository documentation and Git messages in English.
+- Current October16 request explicitly restores the prior proportional-ADS policy
+  and live world FOV, adds reconfigurable XInput hold aim (LT default), and
+  authorizes publishing the checked next experimental release on GitHub.
+  Optical/viewmodel/render corrections and external captures remain excluded.
 - October 16: optical/viewmodel correction is abandoned. Current authorized work
   is default-ON global hotkeys and native FOV-slider/HUD preferences. No lens or
   green render hooks should return to this candidate. Launch permission remains

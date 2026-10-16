@@ -1,5 +1,16 @@
 # Cumulative TODO
 
+## 0.28 live FOV / XInput hold aim
+
+- [x] Retain0.27 accepted behavior and separate experimental branch.
+- [x] Restore live camera/aim policy only; no viewmodel or rendering patch.
+- [x] Implement LT-default XInput hold aim, named choices and remapping entry.
+- [x] Final build, restored ABI/target, input/persistence and UI checks.
+- [x] Verify package and installer/rollback with exact final payload.
+- [x] Install after normal closure, preserving all current settings.
+- [ ] Publish branch/tag/prerelease and verify downloaded ZIP/hash/source.
+- [ ] Obtain player confirmation of live FOV, proportional ADS and controller.
+
 ## 0.27 global shortcuts / native settings
 
 - [x] Retire green runtime; preserve accepted gameplay and custom assignments.

@@ -1,5 +1,19 @@
 # Cumulative technical notebook
 
+## October16 -0.28 requested camera/aim restoration
+
+Use0.27 accepted gameplay as base; explicitly restore63f87fe player_options camera
+and target-return policy with its schema/caller guards. Remove0.27 slider control
+from the runtime menu; preserve its saved preference inertly. No native config
+write or helper/launcher requirement. Proportional effect previously visible,
+exact current-game target/transition behavior not asserted from that history.
+
+XInput polling loads system DLLs dynamically; no new bundled dependencies.
+ControllerAimButton choices LT..Y share existing hold state with physical mouse
+input. Trigger threshold30, up to four slots, releases on disconnect. Button
+identity contributes to the release gate. F10 enables both inputs; Ctrl+F11
+cycles controller choice with persistence; native bindings are not intercepted.
+
 ## October 16 - global commands / native settings0.27
 
 Preserve action identities/custom keys; append GlobalHotkeys Ctrl+F10. Overlay

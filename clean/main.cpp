@@ -4,6 +4,8 @@
 #include "aim.h"
 #include "ui_config.h"
 #include "native_fov_config.h"
+#include "aim_zoom_setting.h"
+#include "controller_aim.h"
 #include <shlobj.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -20,7 +22,9 @@ bool saveNativeSliderSetting(int percent) {
     if(!WritePrivateProfileStringW(L"Display",L"NativeFOVSlider",value,modIni))return false;
     InterlockedExchange(&nativeSliderPercent,percent);return true;
 }
-bool saveNativeAimZoom(bool) { return false; } // Reserved binding; old INI preference retained.
+bool saveNativeAimZoom(bool enabled) {return aim_zoom_setting::save(modIni,nativeAimZoom,enabled);}
+volatile LONG controllerAimButton=0,controllerAimThreshold=30;
+bool saveControllerAimButton(int index){return controller_aim::save(modIni,controllerAimButton,index);}
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden) {
     if(!WritePrivateProfileStringW(L"Display",L"HideCrosshair",hidden?L"1":L"0",modIni))return false;
@@ -39,7 +43,7 @@ bool saveFOVSetting(int degrees) {
     if(degrees<80 || degrees>130)return false;
     wchar_t value[16];swprintf(value,16,L"%d",degrees);
     if(!WritePrivateProfileStringW(L"Display",L"FOV",value,modIni))return false;
-    InterlockedExchange(&fovDegrees,degrees);InterlockedExchange(&nativeFovRequest,1);return true;
+    InterlockedExchange(&fovDegrees,degrees);return true;
 }
 static void loadPlayerSettings() {
     wchar_t value[32],*end=nullptr;
@@ -56,7 +60,7 @@ static void loadPlayerSettings() {
     }
     InterlockedExchange(&speedPercent,speed);InterlockedExchange(&fovDegrees,fov);
     // New key: a rejected experiment's ProportionalAim setting cannot enable this.
-    InterlockedExchange(&nativeAimZoom,0); // Native zoom only; do not rewrite the retained preference.
+    InterlockedExchange(&nativeAimZoom,aim_zoom_setting::load(modIni));
 }
 bool saveHUDSetting(int percent) {
     if(!nativeUIScale(percent))return false;
@@ -93,7 +97,7 @@ static DWORD WINAPI start(void *) {
     swprintf(modIni,MAX_PATH,L"%lsInfiniteMod.ini",path);
     wchar_t logPath[MAX_PATH];swprintf(logPath,MAX_PATH,L"%lsInfiniteMod.log",path);
     logFile=CreateFileW(logPath,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,nullptr,OPEN_ALWAYS,0,nullptr);
-    modLog("InfiniteMod 0.27.0 EXPERIMENTAL; global shortcuts/native slider settings; no diagnostic or camera overrides.");
+    modLog("InfiniteMod 0.28.0 EXPERIMENTAL; live world FOV/proportional aim; keyboard and XInput hold aim; no render corrections.");
     if(!GetPrivateProfileIntW(L"General",L"Enabled",1,modIni)) {modLog("Disabled.");return 0;}
     BYTE *image=(BYTE *)GetModuleHandleW(nullptr);
     auto *dos=(IMAGE_DOS_HEADER *)image;
@@ -105,8 +109,6 @@ static DWORD WINAPI start(void *) {
     if(GetPrivateProfileIntW(L"Overlay",L"Enabled",1,modIni))
         modLog("Graphics import capture: %s",installGameGraphicsImport(image)?"ready; waiting for game's factory":"failed");
     loadPlayerSettings();
-    int slider=-1;
-    if(readNativeSliderPreference(modIni,slider) && slider>=0)InterlockedExchange(&nativeSliderPercent,slider);
     bool commands=installWeapons(image);
     modLog("Gameplay command initialization: %s",commands?"ready":"unavailable; no gameplay calls");
     if(commands)installAim(image);
@@ -122,6 +124,9 @@ static DWORD WINAPI start(void *) {
     if(hudCount && hudCount<31 && hudEnd!=hudValue && *hudEnd==0)
         for(int percent:{100,125,150,200})if(hudScale==(double)percent/100)hudWanted=percent;
     aimWanted=GetPrivateProfileIntW(L"Controls",L"HoldAim",0,modIni)!=0;
+    controllerAimButton=controller_aim::load(modIni);
+    int threshold=(int)GetPrivateProfileIntW(L"Controls",L"ControllerAimThreshold",30,modIni);
+    controllerAimThreshold=threshold>=0 && threshold<=254?threshold:30;
     aimKey=GetPrivateProfileIntW(L"Controls",L"AimKey",VK_MBUTTON,modIni);
     if(aimKey<1 || aimKey>254)aimKey=VK_MBUTTON;
     float expectedUICap=1;bool uiCheck=false;DWORD uiCheckStart=GetTickCount();
@@ -138,25 +143,7 @@ static DWORD WINAPI start(void *) {
         modLog("Native UI startup: requested=%ld%%, result=%d; no live changes",hudWanted,result);
     }
     InterlockedExchange(&configRequest,1);
-    wchar_t optionsPath[MAX_PATH]={};wcscpy(optionsPath,gameIni);
-    wchar_t *optionsSlash=wcsrchr(optionsPath,L'\\');
-    if(optionsSlash)wcscpy(optionsSlash+1,L"XUserOptions.ini");
-    if(nativeSliderPercent<0 && optionsSlash) {
-        std::string raw,text,value;bool wide=false;size_t begin=0,length=0;
-        if(readConfigBytes(optionsPath,raw) && decodeUIConfig(raw,text,wide)
-            && nativeFOVToken(text,value,begin,length,"fieldofview",1.0))
-            InterlockedExchange(&nativeSliderPercent,(LONG)lround(strtod(value.c_str(),nullptr)*100));
-    }
     for(;;) {
-        if(InterlockedExchange(&nativeFovRequest,0)) {
-            std::string raw,text,value;bool wide=false;size_t begin=0,length=0;
-            bool valid=optionsSlash && readConfigBytes(optionsPath,raw) && decodeUIConfig(raw,text,wide)
-                && nativeFOVToken(text,value,begin,length);
-            double requested=nativeFOVPercent((int)InterlockedCompareExchange(&fovDegrees,0,0));
-            bool configured=valid && fabs(strtod(value.c_str(),nullptr)-requested)<0.00001;
-            InterlockedExchange(&nativeFovResult,!valid?-1:configured?1:2);
-            modLog("Native FOV range: requested +%.6f%%; config=%s. No live camera/config writes; use mod launcher for changed range.",requested,valid?value.c_str():"unavailable");
-        }
         if(uiCheck) {
             float current=0;SIZE_T read=0;
             if(ReadProcessMemory(GetCurrentProcess(),image+0x135aca0,&current,sizeof(current),&read)

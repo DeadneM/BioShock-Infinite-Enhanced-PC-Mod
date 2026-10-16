@@ -14,7 +14,7 @@ enum class Action : unsigned {
     MainMenu, BindingsMenu, Vitals, Ammo, WeaponPrevious, WeaponNext, GiveMain,
     GiveSecondary, Speed, SkipIntros, Powers, Gear, WeaponUpgrades, VigorUpgrades,
     Infusions, Money, Lockpicks, Crosshair, HUD, HoldAim, AimKey, FovDecrease,
-    FovIncrease, NativeAimZoom, GlobalHotkeys, Count
+    FovIncrease, NativeAimZoom, GlobalHotkeys, ControllerAimKey, Count
 };
 constexpr unsigned count=static_cast<unsigned>(Action::Count);
 enum Modifier : unsigned { Control=1, Alt=2, Shift=4, Win=8 };
@@ -44,10 +44,11 @@ inline constexpr Definition definitions[count]={
     {L"HUD","Change interface size",{VK_F9,0},true},
     {L"HoldAim","Enable / disable hold-to-aim",{VK_F10,0},true},
     {L"AimKey","Change aim key",{VK_F11,0},true},
-    {L"FovDecrease","Decrease native FOV slider (restart)",{VK_OEM_MINUS,0},true},
-    {L"FovIncrease","Increase native FOV slider (restart)",{VK_OEM_PLUS,0},true},
-    {L"NativeAimZoom","Reserved aim option (native zoom active)",{VK_F9,Control},true},
-    {L"GlobalHotkeys","Hotkeys without the menu: ON / OFF",{VK_F10,Control},false}
+    {L"FovDecrease","Decrease live world FOV",{VK_OEM_MINUS,0},true},
+    {L"FovIncrease","Increase live world FOV",{VK_OEM_PLUS,0},true},
+    {L"NativeAimZoom","Proportional aim zoom: ON / OFF",{VK_F9,Control},true},
+    {L"GlobalHotkeys","Hotkeys without the menu: ON / OFF",{VK_F10,Control},false},
+    {L"ControllerAimKey","Change controller hold-aim button",{VK_F11,Control},true}
 };
 inline bool validAction(Action action) {return static_cast<unsigned>(action)<count;}
 struct ChordList {Chord chords[3];unsigned size;};
