@@ -57,6 +57,10 @@ if($Version -eq '0.25.0') {
     $files+=@{path='NativeFOV.exe';source=$nativeTool}
     $files+=@{path='Launch-Mod.ps1';source=(Join-Path $PSScriptRoot 'Launch-Mod.ps1')}
 }
+if($Version -eq '0.26.0') {
+    $files+=@{path='docs/GREEN-DIAGNOSTIC.md';source=(Join-Path $repo 'docs/GREEN-DIAGNOSTIC.md')}
+    $files+=@{path='docs/DELIVERY-v026.md';source=(Join-Path $repo 'docs/DELIVERY-v026.md')}
+}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
 foreach($file in $files) {

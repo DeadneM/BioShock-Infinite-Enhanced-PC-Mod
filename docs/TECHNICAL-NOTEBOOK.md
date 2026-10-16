@@ -1,5 +1,22 @@
 # Cumulative technical notebook
 
+## October 16 - separate green mask prototype
+
+User now authorizes opt-in visual selection. Four immediate draw variants replay
+selected VS/PS pairs into a private full-resolution RGBA mask with depth disabled.
+Original draws execute first. The mask is composited through the existing ImGui
+backend. PS, native targets/depth, blend factors/mask and stencil reference are
+restored. Shader pairs are grouped by blend/depth-write state; ownership is UNKNOWN.
+No native FOV, bone data or shader constants change. No file logging of draws.
+
+An initial fixture exposed runtime rewriting of context table entries; that
+approach was discarded. The candidate uses bounded MinHook function detours,
+retaining separate typed trampolines for up to eight implementations per draw
+variant. Present checks changed method addresses while diagnostic is active.
+The private offscreen fixture verifies pixels and state; it cannot prove actual
+Infinite layer coverage. GS particles and scaled/MSAA/deferred targets are excluded.
+See GREEN-DIAGNOSTIC.md for X-ray/alpha/query/performance limitations.
+
 ## October 15 - X/base proxy factory comparison
 
 Fresh disk identity matches CE469D44... and installed0.25 ASI48B3CF39.... No

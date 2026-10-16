@@ -1,5 +1,16 @@
 # Cumulative TODO
 
+## 0.26 temporary green visual selector
+
+- [x] Read current delivery, source and failed selection evidence.
+- [x] Isolate experiment; preserve camera policy and saved bindings.
+- [x] Implement opt-in shader-pair silhouettes and explicit unknown ownership.
+- [x] Complete final build, offscreen state/pixel and retained checks.
+- [x] Check root ZIP and transactional installer/rollback fixtures.
+- [x] Install only after confirming normal closure, preserving current INIs.
+- [ ] Ask before launch; obtain player identification of green candidate groups.
+- [ ] Do not mistake successful green geometry for a lens-ready segmentation.
+
 ## 0.25 native slider experiment
 
 - [x] Branch from retained63f87fe and explicitly retire experimental aim/camera adapters.

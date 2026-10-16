@@ -9,6 +9,9 @@
   experimental work from accepted releases and provide a checked rollback.
 - Distinguish build/package checks from player validation. Read the current
   delivery record, technical notebook and TODO before resuming.
-- No further draw observations are authorized by the current research request.
+- October 16: the user authorized a temporary green visual selector using F5-F8.
+  This permits the opt-in on-screen diagnostic, not renewed external process
+  captures, FOV edits or automatic launches. Preserve normal bindings outside it.
+- No further external draw observations are authorized by the current research request.
   Work from saved evidence and public UE3/UDK sources unless the user changes
   that scope. No new build or functional fix is implied by research findings.

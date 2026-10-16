@@ -38,6 +38,7 @@ static void *originalFor(void **address) {
     for(unsigned i=0;i<slotCount;i++) if(slots[i].address==address) {original=slots[i].original;break;}
     ReleaseSRWLockShared(&slotLock);return original;
 }
+#include "green_layers.inl"
 typedef HRESULT (WINAPI *FactoryFn)(REFIID,void **);
 typedef HRESULT (STDMETHODCALLTYPE *SwapFn)(IDXGIFactory *,IUnknown *,DXGI_SWAP_CHAIN_DESC *,IDXGISwapChain **);
 typedef HRESULT (STDMETHODCALLTYPE *PresentFn)(IDXGISwapChain *,UINT,UINT);
@@ -51,7 +52,11 @@ static char bindingsNotice[256];
 static bool navigationHeld[4],navigationFocused;
 static constexpr unsigned bindingsPageSize=8;
 static const int aimKeys[]={VK_MBUTTON,VK_RBUTTON,'Z',VK_XBUTTON1,VK_XBUTTON2};
-static SHORT overlayKeyQuery(int key) {return GetAsyncKeyState(key);}
+static SHORT diagnosticKeyQuery(int key) {return GetAsyncKeyState(key);}
+static SHORT overlayKeyQuery(int key) {
+    if(green_layers::enabled && key>=VK_F5 && key<=VK_F8)return 0;
+    return GetAsyncKeyState(key);
+}
 static std::string shortcutLabel(keybinds::Action action) {
     keybinds::Chord chord=overlayBindings.binding(action);
     if(chord.modifiers==0 && chord.key==VK_OEM_MINUS)return "-";
@@ -204,6 +209,7 @@ static void drawShortcut(keybinds::Action action,const char *description) {
 static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"%s",label);}
 static const char *aimZoomLabel() { return "NATIVE"; }
 static void drawMainMenuContents() {
+    ImGui::TextDisabled("0.26 GREEN DIAGNOSTIC | Ctrl+Alt+F5: temporary visual selector");
     using Action=keybinds::Action;
     drawMenuSection("INFINITEMOD");
     ImGui::TextDisabled("%s: menu | %s: shortcuts",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
@@ -313,13 +319,30 @@ static void drawMenu(IDXGISwapChain *chain) {
     io.DeltaTime=delta>0 && delta<1?(float)delta:1.0f/60;
     ImGuiStyle &style=ImGui::GetStyle();style.WindowPadding=ImVec2(20*scale,18*scale);style.ItemSpacing=ImVec2(10*scale,10*scale);style.WindowRounding=8*scale;
     ImGui_ImplDX11_NewFrame();ImGui::NewFrame();
+    if(green_layers::enabled) {
+        if(green_layers::image && green_layers::selected<green_layers::count)
+            ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)(intptr_t)green_layers::image,ImVec2(0,0),io.DisplaySize);
+        ImGui::SetNextWindowPos(ImVec2(12*scale,12*scale),ImGuiCond_Always);
+        ImGui::SetNextWindowBgAlpha(0.9f);
+        ImGui::Begin("Green diagnostic",nullptr,ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoSavedSettings);
+        ImGui::Text("EXPERIMENTAL / GREEN SILHOUETTES");
+        ImGui::Text("F5: opaque/write | F6: opaque/no write | F7: blend | F8: clear");
+        ImGui::Text("Repeat a key: next shader pair. Ctrl+Alt+F5: exit diagnostic.");
+        ImGui::Text("Candidate: %u | known pairs: %u / 192 | matched draws: %u",green_layers::selected<green_layers::count?green_layers::selected+1:0,green_layers::count,green_layers::matched);
+        if(!green_layers::hooksReady || !green_layers::target)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Diagnostic unavailable: hooks or private mask failed. No selection applied.");
+        ImGui::Text("Ownership UNKNOWN. Silhouettes ignore occlusion and alpha cutouts.");
+        ImGui::End();
+    }
+    if(menuOpen || bindingsOpen) {
     ImGui::SetNextWindowPos(ImVec2(desc.Width*0.5f,desc.Height*0.5f),ImGuiCond_Always,ImVec2(0.5f,0.5f));
     float menuWidth=1100*scale;if(menuWidth>desc.Width-40*scale)menuWidth=desc.Width-40*scale;
     ImGui::SetNextWindowSize(ImVec2(menuWidth,0),ImGuiCond_Always);
     ImGui::SetNextWindowBgAlpha(0.97f);
     ImGui::Begin("InfiniteMod",nullptr,ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_AlwaysAutoResize);
     if(bindingsOpen)drawBindingsMenuContents();else drawMainMenuContents();
-    ImGui::End();ImGui::Render();
+    ImGui::End();
+    }
+    ImGui::Render();
 
     // Restore every state touched by the backend, including stages it clears.
     ID3D11RenderTargetView *oldTargets[8]={};ID3D11DepthStencilView *depth=nullptr;
@@ -345,8 +368,18 @@ static HRESULT STDMETHODCALLTYPE gamePresent(IDXGISwapChain *chain,UINT sync,UIN
             weaponWindow(desc.OutputWindow);
             if(frames==1 || frames==120 || frames==600) modLog("GAME Present #%lu: %ux%u, window=%p, thread=%lu",frames,desc.BufferDesc.Width,desc.BufferDesc.Height,desc.OutputWindow,GetCurrentThreadId());
             bool focused=desc.OutputWindow && GetForegroundWindow()==desc.OutputWindow;
+            green_layers::input(focused,diagnosticKeyQuery);
             updateMenuInput(focused);
-            if((menuOpen || bindingsOpen) && focused) drawMenu(chain);
+            if(green_layers::enabled && renderer(chain)) {
+                green_layers::attach(context);
+                ID3D11Texture2D *bb=nullptr;
+                if(SUCCEEDED(chain->GetBuffer(0,__uuidof(ID3D11Texture2D),(void **)&bb))) {
+                    D3D11_TEXTURE2D_DESC size;bb->GetDesc(&size);bb->Release();
+                    green_layers::prepare(device,size.Width,size.Height);
+                }
+            }
+            if((menuOpen || bindingsOpen || green_layers::enabled) && focused) drawMenu(chain);
+            if(context)green_layers::endFrame(context);
         }
         ReleaseSRWLockExclusive(&drawLock);
     }
@@ -358,6 +391,12 @@ static HRESULT STDMETHODCALLTYPE gameCreateSwap(IDXGIFactory *factory,IUnknown *
     SwapFn original=(SwapFn)originalFor(&(*(void ***)factory)[10]);if(!original)return E_UNEXPECTED;
     HRESULT result=original(factory,dev,desc,out);
     if(SUCCEEDED(result) && out && *out) {
+        ID3D11Device *graphics=nullptr;
+        if(SUCCEEDED((*out)->GetDevice(__uuidof(ID3D11Device),(void **)&graphics))) {
+            ID3D11DeviceContext *ctx=nullptr;graphics->GetImmediateContext(&ctx);
+            bool attached=green_layers::attach(ctx);ctx->Release();graphics->Release();
+            modLog("Green visual diagnostic hooks: %s (OFF by default)",attached?"ready":"unavailable");
+        }
         bool ok=hookSlot(&(*(void ***)*out)[8],(void *)gamePresent);
         modLog("GAME swap chain created: capture=%s, result=%08lx",ok?"ready":"failed",result);
     } else modLog("GAME swap chain creation failed %08lx",result);

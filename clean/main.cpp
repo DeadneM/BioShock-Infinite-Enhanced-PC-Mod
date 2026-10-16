@@ -86,7 +86,7 @@ static DWORD WINAPI start(void *) {
     swprintf(modIni,MAX_PATH,L"%lsInfiniteMod.ini",path);
     wchar_t logPath[MAX_PATH];swprintf(logPath,MAX_PATH,L"%lsInfiniteMod.log",path);
     logFile=CreateFileW(logPath,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,nullptr,OPEN_ALWAYS,0,nullptr);
-    modLog("InfiniteMod 0.25.0 NATIVE FOV EXPERIMENTAL; retained gameplay; no camera/aim/render overrides.");
+    modLog("InfiniteMod 0.26.0 GREEN DIAGNOSTIC EXPERIMENTAL; native camera/aim; optional visual shader-pair selector.");
     if(!GetPrivateProfileIntW(L"General",L"Enabled",1,modIni)) {modLog("Disabled.");return 0;}
     BYTE *image=(BYTE *)GetModuleHandleW(nullptr);
     auto *dos=(IMAGE_DOS_HEADER *)image;

@@ -1,5 +1,13 @@
 # Cumulative history
 
+## October 16 - opt-in green visual selector
+
+User authorizes a temporary F5-F8 diagnostic to visually identify the rig.
+Prepare independent branch experiment/green-layer-selector from the documented
+0.25 source, retaining accepted English gameplay and authorized native-camera
+restart. Candidate shader pairs are silhouettes, not engine ownership layers.
+No FOV change, external process capture or game launch. See GREEN-DIAGNOSTIC.md.
+
 ## October 15 - offline native proxy comparison
 
 Check the supported original executable and installed0.25 ASI without opening

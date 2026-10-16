@@ -1,5 +1,13 @@
 # InfiniteMod - English gameplay mod and native FOV experiment
 
+**Experimental branch 0.26.0: opt-in green visual selector.** See
+[controls, limitations and rollback](docs/GREEN-DIAGNOSTIC.md). Ctrl+Alt+F5
+temporarily enables F5/F6/F7 shader-pair selection and F8 clearing. Green marks
+candidate geometry, not confirmed ownership layers. No FOV correction is included.
+Normal settings and bindings are retained. This short-test package does not
+change native FOV options; use the existing native slider. The 0.25 description
+below records the preceding native-range experiment, not a green-test result.
+
 ASI mod for **BioShock Infinite GOG x86**: overlay, weapons and progression,
 player settings, and configurable shortcuts.
 
