@@ -32,6 +32,16 @@ static void testNativeFOVConfig() {
         CHECK(encodeUIConfig(restored,wide,changed));
         CHECK(applyNativeFOV(path,80,true)==1);CHECK(readConfigBytes(path,saved) && saved==changed);
         CHECK(applyNativeFOV(path,80,true)==0);
+        std::string sliderBackup=changed;
+        CHECK(applyNativeFOV(path,65,false,true)==1);
+        CHECK(applyNativeFOV(path,65,false,true)==0);
+        CHECK(readConfigBytes(path,saved));CHECK(decodeUIConfig(saved,text,encoded));
+        std::string sliderExpected=restored;sliderExpected.replace(sliderExpected.find("FieldOfView=0.500000"),strlen("FieldOfView=0.500000"),"FieldOfView=0.650000");
+        CHECK(text==sliderExpected);
+        CHECK(applyNativeFOV(path,101,false,true)==-1);
+        CHECK(applyNativeFOV(path,0,true,true)==1);CHECK(readConfigBytes(path,saved) && saved==sliderBackup);
+        std::wstring sliderBackupPath=std::wstring(path)+L".InfiniteMod-native-slider-backup";
+        CHECK(readConfigBytes(sliderBackupPath.c_str(),saved) && saved==sliderBackup);CHECK(DeleteFileW(sliderBackupPath.c_str()));
         CHECK(DeleteFileW(path));CHECK(DeleteFileW(backup.c_str()));
     }
     CHECK(applyNativeFOV(path,110)==-1);CHECK(nativeFOVPercent(79)==-1);

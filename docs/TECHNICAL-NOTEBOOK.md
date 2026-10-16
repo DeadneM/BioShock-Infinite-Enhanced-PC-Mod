@@ -1,5 +1,19 @@
 # Cumulative technical notebook
 
+## October 16 - global commands / native settings0.27
+
+Preserve action identities/custom keys; append GlobalHotkeys Ctrl+F10. Overlay
+edge detection treats the main menu as eligible when global commands are ON,
+but retains editor/capture/focus/release gates. Persist Controls.GlobalHotkeys
+only after a successful profile write; default ON for missing keys.
+
+Native FOV shortcuts now save Display.NativeFOVSlider0..100, leaving legacy
+Display.FOV untouched. Native helper apply-slider changes only FieldOfView0..1
+before launch, using the same locked atomic transaction with a separate immutable
+slider backup. Runtime reads native config for initial feedback only. No native
+cap/projection/ADS mutation. HUD uses retained next-launch UI ceiling handling.
+Green source remains historical but is not included, installed or hooked by0.27.
+
 ## October 16 - player green evidence and limited lens feasibility gate
 
 Player screenshots show revolver23, hands/arms24 and sleeve25, plus broad67 and

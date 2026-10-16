@@ -61,6 +61,13 @@ if($Version -eq '0.26.0') {
     $files+=@{path='docs/GREEN-DIAGNOSTIC.md';source=(Join-Path $repo 'docs/GREEN-DIAGNOSTIC.md')}
     $files+=@{path='docs/DELIVERY-v026.md';source=(Join-Path $repo 'docs/DELIVERY-v026.md')}
 }
+if($Version -eq '0.27.0') {
+    $nativeTool=Join-Path $repo 'tools/native-fov/NativeFOV.exe'
+    $files+=@{path='NativeFOV.exe';source=$nativeTool}
+    $files+=@{path='Launch-Mod.ps1';source=(Join-Path $PSScriptRoot 'Launch-Mod.ps1')}
+    $files+=@{path='docs/BUILD-v027.md';source=(Join-Path $repo 'docs/BUILD-v027.md')}
+    $files+=@{path='docs/DELIVERY-v027.md';source=(Join-Path $repo 'docs/DELIVERY-v027.md')}
+}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
 foreach($file in $files) {
@@ -69,7 +76,7 @@ foreach($file in $files) {
     if($file.path.StartsWith('Binaries/Win32/')){$moduleFiles+=[pscustomobject]@{path=$file.path;sha256=(Get-ModHash $file.source);size=(Get-Item -LiteralPath $file.source).Length}}
 }
 $package=[ordered]@{schema=1;version=$Version;status='EXPERIMENTAL';validatedBase=$ValidatedBase;objective=$Objective;successCriterion=$SuccessCriterion;files=$moduleFiles}
-if($Version -eq '0.25.0'){$package.nativeFOVToolSHA256=Get-ModHash $nativeTool}
+if($Version -in @('0.25.0','0.27.0')){$package.nativeFOVToolSHA256=Get-ModHash $nativeTool}
 if($ListOnly){@($files | ForEach-Object {$_.path})+'package.json';return}
 $zipPath=Get-AbsolutePath $OutputPath
 if(Test-Path -LiteralPath $zipPath){throw 'ZIP already exists. Choose a new output path; existing releases are never overwritten.'}

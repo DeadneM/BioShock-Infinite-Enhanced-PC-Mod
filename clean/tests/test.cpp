@@ -13,6 +13,13 @@ volatile LONG configWanted=1,configRequest=0,configResult=1;
 volatile LONG hudWanted=100,hudApplied=100,hudResult=1,aimWanted=0,aimKey=VK_MBUTTON,modMenuOpen=0;
 volatile LONG speedPercent=100,fovDegrees=80;
 volatile LONG nativeAimZoom=0,nativeFovRequest=1,nativeFovResult=0;
+volatile LONG nativeSliderPercent=0;
+bool saveNativeSliderSetting(int percent){
+    if(percent<0 || percent>100)return false;
+    wchar_t value[16];swprintf(value,16,L"%d",percent);
+    if(!WritePrivateProfileStringW(L"Display",L"NativeFOVSlider",value,modIni))return false;
+    InterlockedExchange(&nativeSliderPercent,percent);return true;
+}
 bool saveNativeAimZoom(bool){return false;}
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden){InterlockedExchange(&crosshairHidden,hidden);return true;}
@@ -50,7 +57,6 @@ static SHORT testKeys(int key){return keys[key];}
 #include "powers_fixture.h"
 #include "vigor_upgrades_fixture.h"
 #include "infusions_fixture.h"
-#include "green_fixture.h"
 static FactoryFn importSlot;
 static HRESULT WINAPI delayFactory(REFIID iid,void **out) {
     importSlot=CreateDXGIFactory; // Simulate the game's real delay loader replacing the IAT.
@@ -142,7 +148,6 @@ int main(int argc,char **argv) {
     HWND window=CreateWindowExW(0,wc.lpszClassName,L"",WS_POPUP,0,0,1280,720,nullptr,nullptr,wc.hInstance,nullptr);CHECK(window);
     DXGI_SWAP_CHAIN_DESC desc={};desc.BufferDesc.Width=1280;desc.BufferDesc.Height=720;desc.BufferDesc.Format=DXGI_FORMAT_R8G8B8A8_UNORM;desc.SampleDesc.Count=1;desc.BufferUsage=DXGI_USAGE_RENDER_TARGET_OUTPUT;desc.BufferCount=1;desc.OutputWindow=window;desc.Windowed=TRUE;
     IDXGISwapChain *chain=nullptr;CHECK(SUCCEEDED(factory->CreateSwapChain(dev,&desc,&chain)));
-    testGreenLayers(dev,ctx);
     testOverlayBindings(chain,window);
     ID3DBlob *shaderCode=nullptr;const char *shader="RWByteAddressBuffer output:register(u0);[numthreads(1,1,1)]void main(uint3 id:SV_DispatchThreadID){output.Store(0,id.x);}";
     CHECK(SUCCEEDED(D3DCompile(shader,strlen(shader),nullptr,nullptr,nullptr,"main","cs_5_0",0,0,&shaderCode,nullptr)));
@@ -163,7 +168,7 @@ int main(int argc,char **argv) {
             ctx->ClearRenderTargetView(target,background);drawMenu(chain);checkMenuBounds(size[0],size[1]);
             capture(chain,"aim-on-1280x720.bmp");nativeAimZoom=0;
         }
-        for(unsigned page:{0u,2u}) {
+        for(unsigned page:{0u,(keybinds::count-1)/bindingsPageSize}) {
             menuOpen=false;bindingsOpen=true;selectedBinding=page*bindingsPageSize;publishMenuState();
             ctx->ClearRenderTargetView(target,background);drawMenu(chain);ctx->ClearRenderTargetView(target,background);drawMenu(chain);
             CHECK(ImGui::GetDrawData()->TotalVtxCount>0);checkMenuBounds(size[0],size[1]);
@@ -176,11 +181,8 @@ int main(int argc,char **argv) {
     }
     tap(chain,VK_INSERT);CHECK(!menuOpen && !bindingsOpen);tap(chain,VK_F1);CHECK(pending==-1 && configWanted==1);
     tap(chain,VK_ADD);tap(chain,VK_F12);tap(chain,VK_F7);CHECK(configWanted==1 && fovDegrees==80 && speedPercent==125);
-    ctx->CSSetShader(nullptr,nullptr,0);compute->Release();releaseRenderer();green_layers::detach();
-    for(unsigned i=0;i<slotCount;i++){
-        if(*slots[i].address!=slots[i].replacement)printf("SLOT CHANGED %u address=%p actual=%p replacement=%p original=%p\n",i,slots[i].address,*slots[i].address,slots[i].replacement,slots[i].original);
-        CHECK(replacePointer(slots[i].address,slots[i].replacement,slots[i].original));
-    }
+    ctx->CSSetShader(nullptr,nullptr,0);compute->Release();releaseRenderer();
+    for(unsigned i=0;i<slotCount;i++)CHECK(replacePointer(slots[i].address,slots[i].replacement,slots[i].original));
     CHECK(replacePointer((void **)&importSlot,(void *)gameCreateFactory,(void *)factoryOriginal));
     chain->Release();ctx->Release();dev->Release();adapter->Release();factory->Release();DestroyWindow(window);
     puts("PASS: real factory/device/swapchain capture, delay-IAT rearm, configurable foreground/key edges, shader/target restoration, main/config pages inside viewport at 720p/4K/ultrawide, resize and release without retained buffers.");

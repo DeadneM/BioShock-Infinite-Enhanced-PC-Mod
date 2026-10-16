@@ -20,3 +20,5 @@ bool saveSpeedSetting(int percent);
 bool saveFOVSetting(int degrees);
 
 extern volatile LONG nativeFovRequest,nativeFovResult;
+extern volatile LONG nativeSliderPercent;
+bool saveNativeSliderSetting(int percent);

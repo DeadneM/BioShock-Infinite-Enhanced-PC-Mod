@@ -1,5 +1,13 @@
 # InfiniteMod - English gameplay mod and native FOV experiment
 
+**Current branch candidate0.27: global hotkeys and native display preferences.**
+Ctrl+F10 toggles commands without the menu (default ON). Minus/Plus save the native
+FOV slider; F9 cycles HUD scale. Display changes apply at the next launch; use
+Launch-Mod.ps1 for a saved FOV slider. Existing custom keys are preserved.
+Green diagnostics and experimental lens/camera corrections are retired.
+See [controls, limitations and rollback](docs/BUILD-v027.md). Older sections below
+are historical; they do not describe the current runtime or current validation.
+
 **Experimental branch 0.26.0: opt-in green visual selector.** See
 [controls, limitations and rollback](docs/GREEN-DIAGNOSTIC.md). Ctrl+Alt+F5
 temporarily enables F5/F6/F7 shader-pair selection and F8 clearing. Green marks

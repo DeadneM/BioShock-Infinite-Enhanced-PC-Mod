@@ -1,5 +1,18 @@
 # Cumulative TODO
 
+## 0.27 global shortcuts / native settings
+
+- [x] Retire green runtime; preserve accepted gameplay and custom assignments.
+- [x] Implement default-ON persisted global toggle and remapping entry.
+- [x] Add native slider preference controls and closed-game preparation helper.
+- [x] Final build, retained/new checks and menu layout verification.
+- [x] Root ZIP and installer/rollback verification.
+- [x] Install after closure, preserving current INI and native options.
+- [ ] Player verifies global commands and next-launch native settings.
+
+Optical lens/viewmodel correction is abandoned at the player's request. Earlier
+pending research below is historical, not an active task.
+
 ## Limited lens prototype gate - October 16
 
 - [x] Record player-visible candidates23/24/25 and saturated registry.

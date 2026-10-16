@@ -7,6 +7,8 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     wcscpy(originalIni,modIni);CHECK(GetCurrentDirectoryW(MAX_PATH,directory));
     CHECK(swprintf(fixtureIni,MAX_PATH,L"%ls\\overlay-bindings-%lu-%lu.ini",directory,GetCurrentProcessId(),GetTickCount())>0);
     CHECK(WritePrivateProfileStringW(L"Other",L"Preserve",L"unchanged",fixtureIni));wcscpy(modIni,fixtureIni);
+    CHECK(readGlobalHotkeys(fixtureIni));
+    CHECK(persistGlobalHotkeys(fixtureIni,false));CHECK(!readGlobalHotkeys(fixtureIni));
     for(auto &key:keys)key=0;
     overlayBindings.resetDefaults();bindingsLoaded=false;bindingsOpen=false;menuOpen=false;bindingsReturnToMain=false;
     selectedWeapon=0;selectedBinding=0;*bindingsNotice=0;bindingsError=false;settingError=false;
@@ -44,7 +46,7 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     // Each accepted action and the appended experimental action is reachable.
     CHECK(selectedBinding==0);
     for(unsigned i=1;i<keybinds::count;++i){tapBinding(VK_DOWN);CHECK(selectedBinding==i);}
-    CHECK(selectedBinding/bindingsPageSize==2);tapBinding(VK_DOWN);CHECK(selectedBinding==0);
+    CHECK(selectedBinding/bindingsPageSize==(keybinds::count-1)/bindingsPageSize);tapBinding(VK_DOWN);CHECK(selectedBinding==0);
     tapBinding(VK_UP);CHECK(selectedBinding==keybinds::count-1);tapBinding(VK_DOWN);CHECK(selectedBinding==0);
     // Rebind Insert. A conflicting F2 is rejected while keeping capture open;
     // a held grant key during capture cannot execute the grant behind the UI.
@@ -86,12 +88,14 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     tapBinding(VK_F12);CHECK(configWanted==0);tapBinding(VK_F12);CHECK(configWanted==1);
     for(int expected:{125,150,175,200,100}){tapBinding(VK_F7);CHECK(speedPercent==expected);}
     press(VK_F7);frame();CHECK(speedPercent==125);release(VK_F7);
-    tapBinding(VK_SUBTRACT);CHECK(fovDegrees==80);press(VK_ADD);frame();CHECK(fovDegrees==85);release(VK_ADD);
-    for(int i=0;i<12;++i)tapBinding(VK_ADD);CHECK(fovDegrees==130);
-    for(int i=0;i<12;++i)tapBinding(VK_SUBTRACT);CHECK(fovDegrees==80);
-    tapBinding(VK_OEM_PLUS);CHECK(fovDegrees==85);tapBinding(VK_OEM_MINUS);CHECK(fovDegrees==80);
-    keys[VK_SHIFT]=static_cast<SHORT>(0x8000);tapBinding(VK_OEM_PLUS);CHECK(fovDegrees==85);keys[VK_SHIFT]=0;frame();tapBinding(VK_OEM_MINUS);CHECK(fovDegrees==80);
-    focus=nullptr;tapBinding(VK_ADD);tapBinding(VK_F7);CHECK(fovDegrees==80 && speedPercent==125);focus=window;frame();
+    nativeSliderPercent=0;
+    tapBinding(VK_SUBTRACT);CHECK(nativeSliderPercent==0);press(VK_ADD);frame();CHECK(nativeSliderPercent==5);release(VK_ADD);
+    for(int i=0;i<22;++i)tapBinding(VK_ADD);CHECK(nativeSliderPercent==100);
+    for(int i=0;i<22;++i)tapBinding(VK_SUBTRACT);CHECK(nativeSliderPercent==0);
+    tapBinding(VK_OEM_PLUS);CHECK(nativeSliderPercent==5);tapBinding(VK_OEM_MINUS);CHECK(nativeSliderPercent==0);
+    keys[VK_SHIFT]=static_cast<SHORT>(0x8000);tapBinding(VK_OEM_PLUS);CHECK(nativeSliderPercent==5);keys[VK_SHIFT]=0;frame();tapBinding(VK_OEM_MINUS);CHECK(nativeSliderPercent==0);
+    CHECK(GetPrivateProfileIntW(L"Display",L"NativeFOVSlider",-1,fixtureIni)==0);
+    focus=nullptr;tapBinding(VK_ADD);tapBinding(VK_F7);CHECK(nativeSliderPercent==0 && speedPercent==125);focus=window;frame();
     // Cancelled capture keeps the key and doesn't close its menu on the same
     // Escape; saving failure leaves the old binding functional and visible.
     tapBinding('J');CHECK(bindingsOpen);selectedBinding=0;tapBinding(VK_RETURN);tapBinding(VK_ESCAPE);
@@ -108,6 +112,14 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     tapBinding(VK_RETURN);CHECK(overlayBindings.capturing());tapBinding(VK_ESCAPE);CHECK(bindingsOpen && !overlayBindings.capturing());
     tapBinding(VK_ESCAPE);CHECK(menuOpen && !bindingsOpen);tapBinding(VK_UP);CHECK(!menuOpen);tapBinding(VK_DOWN);CHECK(bindingsOpen && !menuOpen);
     tapBinding(VK_ESCAPE);CHECK(!menuOpen && !bindingsOpen);
+    // Global toggle is available even with the menu closed and global actions OFF.
+    keys[VK_CONTROL]=(SHORT)0x8000;frame();tapBinding(VK_F10);keys[VK_CONTROL]=0;frame();
+    CHECK(globalHotkeys && readGlobalHotkeys(fixtureIni) && !menuOpen);
+    available=true;lastSeen=GetTickCount();tapBinding(VK_F2);CHECK(pending==-2);pending=-1;
+    lastSeen=GetTickCount();tapBinding(VK_F5);CHECK(pending==selectedWeapon && pendingDestination==0);pending=-1;
+    focus=nullptr;tapBinding(VK_F2);CHECK(pending==-1);focus=window;frame();
+    keys[VK_CONTROL]=(SHORT)0x8000;frame();tapBinding(VK_F10);keys[VK_CONTROL]=0;frame();
+    CHECK(!globalHotkeys && !readGlobalHotkeys(fixtureIni));tapBinding(VK_F2);CHECK(pending==-1);
     // Leave stable defaults for the existing rendering/state-restoration tests.
     CHECK(DeleteFileW(fixtureIni));wcscpy(modIni,originalIni);overlayBindings.resetDefaults();bindingsLoaded=true;
     selectedBinding=0;menuOpen=true;bindingsOpen=false;bindingsReturnToMain=false;bindingsError=false;*bindingsNotice=0;

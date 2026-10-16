@@ -5,6 +5,10 @@
   user's explicit instruction; a general request to continue work is not launch
   permission.
 - Keep the mod UI, repository documentation and Git messages in English.
+- October 16: optical/viewmodel correction is abandoned. Current authorized work
+  is default-ON global hotkeys and native FOV-slider/HUD preferences. No lens or
+  green render hooks should return to this candidate. Launch permission remains
+  required every time, including use of the native-preparation launcher.
 - Preserve validated gameplay, current INI values and custom bindings. Separate
   experimental work from accepted releases and provide a checked rollback.
 - Distinguish build/package checks from player validation. Read the current

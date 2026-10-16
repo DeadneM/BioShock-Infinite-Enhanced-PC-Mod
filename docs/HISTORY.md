@@ -1,5 +1,13 @@
 # Cumulative history
 
+## October 16 - abandon optical correction; add global shortcuts
+
+At the player's request abandon the FOV/lens correction project. Preserve gameplay
+and retire the0.26 green runtime. New0.27 candidate adds default-ON outside-menu
+commands, a rebindable persistent toggle, and native FOV-slider/HUD preferences.
+FOV is a closed-game next-launch native token edit, not a live camera modification.
+No launch or player validation inferred. See BUILD-v027.md and delivery record.
+
 ## October 16 - green screenshots and lens gate
 
 Player provides five screenshots: candidate23 covers revolver,24 hands/arms,

@@ -2,6 +2,7 @@
 #include "weapons.h"
 #include "aim.h"
 #include "keybinds.h"
+#include "hotkey_setting.h"
 #include <d3d11.h>
 #include <stdio.h>
 #include "imgui.h"
@@ -38,7 +39,6 @@ static void *originalFor(void **address) {
     for(unsigned i=0;i<slotCount;i++) if(slots[i].address==address) {original=slots[i].original;break;}
     ReleaseSRWLockShared(&slotLock);return original;
 }
-#include "green_layers.inl"
 typedef HRESULT (WINAPI *FactoryFn)(REFIID,void **);
 typedef HRESULT (STDMETHODCALLTYPE *SwapFn)(IDXGIFactory *,IUnknown *,DXGI_SWAP_CHAIN_DESC *,IDXGISwapChain **);
 typedef HRESULT (STDMETHODCALLTYPE *PresentFn)(IDXGISwapChain *,UINT,UINT);
@@ -48,15 +48,12 @@ static bool menuOpen,bindingsOpen,bindingsReturnToMain,settingError,bindingsLoad
 static unsigned selectedBinding;
 static int selectedWeapon;
 static keybinds::Engine overlayBindings;
+static bool globalHotkeys=true;
 static char bindingsNotice[256];
 static bool navigationHeld[4],navigationFocused;
 static constexpr unsigned bindingsPageSize=8;
 static const int aimKeys[]={VK_MBUTTON,VK_RBUTTON,'Z',VK_XBUTTON1,VK_XBUTTON2};
-static SHORT diagnosticKeyQuery(int key) {return GetAsyncKeyState(key);}
-static SHORT overlayKeyQuery(int key) {
-    if(green_layers::enabled && key>=VK_F5 && key<=VK_F8)return 0;
-    return GetAsyncKeyState(key);
-}
+static SHORT overlayKeyQuery(int key) {return GetAsyncKeyState(key);}
 static std::string shortcutLabel(keybinds::Action action) {
     keybinds::Chord chord=overlayBindings.binding(action);
     if(chord.modifiers==0 && chord.key==VK_OEM_MINUS)return "-";
@@ -66,6 +63,7 @@ static std::string shortcutLabel(keybinds::Action action) {
 static void loadOverlayBindings() {
     if(bindingsLoaded)return;
     keybinds::LoadReport result=overlayBindings.load(modIni);bindingsLoaded=true;
+    globalHotkeys=readGlobalHotkeys(modIni);
     if(result.invalid || result.conflicts) {
         bindingsError=true;
         snprintf(bindingsNotice,sizeof(bindingsNotice),"Invalid (%u) or conflicting (%u) shortcuts: defaults restored.",result.invalid,result.conflicts);
@@ -87,7 +85,7 @@ static void updateMenuInput(bool focused) {
         navigationHeld[i]=down;
     }
     navigationFocused=focused;
-    keybinds::Events events=overlayBindings.pollEdges(focused,menuOpen && !bindingsOpen,false,overlayKeyQuery);
+    keybinds::Events events=overlayBindings.pollEdges(focused,(menuOpen || globalHotkeys) && !bindingsOpen,false,overlayKeyQuery);
     if(overlayBindings.capturing()) {
         keybinds::CaptureResult result=overlayBindings.pollCapture(focused,overlayKeyQuery);
         if(result.status==keybinds::CaptureStatus::Conflict) {
@@ -134,7 +132,13 @@ static void updateMenuInput(bool focused) {
     }
     if(!focused)return;
     if(bindingsOpen)return;
-    if(!menuOpen)return;
+    if(events.has(Action::GlobalHotkeys)) {
+        bool next=!globalHotkeys;
+        settingError=!persistGlobalHotkeys(modIni,next);
+        if(!settingError)globalHotkeys=next;
+        return;
+    }
+    if(!menuOpen && !globalHotkeys)return;
     if(events.has(Action::Vitals))requestVitals();
     if(events.has(Action::Ammo))requestAmmo();
     if(events.has(Action::WeaponPrevious))selectedWeapon=(selectedWeapon+weaponChoiceCount-1)%weaponChoiceCount;
@@ -154,12 +158,12 @@ static void updateMenuInput(bool focused) {
         settingError=!saveSpeedSetting(value>=100 && value<200 && value%25==0?value+25:100);
     }
     if(events.has(Action::FovDecrease)) {
-        int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
-        if(value>80)settingError=!saveFOVSetting(value<85?80:value-5);
+        int value=(int)InterlockedCompareExchange(&nativeSliderPercent,0,0);
+        if(value>0)settingError=!saveNativeSliderSetting(value<5?0:value-5);
     }
     if(events.has(Action::FovIncrease)) {
-        int value=(int)InterlockedCompareExchange(&fovDegrees,0,0);
-        if(value<130)settingError=!saveFOVSetting(value>125?130:value+5);
+        int value=(int)InterlockedCompareExchange(&nativeSliderPercent,0,0);
+        if(value>=0 && value<100)settingError=!saveNativeSliderSetting(value>95?100:value+5);
     }
     if(events.has(Action::NativeAimZoom)) {
         modLog("Reserved aim shortcut: native aiming remains active; saved preference unchanged.");
@@ -209,11 +213,10 @@ static void drawShortcut(keybinds::Action action,const char *description) {
 static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,0.72f,0.3f,1),"%s",label);}
 static const char *aimZoomLabel() { return "NATIVE"; }
 static void drawMainMenuContents() {
-    ImGui::TextDisabled("0.26 GREEN DIAGNOSTIC | Ctrl+Alt+F5: temporary visual selector");
     using Action=keybinds::Action;
-    drawMenuSection("INFINITEMOD");
+    drawMenuSection("INFINITEMOD 0.27");
     ImGui::TextDisabled("%s: menu | %s: shortcuts",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
-    ImGui::TextDisabled("Commands are active with this menu open. The game continues.");
+    ImGui::TextWrapped("%s   Hotkeys without menu: %s",shortcutLabel(Action::GlobalHotkeys).c_str(),globalHotkeys?"ON":"OFF");
     ImGui::Separator();
     if(ImGui::BeginTable("mainColumns",2,ImGuiTableFlags_SizingStretchSame)) {
         ImGui::TableNextRow();ImGui::TableSetColumnIndex(0);
@@ -236,12 +239,11 @@ static void drawMainMenuContents() {
         ImGui::TableSetColumnIndex(1);
         drawMenuSection("MOVEMENT AND FOV");
         ImGui::TextWrapped("%s   Speed: x%.2f",shortcutLabel(Action::Speed).c_str(),(double)InterlockedCompareExchange(&speedPercent,0,0)/100.0);
-        double percent=((double)InterlockedCompareExchange(&fovDegrees,0,0)/75.0-1.0)*100.0;
-        ImGui::TextWrapped("%s / %s   Native FOV range: +%.1f%%",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),percent);
-        ImGui::TextWrapped("Adjust the FOV slider in the game options. Restart with the mod launcher after changing its range.");
-        LONG rangeState=InterlockedCompareExchange(&nativeFovResult,0,0);
-        ImGui::TextWrapped("%s",rangeState<0?"Native FOV configuration unavailable: see log.":rangeState==2?"Saved. Restart with the mod launcher to apply.":rangeState==1?"Native FOV range configured.":"Checking native FOV range...");
-        ImGui::TextWrapped("Aim zoom: %s. Experimental aim shortcut reserved.",aimZoomLabel());
+        LONG slider=InterlockedCompareExchange(&nativeSliderPercent,0,0);
+        if(slider<0)ImGui::TextWrapped("Native FOV slider unavailable: leave the native configuration intact.");
+        else ImGui::TextWrapped("%s / %s   Native FOV slider: %ld%%",shortcutLabel(Action::FovDecrease).c_str(),shortcutLabel(Action::FovIncrease).c_str(),slider);
+        ImGui::TextWrapped("Saved preference, not degrees or live FOV. Apply at next start with Launch-Mod.ps1.");
+        ImGui::TextWrapped("Aim zoom: %s.",aimZoomLabel());
         char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
         ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");
         bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();
@@ -319,30 +321,13 @@ static void drawMenu(IDXGISwapChain *chain) {
     io.DeltaTime=delta>0 && delta<1?(float)delta:1.0f/60;
     ImGuiStyle &style=ImGui::GetStyle();style.WindowPadding=ImVec2(20*scale,18*scale);style.ItemSpacing=ImVec2(10*scale,10*scale);style.WindowRounding=8*scale;
     ImGui_ImplDX11_NewFrame();ImGui::NewFrame();
-    if(green_layers::enabled) {
-        if(green_layers::image && green_layers::selected<green_layers::count)
-            ImGui::GetBackgroundDrawList()->AddImage((ImTextureID)(intptr_t)green_layers::image,ImVec2(0,0),io.DisplaySize);
-        ImGui::SetNextWindowPos(ImVec2(12*scale,12*scale),ImGuiCond_Always);
-        ImGui::SetNextWindowBgAlpha(0.9f);
-        ImGui::Begin("Green diagnostic",nullptr,ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoSavedSettings);
-        ImGui::Text("EXPERIMENTAL / GREEN SILHOUETTES");
-        ImGui::Text("F5: opaque/write | F6: opaque/no write | F7: blend | F8: clear");
-        ImGui::Text("Repeat a key: next shader pair. Ctrl+Alt+F5: exit diagnostic.");
-        ImGui::Text("Candidate: %u | known pairs: %u / 192 | matched draws: %u",green_layers::selected<green_layers::count?green_layers::selected+1:0,green_layers::count,green_layers::matched);
-        if(!green_layers::hooksReady || !green_layers::target)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Diagnostic unavailable: hooks or private mask failed. No selection applied.");
-        ImGui::Text("Ownership UNKNOWN. Silhouettes ignore occlusion and alpha cutouts.");
-        ImGui::End();
-    }
-    if(menuOpen || bindingsOpen) {
     ImGui::SetNextWindowPos(ImVec2(desc.Width*0.5f,desc.Height*0.5f),ImGuiCond_Always,ImVec2(0.5f,0.5f));
     float menuWidth=1100*scale;if(menuWidth>desc.Width-40*scale)menuWidth=desc.Width-40*scale;
     ImGui::SetNextWindowSize(ImVec2(menuWidth,0),ImGuiCond_Always);
     ImGui::SetNextWindowBgAlpha(0.97f);
     ImGui::Begin("InfiniteMod",nullptr,ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_AlwaysAutoResize);
     if(bindingsOpen)drawBindingsMenuContents();else drawMainMenuContents();
-    ImGui::End();
-    }
-    ImGui::Render();
+    ImGui::End();ImGui::Render();
 
     // Restore every state touched by the backend, including stages it clears.
     ID3D11RenderTargetView *oldTargets[8]={};ID3D11DepthStencilView *depth=nullptr;
@@ -368,18 +353,8 @@ static HRESULT STDMETHODCALLTYPE gamePresent(IDXGISwapChain *chain,UINT sync,UIN
             weaponWindow(desc.OutputWindow);
             if(frames==1 || frames==120 || frames==600) modLog("GAME Present #%lu: %ux%u, window=%p, thread=%lu",frames,desc.BufferDesc.Width,desc.BufferDesc.Height,desc.OutputWindow,GetCurrentThreadId());
             bool focused=desc.OutputWindow && GetForegroundWindow()==desc.OutputWindow;
-            green_layers::input(focused,diagnosticKeyQuery);
             updateMenuInput(focused);
-            if(green_layers::enabled && renderer(chain)) {
-                green_layers::attach(context);
-                ID3D11Texture2D *bb=nullptr;
-                if(SUCCEEDED(chain->GetBuffer(0,__uuidof(ID3D11Texture2D),(void **)&bb))) {
-                    D3D11_TEXTURE2D_DESC size;bb->GetDesc(&size);bb->Release();
-                    green_layers::prepare(device,size.Width,size.Height);
-                }
-            }
-            if((menuOpen || bindingsOpen || green_layers::enabled) && focused) drawMenu(chain);
-            if(context)green_layers::endFrame(context);
+            if((menuOpen || bindingsOpen) && focused) drawMenu(chain);
         }
         ReleaseSRWLockExclusive(&drawLock);
     }
@@ -391,12 +366,6 @@ static HRESULT STDMETHODCALLTYPE gameCreateSwap(IDXGIFactory *factory,IUnknown *
     SwapFn original=(SwapFn)originalFor(&(*(void ***)factory)[10]);if(!original)return E_UNEXPECTED;
     HRESULT result=original(factory,dev,desc,out);
     if(SUCCEEDED(result) && out && *out) {
-        ID3D11Device *graphics=nullptr;
-        if(SUCCEEDED((*out)->GetDevice(__uuidof(ID3D11Device),(void **)&graphics))) {
-            ID3D11DeviceContext *ctx=nullptr;graphics->GetImmediateContext(&ctx);
-            bool attached=green_layers::attach(ctx);ctx->Release();graphics->Release();
-            modLog("Green visual diagnostic hooks: %s (OFF by default)",attached?"ready":"unavailable");
-        }
         bool ok=hookSlot(&(*(void ***)*out)[8],(void *)gamePresent);
         modLog("GAME swap chain created: capture=%s, result=%08lx",ok?"ready":"failed",result);
     } else modLog("GAME swap chain creation failed %08lx",result);

@@ -13,6 +13,13 @@ volatile LONG hudWanted=100,hudApplied=0,hudResult=0,aimWanted=0,aimKey=VK_MBUTT
 volatile LONG speedPercent=100,fovDegrees=80;
 volatile LONG nativeAimZoom=0;
 volatile LONG nativeFovRequest=1,nativeFovResult=0;
+volatile LONG nativeSliderPercent=-1;
+bool saveNativeSliderSetting(int percent) {
+    if(percent<0 || percent>100)return false;
+    wchar_t value[16];swprintf(value,16,L"%d",percent);
+    if(!WritePrivateProfileStringW(L"Display",L"NativeFOVSlider",value,modIni))return false;
+    InterlockedExchange(&nativeSliderPercent,percent);return true;
+}
 bool saveNativeAimZoom(bool) { return false; } // Reserved binding; old INI preference retained.
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden) {
@@ -86,7 +93,7 @@ static DWORD WINAPI start(void *) {
     swprintf(modIni,MAX_PATH,L"%lsInfiniteMod.ini",path);
     wchar_t logPath[MAX_PATH];swprintf(logPath,MAX_PATH,L"%lsInfiniteMod.log",path);
     logFile=CreateFileW(logPath,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,nullptr,OPEN_ALWAYS,0,nullptr);
-    modLog("InfiniteMod 0.26.0 GREEN DIAGNOSTIC EXPERIMENTAL; native camera/aim; optional visual shader-pair selector.");
+    modLog("InfiniteMod 0.27.0 EXPERIMENTAL; global shortcuts/native slider settings; no diagnostic or camera overrides.");
     if(!GetPrivateProfileIntW(L"General",L"Enabled",1,modIni)) {modLog("Disabled.");return 0;}
     BYTE *image=(BYTE *)GetModuleHandleW(nullptr);
     auto *dos=(IMAGE_DOS_HEADER *)image;
@@ -98,6 +105,8 @@ static DWORD WINAPI start(void *) {
     if(GetPrivateProfileIntW(L"Overlay",L"Enabled",1,modIni))
         modLog("Graphics import capture: %s",installGameGraphicsImport(image)?"ready; waiting for game's factory":"failed");
     loadPlayerSettings();
+    int slider=-1;
+    if(readNativeSliderPreference(modIni,slider) && slider>=0)InterlockedExchange(&nativeSliderPercent,slider);
     bool commands=installWeapons(image);
     modLog("Gameplay command initialization: %s",commands?"ready":"unavailable; no gameplay calls");
     if(commands)installAim(image);
@@ -132,6 +141,12 @@ static DWORD WINAPI start(void *) {
     wchar_t optionsPath[MAX_PATH]={};wcscpy(optionsPath,gameIni);
     wchar_t *optionsSlash=wcsrchr(optionsPath,L'\\');
     if(optionsSlash)wcscpy(optionsSlash+1,L"XUserOptions.ini");
+    if(nativeSliderPercent<0 && optionsSlash) {
+        std::string raw,text,value;bool wide=false;size_t begin=0,length=0;
+        if(readConfigBytes(optionsPath,raw) && decodeUIConfig(raw,text,wide)
+            && nativeFOVToken(text,value,begin,length,"fieldofview",1.0))
+            InterlockedExchange(&nativeSliderPercent,(LONG)lround(strtod(value.c_str(),nullptr)*100));
+    }
     for(;;) {
         if(InterlockedExchange(&nativeFovRequest,0)) {
             std::string raw,text,value;bool wide=false;size_t begin=0,length=0;
