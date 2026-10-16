@@ -1,5 +1,16 @@
 # Cumulative technical notebook
 
+## October 16 - player green evidence and limited lens feasibility gate
+
+Player screenshots show revolver23, hands/arms24 and sleeve25, plus broad67 and
+likely HUD-related68. These are session-local identities;192/192 entries means
+coverage is incomplete. The player-visible mask works for these shown parts.
+Offline source check confirms no isolated native RGB layer or clean underlying
+world image is captured. Green replay is not lens-ready segmentation. Exclude
+a masked final-image warp and unqualified original-PS single-target replay.
+No lens build/install/launch or new observation. See LENS-PROTOTYPE-GATE.md for
+the exact blocker and success criterion, without claiming engine impossibility.
+
 ## October 16 - separate green mask prototype
 
 User now authorizes opt-in visual selection. Four immediate draw variants replay

@@ -1,5 +1,14 @@
 # Cumulative history
 
+## October 16 - green screenshots and lens gate
+
+Player provides five screenshots: candidate23 covers revolver,24 hands/arms,
+25 sleeve,67 broad surfaces and68 a lower-left HUD-area rectangle. Registry
+is full. Record narrow visual proof, not stable ownership or complete rig/FX.
+Source feasibility check finds only silhouettes, not isolated color layers.
+Do not install a masked warp with known old-image/occlusion errors. Lens prototype
+remains unimplemented pending a qualified composition/projection boundary.
+
 ## October 16 - opt-in green visual selector
 
 User authorizes a temporary F5-F8 diagnostic to visually identify the rig.

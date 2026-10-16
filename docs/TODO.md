@@ -1,5 +1,15 @@
 # Cumulative TODO
 
+## Limited lens prototype gate - October 16
+
+- [x] Record player-visible candidates23/24/25 and saturated registry.
+- [x] Check whether the green implementation provides isolated color/coverage.
+- [x] Exclude masked final-image warping: missing clean underlying scene/layer.
+- [ ] Qualify complete first-person composition or native projection boundary.
+- [ ] Only then implement the common lens prototype; no new build justified yet.
+
+See LENS-PROTOTYPE-GATE.md. No lens correction is built or validated.
+
 ## 0.26 temporary green visual selector
 
 - [x] Read current delivery, source and failed selection evidence.
@@ -8,7 +18,7 @@
 - [x] Complete final build, offscreen state/pixel and retained checks.
 - [x] Check root ZIP and transactional installer/rollback fixtures.
 - [x] Install only after confirming normal closure, preserving current INIs.
-- [ ] Ask before launch; obtain player identification of green candidate groups.
+- [x] Player supplies screenshots identifying green candidate groups after manual launch.
 - [ ] Do not mistake successful green geometry for a lens-ready segmentation.
 
 ## 0.25 native slider experiment
