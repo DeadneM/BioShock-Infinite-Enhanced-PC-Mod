@@ -71,6 +71,7 @@ if($Version -eq '0.27.0') {
 if($Version -eq '0.28.0') {
     foreach($doc in @('BUILD-v028.md','DELIVERY-v028.md')){$files+=@{path=('docs/'+$doc);source=(Join-Path $repo ('docs/'+$doc))}}
 }
+if($Version -eq '0.29.0'){$files+=@{path='docs/BUILD-v029.md';source=(Join-Path $repo 'docs/BUILD-v029.md')}}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
 foreach($file in $files) {

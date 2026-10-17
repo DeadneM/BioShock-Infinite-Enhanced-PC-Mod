@@ -24,3 +24,6 @@ extern volatile LONG nativeSliderPercent;
 bool saveNativeSliderSetting(int percent);
 extern volatile LONG controllerAimButton,controllerAimThreshold;
 bool saveControllerAimButton(int index);
+extern volatile LONG inputGains[6];
+bool saveInputGain(unsigned index,int percent);
+LONG inputProfileStatus();

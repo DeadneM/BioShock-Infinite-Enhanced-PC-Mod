@@ -14,7 +14,8 @@ enum class Action : unsigned {
     MainMenu, BindingsMenu, Vitals, Ammo, WeaponPrevious, WeaponNext, GiveMain,
     GiveSecondary, Speed, SkipIntros, Powers, Gear, WeaponUpgrades, VigorUpgrades,
     Infusions, Money, Lockpicks, Crosshair, HUD, HoldAim, AimKey, FovDecrease,
-    FovIncrease, NativeAimZoom, GlobalHotkeys, ControllerAimKey, Count
+    FovIncrease, NativeAimZoom, GlobalHotkeys, ControllerAimKey,
+    MouseNormal,MouseADS,MouseSniper,PadNormal,PadADS,PadSniper,Count
 };
 constexpr unsigned count=static_cast<unsigned>(Action::Count);
 enum Modifier : unsigned { Control=1, Alt=2, Shift=4, Win=8 };
@@ -48,7 +49,13 @@ inline constexpr Definition definitions[count]={
     {L"FovIncrease","Increase live world FOV",{VK_OEM_PLUS,0},true},
     {L"NativeAimZoom","Proportional aim zoom: ON / OFF",{VK_F9,Control},true},
     {L"GlobalHotkeys","Hotkeys without the menu: ON / OFF",{VK_F10,Control},false},
-    {L"ControllerAimKey","Change controller hold-aim button",{VK_F11,Control},true}
+    {L"ControllerAimKey","Change controller hold-aim button",{VK_F11,Control},true},
+    {L"MouseNormal","Mouse normal sensitivity",{'1',Control},true},
+    {L"MouseADS","Mouse ADS sensitivity",{'2',Control},true},
+    {L"MouseSniper","Mouse sniper sensitivity",{'3',Control},true},
+    {L"PadNormal","Controller normal sensitivity",{'4',Control},true},
+    {L"PadADS","Controller ADS sensitivity",{'5',Control},true},
+    {L"PadSniper","Controller sniper sensitivity",{'6',Control},true}
 };
 inline bool validAction(Action action) {return static_cast<unsigned>(action)<count;}
 struct ChordList {Chord chords[3];unsigned size;};

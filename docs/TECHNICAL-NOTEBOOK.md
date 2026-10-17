@@ -1,3 +1,7 @@
+## October 17 - 0.29 local input profiles candidate
+
+Six independent mouse/controller normal, ADS and sniper multipliers are implemented on experiment/input-comfort. All default to x1. Local tests pass; actual game consumption is unverified. Bobbing/sway remains pending. No installation, publication or game launch. See [build record](BUILD-v029.md).
+
 # Cumulative technical notebook
 
 ## October16 -0.28 requested camera/aim restoration
@@ -468,11 +472,11 @@ does not validate the rendered result.
 - **Speed**: adapts the local player's walking/running and sprint attribute
   results. x1 restores the native result; no multiplier is persistently
   written into the character.
-- **0.15 FOV**: world setting 80–130 at the local player's camera calculation.
+- **0.15 FOV**: world setting 80â€“130 at the local player's camera calculation.
   Aiming transitions keep their native calculation. First-person model FOV
   and zoom at high FOV are known limitations.
 
-## 0.18 — configurable shortcuts
+## 0.18 â€” configurable shortcuts
 
 One keybinds::Engine instance owns the configuration and key-edge history.
 Each action is identified independently of its key. Modifiers match exactly:
@@ -494,7 +498,7 @@ The shortcut menu can open without opening the main menu. Grant and setting
 commands keep their conditions: main menu open and game in the foreground.
 Mod shortcuts do not change the game's internal bindings.
 
-## 0.18 — refill current gauge values
+## 0.18 â€” refill current gauge values
 
 F1 fills health, shield, and salts up to their current capacities. It does
 not replace the Ctrl+F5 infusion command, which increases capacities. It does
@@ -521,9 +525,9 @@ been player-confirmed; a separate F1 test on that binary was not reported.
 
 ## Why the FOV experiments are not retained
 
-Builds 0.16–0.17.1 passed mathematics, ABI, or loading checks without achieving
+Builds 0.16â€“0.17.1 passed mathematics, ABI, or loading checks without achieving
 a satisfactory visual result. Weapons, reload parts, and firing effects were
-not all aligned. Player feedback and videos take precedence over “hook ready”
+not all aligned. Player feedback and videos take precedence over â€œhook readyâ€
 messages or synthetic tests.
 
 Earlier reads identified a DPG2 foreground route and a
@@ -616,7 +620,7 @@ are USER-VALIDATED. A restart-persistence test and every remapped action were no
 those remain distinguished from the integrated routing/INI-reload checks. Weapon/hand FOV remains unresolved.
 The accepted controls build can serve as the next retained base without importing rejected FOV hooks.
 
-## English localization checkpoint — October 12, 2026
+## English localization checkpoint â€” October 12, 2026
 
 Historical build checkpoint; its pending installation/player statements are
 superseded by the installation and confirmation checkpoint below.
@@ -649,7 +653,7 @@ game text or supply an independent weapon/hand FOV fix. The next optical
 experiment stays separate and must cover complete first-person rendering
 and proportional aiming rather than per-weapon offsets.
 
-## English installation and source checkpoint — October 12, 2026
+## English installation and source checkpoint â€” October 12, 2026
 
 The local ZIP is immutable at SHA256
 `1853FEF39BAFE9CCC6739B1E66A30A959E44999E86A956A4C82BF831B9EAA545`.

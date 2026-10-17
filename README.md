@@ -1,3 +1,7 @@
+## October 17 - 0.29 local input profiles candidate
+
+Six independent mouse/controller normal, ADS and sniper multipliers are implemented on experiment/input-comfort. All default to x1. Local tests pass; actual game consumption is unverified. Bobbing/sway remains pending. No installation, publication or game launch. See [build record](docs/BUILD-v029.md).
+
 # InfiniteMod - English gameplay mod and native FOV experiment
 
 **0.28 experimental: live world FOV, proportional ADS and XInput hold aim.**
@@ -64,7 +68,7 @@ See [the verified delivery](docs/DELIVERY-v0181.md).
 
 ## Accepted download and rollback
 
-[Installable v0.18.1 English ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.1-experimental/InfiniteMod-v0.18.1-English.zip) · [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.1-experimental)
+[Installable v0.18.1 English ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.18.1-experimental/InfiniteMod-v0.18.1-English.zip) Â· [Release notes](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.18.1-experimental)
 
 The downloaded ZIP was checked against SHA256
 `1853FEF39BAFE9CCC6739B1E66A30A959E44999E86A956A4C82BF831B9EAA545`.

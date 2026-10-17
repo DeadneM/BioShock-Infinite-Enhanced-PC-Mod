@@ -61,7 +61,7 @@ static void testKeybinds() {
     CHECK(swprintf(path,MAX_PATH,L"%ls\\keybinds-%lu-%lu.ini",directory,GetCurrentProcessId(),GetTickCount())>0);
     CHECK(WritePrivateProfileStringW(L"Other",L"Preserve",L"unchanged",path));
     Engine saved;
-    for(unsigned i=0;i<count;++i)CHECK(saved.rebind(static_cast<Action>(i),{static_cast<unsigned>('A'+i),Control|Shift}).ok);
+    for(unsigned i=0;i<count;++i)CHECK(saved.rebind(static_cast<Action>(i),{i<26?static_cast<unsigned>('A'+i):static_cast<unsigned>(VK_F1+i-26),Control|Shift}).ok);
     CHECK(saved.save(path));Engine loaded;LoadReport report=loaded.load(path);CHECK(!report.invalid && !report.conflicts);
     for(unsigned i=0;i<count;++i)CHECK(loaded.binding(static_cast<Action>(i))==saved.binding(static_cast<Action>(i)));
     wchar_t other[32];CHECK(GetPrivateProfileStringW(L"Other",L"Preserve",L"",other,32,path));CHECK(!wcscmp(other,L"unchanged"));

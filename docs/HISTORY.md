@@ -1,3 +1,7 @@
+## October 17 - 0.29 local input profiles candidate
+
+Six independent mouse/controller normal, ADS and sniper multipliers are implemented on experiment/input-comfort. All default to x1. Local tests pass; actual game consumption is unverified. Bobbing/sway remains pending. No installation, publication or game launch. See [build record](BUILD-v029.md).
+
 # Cumulative history
 
 ## October16 -0.28 live FOV and XInput hold aim
@@ -228,17 +232,17 @@ the entire build containing it.
 | Version | Change and result | Retained status |
 | --- | --- | --- |
 | 0.9 / 0.9.1 / 0.9.2, September 2026 | Overlay on the game's graphics device. The player confirmed the main menu and overlay. Manual logo skipping was not confirmed; automatic skipping of the four logos, with loading preserved, was then confirmed. Selective logo restoration was checked. | Overlay and automatic skipping **USER-VALIDATED**; manual skipping abandoned as the delivered solution |
-| 0.11, October 1, 2026 | Weapons, ammunition in both slots, and hold-to-aim. The player replied “yes, perfect” (translated); in-game reads confirmed magazine/reserve counts and the secondary weapon. | Features retained in the validated base; this version's initial HUD setting is not a visually validated result |
-| 0.12 / 0.12.1, October 1–2, 2026 | Speed x1 to x2 and world FOV 80–130. HUD revised to the native MaxResolutionUpScale ceiling; the incorrect ceiling causing excessive interface enlargement at 4K was removed. | World FOV and features retained; first-person rendering **known issue**, HUD effects require a separate check |
+| 0.11, October 1, 2026 | Weapons, ammunition in both slots, and hold-to-aim. The player replied â€œyes, perfectâ€ (translated); in-game reads confirmed magazine/reserve counts and the secondary weapon. | Features retained in the validated base; this version's initial HUD setting is not a visually validated result |
+| 0.12 / 0.12.1, October 1â€“2, 2026 | Speed x1 to x2 and world FOV 80â€“130. HUD revised to the native MaxResolutionUpScale ceiling; the incorrect ceiling causing excessive interface enlargement at 4K was removed. | World FOV and features retained; first-person rendering **known issue**, HUD effects require a separate check |
 | 0.13 / 0.13.1, October 4, 2026 | Grants for Vigors, gear, upgrades, money, and lockpicks. Money/lockpicks confirmed; catalog checks were too strict for some other items and were corrected after reading actual classes and properties. | Resources **USER-VALIDATED**; other grants initially rejected, corrections continued |
 | 0.14, October 5, 2026 | Carbine catalog corrected. Native reads: 48 weapon upgrades, 16 Vigor upgrades, 8 Vigors, and 49 gear items. The player subsequently confirmed the other grants but reported the crosshair. | Progression retained; this version's crosshair hiding **defective** |
-| 0.15, October 8, 2026 | Hiding of both crosshair widgets corrected; health/salts/shield infusions up to their native cap of ten each. The player confirmed “Crosshair OK and all three gauges at 10/10” (translated). Tests and independent reads agreed. | **USER-VALIDATED** predecessor; accepted features retained in 0.18, with a known first-person FOV limitation |
+| 0.15, October 8, 2026 | Hiding of both crosshair widgets corrected; health/salts/shield infusions up to their native cap of ten each. The player confirmed â€œCrosshair OK and all three gauges at 10/10â€ (translated). Tests and independent reads agreed. | **USER-VALIDATED** predecessor; accepted features retained in 0.18, with a known first-person FOV limitation |
 | 0.16 / 0.16.1, October 9, 2026 | First-person adaptation experiments. The player reported misaligned reload parts, cartridges, and firing effects. | **REJECTED** as visual fixes; validated progression features preserved separately |
-| 0.17 / 0.17.1, October 9–10, 2026 | Shared DPG2 projection experiment, followed by preservation of native camera calculations. Builds and mathematical checks passed, but videos and feedback still showed defects. The flash was aligned at world FOV 80 and offset at 120. | FOV fixes **REJECTED**; visual success is not inferred from tests alone |
-| 0.18.0, October 10–11, 2026 | Return to the 0.15 camera base. Requested default shortcuts, health/shield/salts refill, and a menu to edit all 23 shortcuts, including Insert. x86 compilation, integrated checks, installation, and public delivery were recorded. The player confirmed F1 refill and shortcut reassignment. | **BUILT**, **CHECKED**; F1/refill and remapping **USER-VALIDATED**. Current accepted controls base; restart persistence and every remapped action not separately confirmed |
+| 0.17 / 0.17.1, October 9â€“10, 2026 | Shared DPG2 projection experiment, followed by preservation of native camera calculations. Builds and mathematical checks passed, but videos and feedback still showed defects. The flash was aligned at world FOV 80 and offset at 120. | FOV fixes **REJECTED**; visual success is not inferred from tests alone |
+| 0.18.0, October 10â€“11, 2026 | Return to the 0.15 camera base. Requested default shortcuts, health/shield/salts refill, and a menu to edit all 23 shortcuts, including Insert. x86 compilation, integrated checks, installation, and public delivery were recorded. The player confirmed F1 refill and shortcut reassignment. | **BUILT**, **CHECKED**; F1/refill and remapping **USER-VALIDATED**. Current accepted controls base; restart persistence and every remapped action not separately confirmed |
 | 0.19, October 11, 2026 | FOV diagnostic experiment. Its observations did not produce a functional weapon/hand FOV correction. | **DIAGNOSTIC**; no functional FOV fix retained |
 | 0.20, October 11, 2026 | Renderer experiment. The player reported HUD flicker and no weapon/hand FOV correction. | **REJECTED**; excluded from the accepted controls base |
-| 0.18.1, October 11–12, 2026 | English localization from the accepted 0.18 controls checkpoint. Runtime edits change text, the version label, and equivalent fixture expectations while preserving behavior. The retained suite and x86 compilation passed; menu fixtures covered 720p/4K/ultrawide. Local ZIP, backup and installation were verified. The player confirmed English menus and preserved custom menu keys. | **BUILT**, **CHECKED**, **INSTALLED**; English menus/custom menu keys **USER-VALIDATED**. Public release/download and further unreported gameplay/restart checks pending |
+| 0.18.1, October 11â€“12, 2026 | English localization from the accepted 0.18 controls checkpoint. Runtime edits change text, the version label, and equivalent fixture expectations while preserving behavior. The retained suite and x86 compilation passed; menu fixtures covered 720p/4K/ultrawide. Local ZIP, backup and installation were verified. The player confirmed English menus and preserved custom menu keys. | **BUILT**, **CHECKED**, **INSTALLED**; English menus/custom menu keys **USER-VALIDATED**. Public release/download and further unreported gameplay/restart checks pending |
 
 ## Resume from the validated base
 
@@ -301,7 +305,7 @@ those remain distinguished from the integrated routing/INI-reload checks. Weapon
 The accepted 0.18 controls build is the retained base for 0.18.1, preserving
 earlier validated features and excluding rejected FOV hooks.
 
-## 0.18.1 preparation — October 11, 2026
+## 0.18.1 preparation â€” October 11, 2026
 
 Historical preparation checkpoint; superseded by the build and installation
 checkpoints below.
@@ -319,7 +323,7 @@ preservation, and the downloaded release have been checked, with the player's
 result recorded separately. At preparation there is no new ASI/ZIP hash or
 verified release link. The README continues to offer the verified 0.18 ZIP.
 
-## 0.18.1 build and regression checkpoint — October 12, 2026
+## 0.18.1 build and regression checkpoint â€” October 12, 2026
 
 Historical pre-installation checkpoint; its pending delivery/player statements
 are superseded by the installation and confirmation checkpoint below.
@@ -344,7 +348,7 @@ No rejected FOV hooks were imported, and no weapon/hand or aiming FOV fix is
 claimed. Installation, package/release verification, and the player result
 are pending at this checkpoint.
 
-## 0.18.1 installation and menu confirmation — October 12, 2026
+## 0.18.1 installation and menu confirmation â€” October 12, 2026
 
 The immutable installable ZIP was checked: 18 entries at the root and required
 `Binaries/Win32` tree, without game files or private data. Its SHA256 is

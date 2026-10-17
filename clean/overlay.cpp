@@ -4,6 +4,7 @@
 #include "keybinds.h"
 #include "hotkey_setting.h"
 #include "controller_aim.h"
+#include "input_profiles.h"
 #include <d3d11.h>
 #include <stdio.h>
 #include "imgui.h"
@@ -140,6 +141,8 @@ static void updateMenuInput(bool focused) {
         return;
     }
     if(!menuOpen && !globalHotkeys)return;
+    for(unsigned i=0;i<6;++i)if(events.has((Action)((unsigned)Action::MouseNormal+i)))
+        settingError=!saveInputGain(i,input_profiles::next((int)InterlockedCompareExchange(&inputGains[i],0,0)));
     if(events.has(Action::Vitals))requestVitals();
     if(events.has(Action::Ammo))requestAmmo();
     if(events.has(Action::WeaponPrevious))selectedWeapon=(selectedWeapon+weaponChoiceCount-1)%weaponChoiceCount;
@@ -219,7 +222,7 @@ static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,
 static const char *aimZoomLabel() { return InterlockedCompareExchange(&nativeAimZoom,0,0)?"ON":"OFF"; }
 static void drawMainMenuContents() {
     using Action=keybinds::Action;
-    drawMenuSection("INFINITEMOD 0.28");
+    drawMenuSection("INFINITEMOD 0.29 / INPUT PROFILES EXPERIMENTAL");
     ImGui::TextDisabled("%s: menu | %s: shortcuts",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
     ImGui::TextWrapped("%s   Hotkeys without menu: %s",shortcutLabel(Action::GlobalHotkeys).c_str(),globalHotkeys?"ON":"OFF");
     ImGui::Separator();
@@ -248,6 +251,11 @@ static void drawMainMenuContents() {
         ImGui::TextWrapped("%s   Proportional aim zoom: %s",shortcutLabel(Action::NativeAimZoom).c_str(),aimZoomLabel());
         if(InterlockedCompareExchange(&nativeAimZoom,0,0) && nativeAimZoomStatus()<0)ImGui::TextColored(ImVec4(1,0.4f,0.35f,1),"Aim zoom hook unavailable: native zoom retained.");
         char optionText[160];playerOptionsStatus(optionText,sizeof(optionText));ImGui::TextWrapped("%s",optionText);
+        ImGui::Separator();drawMenuSection("SENSITIVITY MULTIPLIERS");
+        const char *labels[]={"Mouse normal","Mouse ADS","Mouse sniper","Controller normal","Controller ADS","Controller sniper"};
+        for(unsigned i=0;i<6;++i)ImGui::TextWrapped("%s   %s: x%.2f",shortcutLabel((Action)((unsigned)Action::MouseNormal+i)).c_str(),labels[i],(double)InterlockedCompareExchange(&inputGains[i],0,0)/100);
+        LONG input=inputProfileStatus();
+        ImGui::TextWrapped("%s",input<0?"Input adapter unavailable: native sensitivity retained.":input==0?"Load gameplay to qualify input.":input==1?"Awaiting native input event.":"Native input event matched; verify feel in game.");
         ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");
         bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();
         ImGui::TextWrapped("%s   Hide crosshairs: %s",shortcutLabel(Action::Crosshair).c_str(),!hideCrosshair?"NO":reticleState>0?"YES":reticleState<0?"UNAVAILABLE":"PENDING");

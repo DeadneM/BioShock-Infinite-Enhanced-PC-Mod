@@ -6,6 +6,7 @@
 #include "native_fov_config.h"
 #include "aim_zoom_setting.h"
 #include "controller_aim.h"
+#include "input_profiles.h"
 #include <shlobj.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -24,6 +25,8 @@ bool saveNativeSliderSetting(int percent) {
 }
 bool saveNativeAimZoom(bool enabled) {return aim_zoom_setting::save(modIni,nativeAimZoom,enabled);}
 volatile LONG controllerAimButton=0,controllerAimThreshold=30;
+volatile LONG inputGains[6]={100,100,100,100,100,100};
+bool saveInputGain(unsigned index,int percent){return input_profiles::save(modIni,inputGains,index,percent);}
 bool saveControllerAimButton(int index){return controller_aim::save(modIni,controllerAimButton,index);}
 volatile LONG crosshairHidden=0;
 bool saveCrosshairSetting(bool hidden) {
@@ -97,7 +100,7 @@ static DWORD WINAPI start(void *) {
     swprintf(modIni,MAX_PATH,L"%lsInfiniteMod.ini",path);
     wchar_t logPath[MAX_PATH];swprintf(logPath,MAX_PATH,L"%lsInfiniteMod.log",path);
     logFile=CreateFileW(logPath,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,nullptr,OPEN_ALWAYS,0,nullptr);
-    modLog("InfiniteMod 0.28.0 EXPERIMENTAL; live world FOV/proportional aim; keyboard and XInput hold aim; no render corrections.");
+    modLog("InfiniteMod 0.29.0 INPUT PROFILES EXPERIMENTAL; scoped mouse/controller gain; camera/weapon bob unchanged.");
     if(!GetPrivateProfileIntW(L"General",L"Enabled",1,modIni)) {modLog("Disabled.");return 0;}
     BYTE *image=(BYTE *)GetModuleHandleW(nullptr);
     auto *dos=(IMAGE_DOS_HEADER *)image;
@@ -109,6 +112,7 @@ static DWORD WINAPI start(void *) {
     if(GetPrivateProfileIntW(L"Overlay",L"Enabled",1,modIni))
         modLog("Graphics import capture: %s",installGameGraphicsImport(image)?"ready; waiting for game's factory":"failed");
     loadPlayerSettings();
+    for(unsigned i=0;i<6;++i)inputGains[i]=input_profiles::load(modIni,i);
     bool commands=installWeapons(image);
     modLog("Gameplay command initialization: %s",commands?"ready":"unavailable; no gameplay calls");
     if(commands)installAim(image);
