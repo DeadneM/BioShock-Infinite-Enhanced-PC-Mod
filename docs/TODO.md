@@ -291,3 +291,5 @@ results remain separate. The release source tag identifies
 - [x] Build final bounded, default-off distance adapter and pass local tests.
 - [x] Complete exact ZIP/installer verification and record actual installation.
 - [ ] Player confirms whole-rig movement and firing/reload/ADS alignment.
+
+0.30.1: built, local tests/package checked, installed with exact0.30 rollback. Pending: player confirms closer direction and acceptable clipping/effect alignment. Six sensitivity parameters and joint rig movement were reported working by the player.

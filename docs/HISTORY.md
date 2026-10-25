@@ -398,3 +398,5 @@ README now points to the verified English release. Full delivery evidence:
 English menus and retained controls, not a new FOV correction.
 
 October25 delivery update: 0.30 native position candidate BUILT / CHECKED / INSTALLED on P: with exact0.29 rollback; personal INI and loader unchanged. Gameplay unvalidated and game not launched. See DELIVERY-v030.md under docs/.
+
+October25: 0.30.1 installed locally after checks; only local-X direction reversed. Existing settings preserved; new closer direction not yet player validated.
