@@ -56,7 +56,7 @@ inline constexpr Definition definitions[count]={
     {L"PadNormal","Controller normal sensitivity",{'4',Control},true},
     {L"PadADS","Controller ADS sensitivity",{'5',Control},true},
     {L"PadSniper","Controller sniper sensitivity",{'6',Control},true},
-    {L"WeaponBack","Move arms / weapon away (experimental)",{'0',Control},true}
+    {L"WeaponBack","Move arms / weapon closer (experimental)",{'0',Control},true}
 };
 inline bool validAction(Action action) {return static_cast<unsigned>(action)<count;}
 struct ChordList {Chord chords[3];unsigned size;};

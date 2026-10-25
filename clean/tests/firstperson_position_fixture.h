@@ -39,10 +39,10 @@ static void testFirstpersonPosition(){
     firstperson_position::PlaceFn volatile call=(firstperson_position::PlaceFn)code;
     float pos[3]={};int rot[3]={};expected=(Obj)root;calls=depth=0;recurse=alter=false;
     for(int back:{0,2,4,6,8,10}){
-        weaponBack=back;call(root,pos,rot);CHECK(seen==3+back && pos[0]==103+back);
+        weaponBack=back;call(root,pos,rot);CHECK(seen==3-back && pos[0]==103-back);
         CHECK(*(float *)(root+0x200)==3 && *(float *)(root+0x204)==4 && *(float *)(root+0x208)==5);
     }
-    weaponBack=4;recurse=true;calls=0;call(root,pos,rot);CHECK(calls==2 && seen==7 && *(float *)(root+0x200)==3);recurse=false;
+    weaponBack=4;recurse=true;calls=0;call(root,pos,rot);CHECK(calls==2 && seen==-1 && *(float *)(root+0x200)==3);recurse=false;
     // ADS/transition/cinematic/death/thread/ownership gates retain native input.
     *(unsigned *)(pc+0x690)=0x20000;call(root,pos,rot);CHECK(seen==3);*(unsigned *)(pc+0x690)=0;
     player_options::fovPolicy.zooming=true;call(root,pos,rot);CHECK(seen==3);player_options::fovPolicy.zooming=false;
@@ -71,5 +71,5 @@ static void testFirstpersonPosition(){
     }
     wchar_t value[32];GetPrivateProfileStringW(L"Other",L"Keep",L"",value,32,path);CHECK(!wcscmp(value,L"unchanged"));
     CHECK(DeleteFileW(path));weaponBack=0;
-    puts("PASS: native aligned ret8 placement trampoline, signature drift refusal, reflected root/Vector identity, bounded backward offset, no accumulation/reentrant doubling, ADS/cinematic/death/thread/owner guards, native-change-preserving restore and real INI persistence. Game coverage unverified.");
+    puts("PASS: native aligned ret8 placement trampoline, signature drift refusal, reflected root/Vector identity, bounded toward-camera offset, no accumulation/reentrant doubling, ADS/cinematic/death/thread/owner guards, native-change-preserving restore and real INI persistence. Game coverage unverified.");
 }

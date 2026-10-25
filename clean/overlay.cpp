@@ -224,7 +224,7 @@ static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,
 static const char *aimZoomLabel() { return InterlockedCompareExchange(&nativeAimZoom,0,0)?"ON":"OFF"; }
 static void drawMainMenuContents() {
     using Action=keybinds::Action;
-    drawMenuSection("INFINITEMOD 0.30 / NATIVE POSITION EXPERIMENTAL");
+    drawMenuSection("INFINITEMOD 0.30.1 / NATIVE POSITION EXPERIMENTAL");
     ImGui::TextDisabled("%s: menu | %s: shortcuts",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
     ImGui::TextWrapped("%s   Hotkeys without menu: %s",shortcutLabel(Action::GlobalHotkeys).c_str(),globalHotkeys?"ON":"OFF");
     ImGui::Separator();
@@ -259,7 +259,7 @@ static void drawMainMenuContents() {
         LONG input=inputProfileStatus();
         ImGui::TextWrapped("%s",input<0?"Input adapter unavailable: native sensitivity retained.":input==0?"Load gameplay to qualify input.":input==1?"Awaiting native input event.":"Native input event matched; verify feel in game.");
         ImGui::Separator();drawMenuSection("ARMS / WEAPON POSITION - EXPERIMENTAL");
-        ImGui::TextWrapped("%s   Extra camera distance: %ld / 10",shortcutLabel(Action::WeaponBack).c_str(),InterlockedCompareExchange(&weaponBack,0,0));
+        ImGui::TextWrapped("%s   Toward camera: %ld / 10",shortcutLabel(Action::WeaponBack).c_str(),InterlockedCompareExchange(&weaponBack,0,0));
         LONG placement=weaponBackStatus();
         ImGui::TextWrapped("%s",placement<0?"Position unavailable: native placement retained.":placement==2?"Native placement matched. ADS uses original position.":placement==1?"Root qualified. Enable offset to compare.":"Load gameplay to qualify the first-person root.");
         ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");

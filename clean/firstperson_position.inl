@@ -43,8 +43,8 @@ void __fastcall place(void *object,void *,void *location,void *rotation){
         InterlockedExchange(&state,-1);original(object,location,rotation);return;
     }
     const Obj bound=root,boundPawn=pawn;
-    // Positive local X is forward: move the rig away from the camera.
-    float changed=offset[0]+(float)back;
+    // Negative local X moves the rig toward the camera, as requested.
+    float changed=offset[0]-(float)back;
     active=true;memcpy((void *)(bound+0x200),&changed,4);
     original(object,location,rotation);
     // Restore only our exact temporary value while ownership is unchanged.
@@ -53,7 +53,7 @@ void __fastcall place(void *object,void *,void *location,void *rotation){
         memcpy((void *)(bound+0x200),&offset[0],4);
     active=false;
     LONG old=InterlockedExchange(&state,2);
-    if(old!=2)modLog("First-person position: native placement matched; local X offset +%d units (away from camera); ADS bypassed",back);
+    if(old!=2)modLog("First-person position: native placement matched; local X offset -%d units (toward camera); ADS bypassed",back);
 }
 void install(){
     bool consumer=!memcmp(host+0x77ca68,offsetXSignature,sizeof(offsetXSignature));

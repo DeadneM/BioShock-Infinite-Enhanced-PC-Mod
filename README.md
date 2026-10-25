@@ -1,3 +1,7 @@
+## October 25 - 0.30.1 direction correction
+
+Player reports all sensitivity parameters appear to work and confirms arms and weapon move together in0.30. Requested change: bring the native first-person root closer to the camera. Keep the same0..10 control, zero default, ADS bypass, keybinds and INI. Only local-X sign changes; temporary effects still require visual confirmation. See [build scope](docs/BUILD-v0301.md).
+
 ## October 25 - 0.30 native position experiment
 
 Requested: adjustable backward movement of the whole first-person root. Default0; Ctrl+0 cycles bounded offsets; ADS bypassed. Exact on-disk native offset consumer identified. Visual coverage remains unverified; no camera/projection fix is claimed. Keep 0.29 rollback and existing personal settings. See [scope and player test](docs/BUILD-v030.md).
