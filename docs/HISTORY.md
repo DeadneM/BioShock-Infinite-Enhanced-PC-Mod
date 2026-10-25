@@ -392,3 +392,5 @@ locally installed package. The accepted stable controls branch is unchanged.
 README now points to the verified English release. Full delivery evidence:
 [DELIVERY-v0181.md](DELIVERY-v0181.md). This is publication of the confirmed
 English menus and retained controls, not a new FOV correction.
+
+October25 delivery update: 0.30 native position candidate BUILT / CHECKED / INSTALLED on P: with exact0.29 rollback; personal INI and loader unchanged. Gameplay unvalidated and game not launched. See DELIVERY-v030.md under docs/.

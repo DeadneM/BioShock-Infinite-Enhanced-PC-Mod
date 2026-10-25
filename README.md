@@ -325,3 +325,5 @@ Dependencies with their licenses retained:
 [Dear ImGui 1.91.9b](https://github.com/ocornut/imgui),
 [MinHook 1.3.4](https://github.com/TsudaKageyu/minhook), and
 [Ultimate ASI Loader 9.7.4](https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases/tag/v9.7.4).
+
+October25 delivery update: 0.30 native position candidate BUILT / CHECKED / INSTALLED on P: with exact0.29 rollback; personal INI and loader unchanged. Gameplay unvalidated and game not launched. See DELIVERY-v030.md under docs/.

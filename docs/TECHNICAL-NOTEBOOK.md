@@ -686,3 +686,5 @@ evidence is recorded in [DELIVERY-v0181.md](DELIVERY-v0181.md).
 FOV research is paused at the user's request. Independent complete first-person
 FOV and proportional aiming remain unfinished. No 0.19 diagnostic or rejected
 0.20 projection/aiming hooks are included in this localization.
+
+October25 delivery update: 0.30 native position candidate BUILT / CHECKED / INSTALLED on P: with exact0.29 rollback; personal INI and loader unchanged. Gameplay unvalidated and game not launched. See DELIVERY-v030.md under docs/.

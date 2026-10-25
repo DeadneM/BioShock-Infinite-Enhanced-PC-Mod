@@ -190,7 +190,7 @@ candidate above. The local build, ZIP and installation are checked; no public
 Completed items above do not mean first-person FOV is fixed. The size/position
 of Vigor effects remains a separate visual check from the native HUD setting.
 
-## Build 0.18 â€” shortcuts and gauge refill
+## Build 0.18 Ã¢â‚¬â€ shortcuts and gauge refill
 
 - [x] Implement the exact requested mapping, with F5 for the active slot and F6 for the secondary.
 - [x] Implement capture and persistence for all 23 shortcuts, including Insert.
@@ -216,7 +216,7 @@ of Vigor effects remains a separate visual check from the native HUD setting.
 - [x] Append verified 0.18.1 public release/download results after publication.
 - [x] Keep README, build notes, history, technical notebook, and this TODO consistent for 0.18.1 delivery.
 
-## Build 0.18.1 â€” English localization
+## Build 0.18.1 Ã¢â‚¬â€ English localization
 
 - [x] Start from accepted 0.18 controls checkpoint `b54167ef6a0ed254b4ef9d52319f9be4e886e5fc`.
 - [x] Translate runtime menus, all 23 action labels, weapon labels, results, and warnings into English.
@@ -241,7 +241,7 @@ has SHA256 `1853FEF39BAFE9CCC6739B1E66A30A959E44999E86A956A4C82BF831B9EAA545`;
 its earlier bundled pre-installation statuses are superseded by the current
 repository delivery record and published release notes.
 
-## Next global FOV build â€” separate experiment
+## Next global FOV build Ã¢â‚¬â€ separate experiment
 
 Research is paused after the player's English-menu confirmation. Publication
 of the localization does not resume native experiments or claim a FOV fix.
@@ -285,5 +285,5 @@ results remain separate. The release source tag identifies
 0.30 follow-up checklist:
 - [x] Qualify native position field and exact supported executable consumer offline.
 - [x] Build final bounded, default-off distance adapter and pass local tests.
-- [ ] Complete exact ZIP/installer verification and record actual installation.
+- [x] Complete exact ZIP/installer verification and record actual installation.
 - [ ] Player confirms whole-rig movement and firing/reload/ADS alignment.

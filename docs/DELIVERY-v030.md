@@ -15,3 +15,11 @@ Retained files include player_options.inl, aim.cpp, reticle.inl and progression 
 Player test: keep the same FOV; revolver in hand; Ctrl+0 twice reaches4. Compare against0, then fire/reload/aim and change weapon. Check hands, speedloader, cartridges and muzzle flash. If only part moves, no movement occurs or visual detachment appears, disable with0 and report the menu status. Do not compensate per weapon.
 
 Distribution fixture: PASSED with the exact final ASI. Verified update keeps custom INI, rollback restores prior ASI, altered payload/unknown loader rejected, shared loader retained. Private fixture only; no game launch. Personal INI currently has no Ctrl+0 binding conflict.
+
+## Actual package and installation result
+
+ZIP verified: releases/InfiniteMod-v0.30.0-native-position-experimental.zip; SHA256 9F70D845978C1D7CB8DA0C89F609730BC521C997AC94467032515909940F3E57.
+Installed exact final ASI on October25 with the game closed. Existing personal INI and shared loader verified byte-identical before/after. Exact0.29 backup verified: P:\Games\BioShock Infinite\InfiniteMod-Backups\install-20261025-152939-901-feaec793.
+Status: BUILT / CHECKED / INSTALLED / EXPERIMENTAL; PLAYER VALIDATION PENDING. No game launched, no public release.
+Rollback: run the supplied Rollback.ps1 with GameDirectory 'P:\Games\BioShock Infinite' and BackupDirectory 'P:\Games\BioShock Infinite\InfiniteMod-Backups\install-20261025-152939-901-feaec793'.
+Source implementation commit ce7b196f44d4a53bc8e36139e7ac2f238cfafad6; subsequent packaging correction closes the documentation-selection block only and does not alter the ASI.
