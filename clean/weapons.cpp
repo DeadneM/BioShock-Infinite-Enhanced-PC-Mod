@@ -2,6 +2,7 @@
 #include "weapons.h"
 #include "aim.h"
 #include "input_profiles.h"
+#include "firstperson_setting.h"
 #include "MinHook.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -96,6 +97,7 @@ bool player(Obj pc,Obj &pawn,Obj &manager) {
 #include "player_options.inl"
 #include "reticle.inl"
 #include "input_comfort.inl"
+#include "firstperson_position.inl"
 Obj carried(Obj manager,Obj archetype) {
     // InventoryItems is a fixed 36-element array, verified through reflection.
     Obj prop=field(manager,"InventoryItems","ObjectProperty");
@@ -227,6 +229,7 @@ void __fastcall camera(void *pc,void *,void *location,void *rotation) {
     latestController=(Obj)pc;latestPawn=pawn;
     player_options::inspect((Obj)pc,pawn,ready);
     input_comfort::inspect((Obj)pc,pawn,ready);
+    firstperson_position::inspect((Obj)pc,pawn,ready);
     AcquireSRWLockExclusive(&stateLock);bool changed=available!=ready;available=ready;lastSeen=now;ReleaseSRWLockExclusive(&stateLock);
     if(changed)modLog("Weapons: player %s, game thread=%lu",ready?"ready":"unavailable",thread);
     if(selected!=-1) {
@@ -300,6 +303,7 @@ void playerOptionsStatus(char *text,size_t capacity) {
 }
 LONG crosshairStatus(){return InterlockedCompareExchange(&reticle::state,0,0);}
 LONG nativeAimZoomStatus(){return !player_options::aimTargetInstalled?-1:InterlockedCompareExchange(&player_options::aimState,0,0);}
+LONG weaponBackStatus(){return !firstperson_position::installed?-1:InterlockedCompareExchange(&firstperson_position::state,0,0);}
 LONG inputProfileStatus(){return !input_comfort::installed?-1:InterlockedCompareExchange(&input_comfort::statusCode,0,0);}
 bool installWeapons(BYTE *image) {
     // Exact GOG 1.1.25.5165 signatures; no rendering code is detoured.
@@ -312,6 +316,6 @@ bool installWeapons(BYTE *image) {
     MH_STATUS result=MH_CreateHook(image+0x25030,(void *)camera,(void **)&cameraOriginal);
     if(result==MH_OK)result=MH_EnableHook(image+0x25030);
     modLog("Weapons: camera command seam %s",MH_StatusToString(result));
-    if(result==MH_OK){player_options::install();input_comfort::install();}
+    if(result==MH_OK){player_options::install();input_comfort::install();firstperson_position::install();}
     return result==MH_OK;
 }

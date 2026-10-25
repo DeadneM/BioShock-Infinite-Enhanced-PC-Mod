@@ -15,7 +15,7 @@ enum class Action : unsigned {
     GiveSecondary, Speed, SkipIntros, Powers, Gear, WeaponUpgrades, VigorUpgrades,
     Infusions, Money, Lockpicks, Crosshair, HUD, HoldAim, AimKey, FovDecrease,
     FovIncrease, NativeAimZoom, GlobalHotkeys, ControllerAimKey,
-    MouseNormal,MouseADS,MouseSniper,PadNormal,PadADS,PadSniper,Count
+    MouseNormal,MouseADS,MouseSniper,PadNormal,PadADS,PadSniper,WeaponBack,Count
 };
 constexpr unsigned count=static_cast<unsigned>(Action::Count);
 enum Modifier : unsigned { Control=1, Alt=2, Shift=4, Win=8 };
@@ -55,7 +55,8 @@ inline constexpr Definition definitions[count]={
     {L"MouseSniper","Mouse sniper sensitivity",{'3',Control},true},
     {L"PadNormal","Controller normal sensitivity",{'4',Control},true},
     {L"PadADS","Controller ADS sensitivity",{'5',Control},true},
-    {L"PadSniper","Controller sniper sensitivity",{'6',Control},true}
+    {L"PadSniper","Controller sniper sensitivity",{'6',Control},true},
+    {L"WeaponBack","Move arms / weapon away (experimental)",{'0',Control},true}
 };
 inline bool validAction(Action action) {return static_cast<unsigned>(action)<count;}
 struct ChordList {Chord chords[3];unsigned size;};

@@ -86,6 +86,7 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     CHECK(nativeAimZoom==0 && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==0);
     keys[VK_CONTROL]=0;frame();
     keys[VK_CONTROL]=(SHORT)0x8000;frame();
+    for(int expected:{2,4,6,8,10,0}){tapBinding('0');CHECK(weaponBack==expected && firstperson_setting::load(fixtureIni)==expected);}
     for(unsigned i=0;i<6;++i){tapBinding('1'+i);CHECK(inputGains[i]==125 && input_profiles::load(fixtureIni,i)==125);CHECK(saveInputGain(i,100));}
     keys[VK_CONTROL]=0;frame();
     tapBinding(VK_F10);CHECK(aimWanted==1);tapBinding(VK_F10);CHECK(aimWanted==0);tapBinding(VK_F11);CHECK(aimKey==VK_RBUTTON);

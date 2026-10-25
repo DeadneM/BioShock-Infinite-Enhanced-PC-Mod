@@ -27,3 +27,6 @@ bool saveControllerAimButton(int index);
 extern volatile LONG inputGains[6];
 bool saveInputGain(unsigned index,int percent);
 LONG inputProfileStatus();
+extern volatile LONG weaponBack;
+bool saveWeaponBack(int units);
+LONG weaponBackStatus();

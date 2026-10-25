@@ -25,3 +25,5 @@
   that scope. No new build or functional fix is implied by research findings.
 
 - October 17: six separate normal/ADS/sniper sensitivities for mouse and controller are authorized. Bob/sway is a separate pending path. 0.29 is local experimental; do not infer native input consumption from fixtures or launch without permission.
+
+- October 25: player explicitly reopens a bounded native arms/weapon POSITION trial and requests preparation through a playable test. This authorizes the dedicated position build and reversible installation, not a game launch. Do not restore optical/viewmodel projection or green-render changes. Default offset0, preserve existing settings; actual common visual coverage remains unverified.

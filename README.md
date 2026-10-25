@@ -1,3 +1,7 @@
+## October 25 - 0.30 native position experiment
+
+Requested: adjustable backward movement of the whole first-person root. Default0; Ctrl+0 cycles bounded offsets; ADS bypassed. Exact on-disk native offset consumer identified. Visual coverage remains unverified; no camera/projection fix is claimed. Keep 0.29 rollback and existing personal settings. See [scope and player test](docs/BUILD-v030.md).
+
 ## October 17 - 0.29 local input profiles candidate
 
 Six independent mouse/controller normal, ADS and sniper multipliers are implemented on experiment/input-comfort. All default to x1. Local tests pass; actual game consumption is unverified. Bobbing/sway remains pending. No installation, publication or game launch. See [build record](docs/BUILD-v029.md).

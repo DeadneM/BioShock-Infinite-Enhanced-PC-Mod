@@ -13,6 +13,8 @@ wchar_t modIni[MAX_PATH],gameIni[MAX_PATH];
 volatile LONG configWanted=1,configRequest=0,configResult=1;
 volatile LONG hudWanted=100,hudApplied=100,hudResult=1,aimWanted=0,aimKey=VK_MBUTTON,modMenuOpen=0;
 volatile LONG speedPercent=100,fovDegrees=80;
+volatile LONG weaponBack=0;
+bool saveWeaponBack(int value){return firstperson_setting::save(modIni,weaponBack,value);}
 volatile LONG inputGains[6]={100,100,100,100,100,100};
 bool saveInputGain(unsigned index,int percent){return input_profiles::save(modIni,inputGains,index,percent);}
 volatile LONG nativeAimZoom=0,nativeFovRequest=1,nativeFovResult=0;
@@ -65,6 +67,7 @@ static SHORT testKeys(int key){return keys[key];}
 #include "vigor_upgrades_fixture.h"
 #include "infusions_fixture.h"
 #include "input_profiles_fixture.h"
+#include "firstperson_position_fixture.h"
 static FactoryFn importSlot;
 static HRESULT WINAPI delayFactory(REFIID iid,void **out) {
     importSlot=CreateDXGIFactory; // Simulate the game's real delay loader replacing the IAT.
@@ -103,6 +106,7 @@ int main(int argc,char **argv) {
     testNativeFOVConfig();
     testResources();
     testInputProfiles();
+    testFirstpersonPosition();
     testVitals();
     testKeybinds();
     testReticle();
