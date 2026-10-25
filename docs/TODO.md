@@ -304,3 +304,5 @@ results remain separate. The release source tag identifies
 ## Player approval and publication request - October 25
 
 The player accepted 0.31 ("c'est tres bien") and explicitly requested GitHub publication. Treat the signed distance controls and selected placement as player accepted, not as exhaustive extreme-position/effect coverage. Preserve the exact tested ZIP FCB9A7DF21C9A7BF097A6F48E372C1B4615300490F635E686B39A42782F2657D and final ASI6DD72AB0168205B4DFC6CBF4B435392097D78ECB117553C7D7FC80859E408DFB. Publication must use a separate experimental branch/tag/release; main remains untouched. No game launch.
+
+0.31 publication complete: English source branch/tag/release pushed, ZIP/checksum uploaded and public downloads byte-matched. Extreme-position/effect coverage remains outside confirmed player scope.

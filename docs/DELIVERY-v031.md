@@ -14,3 +14,11 @@ Rollback.ps1: GameDirectory 'P:\Games\BioShock Infinite', BackupDirectory 'P:\Ga
 ## Player approval and publication request - October 25
 
 The player accepted 0.31 ("c'est tres bien") and explicitly requested GitHub publication. Treat the signed distance controls and selected placement as player accepted, not as exhaustive extreme-position/effect coverage. Preserve the exact tested ZIP FCB9A7DF21C9A7BF097A6F48E372C1B4615300490F635E686B39A42782F2657D and final ASI6DD72AB0168205B4DFC6CBF4B435392097D78ECB117553C7D7FC80859E408DFB. Publication must use a separate experimental branch/tag/release; main remains untouched. No game launch.
+
+## Verified GitHub publication
+
+Player-approved experimental release published at https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.31.0-experimental.
+Release ID 423597131; immutable tag v0.31.0-experimental; tagged source 1588922f427b358d2eb6b82701f1a05afb9410fc. Source branch experiment/firstperson-distance.
+Public ZIP downloaded and byte-matched to the installed/tested archive; public checksum also byte-matched. ZIP SHA256 FCB9A7DF21C9A7BF097A6F48E372C1B4615300490F635E686B39A42782F2657D.
+Direct download: https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/download/v0.31.0-experimental/InfiniteMod-v0.31.0-signed-distance-experimental.zip.
+Main remains at99a75aa9e1a47543c418b2dc37b43a8883898c72. This post-publication documentation commit updates the branch only; the release tag stays on its verified source commit. No rebuild, reinstall or game launch.

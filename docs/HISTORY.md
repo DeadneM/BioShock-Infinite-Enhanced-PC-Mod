@@ -409,3 +409,5 @@ October25: 0.30.1 installed locally after checks; only local-X direction reverse
 ## Player approval and publication request - October 25
 
 The player accepted 0.31 ("c'est tres bien") and explicitly requested GitHub publication. Treat the signed distance controls and selected placement as player accepted, not as exhaustive extreme-position/effect coverage. Preserve the exact tested ZIP FCB9A7DF21C9A7BF097A6F48E372C1B4615300490F635E686B39A42782F2657D and final ASI6DD72AB0168205B4DFC6CBF4B435392097D78ECB117553C7D7FC80859E408DFB. Publication must use a separate experimental branch/tag/release; main remains untouched. No game launch.
+
+October25: v0.31.0-experimental published to GitHub with exact player-approved ZIP and checksum; public downloads verified. Main retained; tagged source1588922f427b358d2eb6b82701f1a05afb9410fc.
