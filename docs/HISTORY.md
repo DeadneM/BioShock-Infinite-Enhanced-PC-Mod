@@ -404,3 +404,8 @@ English menus and retained controls, not a new FOV correction.
 October25 delivery update: 0.30 native position candidate BUILT / CHECKED / INSTALLED on P: with exact0.29 rollback; personal INI and loader unchanged. Gameplay unvalidated and game not launched. See DELIVERY-v030.md under docs/.
 
 October25: 0.30.1 installed locally after checks; only local-X direction reversed. Existing settings preserved; new closer direction not yet player validated.
+
+
+## Player approval and publication request - October 25
+
+The player accepted 0.31 ("c'est tres bien") and explicitly requested GitHub publication. Treat the signed distance controls and selected placement as player accepted, not as exhaustive extreme-position/effect coverage. Preserve the exact tested ZIP FCB9A7DF21C9A7BF097A6F48E372C1B4615300490F635E686B39A42782F2657D and final ASI6DD72AB0168205B4DFC6CBF4B435392097D78ECB117553C7D7FC80859E408DFB. Publication must use a separate experimental branch/tag/release; main remains untouched. No game launch.

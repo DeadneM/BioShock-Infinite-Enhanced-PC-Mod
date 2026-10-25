@@ -1,3 +1,9 @@
+## Player-approved 0.31 experimental release
+
+Signed native arms / weapon distance (-50..+50) with Ctrl+Minus / Ctrl+Plus, preserved native ADS placement and six independent mouse/controller sensitivity profiles. The player approved this version; exhaustive extreme-position/effect coverage is not claimed. Personal settings are preserved.
+
+[Release and installation ZIP](https://github.com/DeadneM/BioShock-Infinite-Enhanced-PC-Mod/releases/tag/v0.31.0-experimental)
+
 ## October 25 - 0.31 signed native distance
 
 Player accepted closer offset10 in0.30.1. New requested range -50..+50; Ctrl+Minus decreases, Ctrl+Plus increases by2 with endpoint clamping. Old closer10 loads as-10 without INI rewriting. Zero/native ADS and existing features retained. Extended range remains experimental. See [scope and controls](docs/BUILD-v031.md).
