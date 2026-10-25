@@ -303,7 +303,7 @@ void playerOptionsStatus(char *text,size_t capacity) {
 }
 LONG crosshairStatus(){return InterlockedCompareExchange(&reticle::state,0,0);}
 LONG nativeAimZoomStatus(){return !player_options::aimTargetInstalled?-1:InterlockedCompareExchange(&player_options::aimState,0,0);}
-LONG weaponBackStatus(){return !firstperson_position::installed?-1:InterlockedCompareExchange(&firstperson_position::state,0,0);}
+LONG weaponDistanceStatus(){return !firstperson_position::installed?-1:InterlockedCompareExchange(&firstperson_position::state,0,0);}
 LONG inputProfileStatus(){return !input_comfort::installed?-1:InterlockedCompareExchange(&input_comfort::statusCode,0,0);}
 bool installWeapons(BYTE *image) {
     // Exact GOG 1.1.25.5165 signatures; no rendering code is detoured.

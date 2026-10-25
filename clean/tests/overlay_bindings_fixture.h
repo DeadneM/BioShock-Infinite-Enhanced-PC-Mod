@@ -86,7 +86,15 @@ static void testOverlayBindings(IDXGISwapChain *chain,HWND window) {
     CHECK(nativeAimZoom==0 && GetPrivateProfileIntW(L"Display",L"NativeAimZoom",-1,fixtureIni)==0);
     keys[VK_CONTROL]=0;frame();
     keys[VK_CONTROL]=(SHORT)0x8000;frame();
-    for(int expected:{2,4,6,8,10,0}){tapBinding('0');CHECK(weaponBack==expected && firstperson_setting::load(fixtureIni)==expected);}
+    LONG beforeFov=fovDegrees;
+    tapBinding(VK_OEM_MINUS);CHECK(weaponDistance==-2 && fovDegrees==beforeFov);
+    tapBinding(VK_SUBTRACT);CHECK(weaponDistance==-4 && firstperson_setting::load(fixtureIni)==-4);
+    tapBinding(VK_OEM_PLUS);CHECK(weaponDistance==-2);
+    tapBinding(VK_ADD);CHECK(weaponDistance==0 && fovDegrees==beforeFov);
+    keys[VK_SHIFT]=(SHORT)0x8000;tapBinding(VK_OEM_PLUS);keys[VK_SHIFT]=0;frame();CHECK(weaponDistance==2);
+    for(int i=0;i<30;++i)tapBinding(VK_OEM_PLUS);CHECK(weaponDistance==50 && firstperson_setting::load(fixtureIni)==50);
+    for(int i=0;i<55;++i)tapBinding(VK_OEM_MINUS);CHECK(weaponDistance==-50 && firstperson_setting::load(fixtureIni)==-50 && fovDegrees==beforeFov);
+    CHECK(saveWeaponDistance(0));
     for(unsigned i=0;i<6;++i){tapBinding('1'+i);CHECK(inputGains[i]==125 && input_profiles::load(fixtureIni,i)==125);CHECK(saveInputGain(i,100));}
     keys[VK_CONTROL]=0;frame();
     tapBinding(VK_F10);CHECK(aimWanted==1);tapBinding(VK_F10);CHECK(aimWanted==0);tapBinding(VK_F11);CHECK(aimKey==VK_RBUTTON);

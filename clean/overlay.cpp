@@ -144,7 +144,8 @@ static void updateMenuInput(bool focused) {
     if(!menuOpen && !globalHotkeys)return;
     for(unsigned i=0;i<6;++i)if(events.has((Action)((unsigned)Action::MouseNormal+i)))
         settingError=!saveInputGain(i,input_profiles::next((int)InterlockedCompareExchange(&inputGains[i],0,0)));
-    if(events.has(Action::WeaponBack))settingError=!saveWeaponBack(firstperson_setting::next((int)InterlockedCompareExchange(&weaponBack,0,0)));
+    if(events.has(Action::WeaponDistanceDecrease))settingError=!saveWeaponDistance(firstperson_setting::step((int)InterlockedCompareExchange(&weaponDistance,0,0),-1));
+    if(events.has(Action::WeaponDistanceIncrease))settingError=!saveWeaponDistance(firstperson_setting::step((int)InterlockedCompareExchange(&weaponDistance,0,0),1));
     if(events.has(Action::Vitals))requestVitals();
     if(events.has(Action::Ammo))requestAmmo();
     if(events.has(Action::WeaponPrevious))selectedWeapon=(selectedWeapon+weaponChoiceCount-1)%weaponChoiceCount;
@@ -224,7 +225,7 @@ static void drawMenuSection(const char *label) {ImGui::TextColored(ImVec4(0.96f,
 static const char *aimZoomLabel() { return InterlockedCompareExchange(&nativeAimZoom,0,0)?"ON":"OFF"; }
 static void drawMainMenuContents() {
     using Action=keybinds::Action;
-    drawMenuSection("INFINITEMOD 0.30.1 / NATIVE POSITION EXPERIMENTAL");
+    drawMenuSection("INFINITEMOD 0.31 / NATIVE POSITION EXPERIMENTAL");
     ImGui::TextDisabled("%s: menu | %s: shortcuts",shortcutLabel(Action::MainMenu).c_str(),shortcutLabel(Action::BindingsMenu).c_str());
     ImGui::TextWrapped("%s   Hotkeys without menu: %s",shortcutLabel(Action::GlobalHotkeys).c_str(),globalHotkeys?"ON":"OFF");
     ImGui::Separator();
@@ -258,10 +259,10 @@ static void drawMainMenuContents() {
         for(unsigned i=0;i<6;++i)ImGui::TextWrapped("%s   %s: x%.2f",shortcutLabel((Action)((unsigned)Action::MouseNormal+i)).c_str(),labels[i],(double)InterlockedCompareExchange(&inputGains[i],0,0)/100);
         LONG input=inputProfileStatus();
         ImGui::TextWrapped("%s",input<0?"Input adapter unavailable: native sensitivity retained.":input==0?"Load gameplay to qualify input.":input==1?"Awaiting native input event.":"Native input event matched; verify feel in game.");
-        ImGui::Separator();drawMenuSection("ARMS / WEAPON POSITION - EXPERIMENTAL");
-        ImGui::TextWrapped("%s   Toward camera: %ld / 10",shortcutLabel(Action::WeaponBack).c_str(),InterlockedCompareExchange(&weaponBack,0,0));
-        LONG placement=weaponBackStatus();
-        ImGui::TextWrapped("%s",placement<0?"Position unavailable: native placement retained.":placement==2?"Native placement matched. ADS uses original position.":placement==1?"Root qualified. Enable offset to compare.":"Load gameplay to qualify the first-person root.");
+        ImGui::Separator();drawMenuSection("ARMS / WEAPON POSITION (-50 TO +50)");
+        ImGui::TextWrapped("%s / %s   Distance: %+ld",shortcutLabel(Action::WeaponDistanceDecrease).c_str(),shortcutLabel(Action::WeaponDistanceIncrease).c_str(),InterlockedCompareExchange(&weaponDistance,0,0));
+        LONG placement=weaponDistanceStatus();
+        ImGui::TextWrapped("%s",placement<0?"Position unavailable: native placement retained.":placement==2?"Active: - closer, + farther. ADS is native.":placement==1?"Ready: - closer, + farther; 0 is native.":"Load gameplay to qualify the first-person root.");
         ImGui::Separator();drawMenuSection("DISPLAY AND AIMING");
         bool hideCrosshair=InterlockedCompareExchange(&crosshairHidden,0,0)!=0;LONG reticleState=crosshairStatus();
         ImGui::TextWrapped("%s   Hide crosshairs: %s",shortcutLabel(Action::Crosshair).c_str(),!hideCrosshair?"NO":reticleState>0?"YES":reticleState<0?"UNAVAILABLE":"PENDING");

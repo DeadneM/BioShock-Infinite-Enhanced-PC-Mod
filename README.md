@@ -1,3 +1,7 @@
+## October 25 - 0.31 signed native distance
+
+Player accepted closer offset10 in0.30.1. New requested range -50..+50; Ctrl+Minus decreases, Ctrl+Plus increases by2 with endpoint clamping. Old closer10 loads as-10 without INI rewriting. Zero/native ADS and existing features retained. Extended range remains experimental. See [scope and controls](docs/BUILD-v031.md).
+
 ## October 25 - 0.30.1 direction correction
 
 Player reports all sensitivity parameters appear to work and confirms arms and weapon move together in0.30. Requested change: bring the native first-person root closer to the camera. Keep the same0..10 control, zero default, ADS bypass, keybinds and INI. Only local-X sign changes; temporary effects still require visual confirmation. See [build scope](docs/BUILD-v0301.md).

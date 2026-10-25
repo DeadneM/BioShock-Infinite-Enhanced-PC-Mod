@@ -15,7 +15,7 @@ enum class Action : unsigned {
     GiveSecondary, Speed, SkipIntros, Powers, Gear, WeaponUpgrades, VigorUpgrades,
     Infusions, Money, Lockpicks, Crosshair, HUD, HoldAim, AimKey, FovDecrease,
     FovIncrease, NativeAimZoom, GlobalHotkeys, ControllerAimKey,
-    MouseNormal,MouseADS,MouseSniper,PadNormal,PadADS,PadSniper,WeaponBack,Count
+    MouseNormal,MouseADS,MouseSniper,PadNormal,PadADS,PadSniper,WeaponDistanceDecrease,WeaponDistanceIncrease,Count
 };
 constexpr unsigned count=static_cast<unsigned>(Action::Count);
 enum Modifier : unsigned { Control=1, Alt=2, Shift=4, Win=8 };
@@ -56,7 +56,8 @@ inline constexpr Definition definitions[count]={
     {L"PadNormal","Controller normal sensitivity",{'4',Control},true},
     {L"PadADS","Controller ADS sensitivity",{'5',Control},true},
     {L"PadSniper","Controller sniper sensitivity",{'6',Control},true},
-    {L"WeaponBack","Move arms / weapon closer (experimental)",{'0',Control},true}
+    {L"WeaponDistanceDecrease","Decrease arms / weapon distance",{VK_OEM_MINUS,Control},true},
+    {L"WeaponDistanceIncrease","Increase arms / weapon distance",{VK_OEM_PLUS,Control},true}
 };
 inline bool validAction(Action action) {return static_cast<unsigned>(action)<count;}
 struct ChordList {Chord chords[3];unsigned size;};
@@ -67,6 +68,10 @@ inline ChordList effectiveChords(Action action,Chord chord) {
         return {{chord,{VK_SUBTRACT,0},{}},2};
     if(action==Action::FovIncrease && chord==definitions[static_cast<unsigned>(action)].defaultChord)
         return {{chord,{VK_ADD,0},{VK_OEM_PLUS,Shift}},3};
+    if(action==Action::WeaponDistanceDecrease && chord==definitions[static_cast<unsigned>(action)].defaultChord)
+        return {{chord,{VK_SUBTRACT,Control},{}},2};
+    if(action==Action::WeaponDistanceIncrease && chord==definitions[static_cast<unsigned>(action)].defaultChord)
+        return {{chord,{VK_ADD,Control},{VK_OEM_PLUS,Control|Shift}},3};
     return {{chord,{},{}},1};
 }
 inline bool chordsConflict(Action a,Chord first,Action b,Chord second) {

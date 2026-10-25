@@ -38,11 +38,11 @@ static void testFirstpersonPosition(){
     firstperson_position::inspect((Obj)pc,(Obj)pawn,true);CHECK(firstperson_position::ready);
     firstperson_position::PlaceFn volatile call=(firstperson_position::PlaceFn)code;
     float pos[3]={};int rot[3]={};expected=(Obj)root;calls=depth=0;recurse=alter=false;
-    for(int back:{0,2,4,6,8,10}){
-        weaponBack=back;call(root,pos,rot);CHECK(seen==3-back && pos[0]==103-back);
+    for(int back:{-50,-10,0,10,50}){
+        weaponDistance=back;call(root,pos,rot);CHECK(seen==3+back && pos[0]==103+back);
         CHECK(*(float *)(root+0x200)==3 && *(float *)(root+0x204)==4 && *(float *)(root+0x208)==5);
     }
-    weaponBack=4;recurse=true;calls=0;call(root,pos,rot);CHECK(calls==2 && seen==-1 && *(float *)(root+0x200)==3);recurse=false;
+    weaponDistance=4;recurse=true;calls=0;call(root,pos,rot);CHECK(calls==2 && seen==7 && *(float *)(root+0x200)==3);recurse=false;
     // ADS/transition/cinematic/death/thread/ownership gates retain native input.
     *(unsigned *)(pc+0x690)=0x20000;call(root,pos,rot);CHECK(seen==3);*(unsigned *)(pc+0x690)=0;
     player_options::fovPolicy.zooming=true;call(root,pos,rot);CHECK(seen==3);player_options::fovPolicy.zooming=false;
@@ -51,25 +51,31 @@ static void testFirstpersonPosition(){
     windowThread=0;call(root,pos,rot);CHECK(seen==3);windowThread=GetCurrentThreadId();
     *(Obj *)(pawn+0x1d38)=(Obj)other;call(root,pos,rot);CHECK(seen==3);*(Obj *)(pawn+0x1d38)=(Obj)root;
     *(Obj *)(root+0xa0)=0;call(root,pos,rot);CHECK(seen==3);*(Obj *)(root+0xa0)=(Obj)pawn;
-    for(int invalid:{-2,1,12,100}){weaponBack=invalid;call(root,pos,rot);CHECK(seen==3);}weaponBack=4;
+    for(int invalid:{-51,51,100}){weaponDistance=invalid;call(root,pos,rot);CHECK(seen==3);}weaponDistance=4;
     alter=true;call(root,pos,rot);CHECK(*(float *)(root+0x200)==77);alter=false;*(float *)(root+0x200)=3;
     *(float *)(root+0x204)=__builtin_nanf("");call(root,pos,rot);CHECK(seen==3);*(float *)(root+0x204)=4;
     *(unsigned *)(view+0x48)=0x204;firstperson_position::ready=false;firstperson_position::inspect((Obj)pc,(Obj)pawn,true);CHECK(!firstperson_position::ready);
     CHECK(MH_DisableHook(code)==MH_OK);CHECK(MH_RemoveHook(code)==MH_OK);CHECK(MH_Uninitialize()==MH_OK);
     firstperson_position::installed=firstperson_position::ready=false;firstperson_position::controller=firstperson_position::pawn=firstperson_position::root=0;
-    firstperson_position::original=nullptr;firstperson_position::state=0;weaponBack=0;
+    firstperson_position::original=nullptr;firstperson_position::state=0;weaponDistance=0;
     player_options::schemaReady=false;player_options::checkedPC=player_options::checkedPawn=0;windowThread=0;
     VirtualFree(host,0,MEM_RELEASE);host=nullptr;
     // Real profile API: strict bounded values and no state update on failed save.
     wchar_t cwd[MAX_PATH],path[MAX_PATH];CHECK(GetCurrentDirectoryW(MAX_PATH,cwd));swprintf(path,MAX_PATH,L"%ls\\position-%lu.ini",cwd,GetCurrentProcessId());
     CHECK(firstperson_setting::load(path)==0);
+    CHECK(WritePrivateProfileStringW(L"FirstPerson",L"BackOffset",L"10",path));
+    CHECK(firstperson_setting::load(path)==-10);
+    CHECK(firstperson_setting::save(path,weaponDistance,0) && firstperson_setting::load(path)==0);
+    CHECK(GetPrivateProfileIntW(L"FirstPerson",L"BackOffset",-1,path)==10);
+    CHECK(firstperson_setting::step(-50,-1)==-50 && firstperson_setting::step(50,1)==50);
+    CHECK(firstperson_setting::step(-10,-1)==-12 && firstperson_setting::step(-10,1)==-8);
     CHECK(WritePrivateProfileStringW(L"Other",L"Keep",L"unchanged",path));
-    for(int back:{0,2,4,6,8,10}){CHECK(firstperson_setting::save(path,weaponBack,back));CHECK(firstperson_setting::load(path)==back && weaponBack==back);}
-    CHECK(!firstperson_setting::save(L"",weaponBack,2) && weaponBack==10);
-    for(const wchar_t *invalid:{L"-2",L"3",L"12",L"4junk",L"999999999999999999999999999"}){
-        CHECK(WritePrivateProfileStringW(L"FirstPerson",L"BackOffset",invalid,path));CHECK(firstperson_setting::load(path)==0);
+    for(int back:{-50,-10,0,10,50}){CHECK(firstperson_setting::save(path,weaponDistance,back));CHECK(firstperson_setting::load(path)==back && weaponDistance==back);}
+    CHECK(!firstperson_setting::save(L"",weaponDistance,2) && weaponDistance==50);
+    for(const wchar_t *invalid:{L"-51",L"51",L"4junk",L"999999999999999999999999999"}){
+        CHECK(WritePrivateProfileStringW(L"FirstPerson",L"DistanceOffset",invalid,path));CHECK(firstperson_setting::load(path)==0);
     }
     wchar_t value[32];GetPrivateProfileStringW(L"Other",L"Keep",L"",value,32,path);CHECK(!wcscmp(value,L"unchanged"));
-    CHECK(DeleteFileW(path));weaponBack=0;
-    puts("PASS: native aligned ret8 placement trampoline, signature drift refusal, reflected root/Vector identity, bounded toward-camera offset, no accumulation/reentrant doubling, ADS/cinematic/death/thread/owner guards, native-change-preserving restore and real INI persistence. Game coverage unverified.");
+    CHECK(DeleteFileW(path));weaponDistance=0;
+    puts("PASS: native aligned ret8 placement trampoline, signature drift refusal, reflected root/Vector identity, bounded signed distance, no accumulation/reentrant doubling, ADS/cinematic/death/thread/owner guards, native-change-preserving restore and real INI persistence. Game coverage unverified.");
 }

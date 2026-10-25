@@ -81,6 +81,11 @@ if($Version -eq '0.30.1') {
         $files+=@{path=('docs/'+$doc);source=(Join-Path $repo ('docs/'+$doc))}
     }
 }
+if($Version -eq '0.31.0') {
+    foreach($doc in @('BUILD-v031.md','DELIVERY-v031.md','FIRSTPERSON-POSITION.md')) {
+        $files+=@{path=('docs/'+$doc);source=(Join-Path $repo ('docs/'+$doc))}
+    }
+}
 if($Version -eq '0.29.0'){$files+=@{path='docs/BUILD-v029.md';source=(Join-Path $repo 'docs/BUILD-v029.md')}}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
