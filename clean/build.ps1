@@ -1,4 +1,4 @@
-param([switch]$Test,[string]$ZigPath=$env:INFINITEMOD_ZIG)
+param([switch]$Test,[switch]$BuildLegacyNativeFOV,[string]$ZigPath=$env:INFINITEMOD_ZIG)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $zig=if($ZigPath){[IO.Path]::GetFullPath($ZigPath)}else{Join-Path $root 'tools/zig-windows-x86_64-0.13.0/zig.exe'}
@@ -19,7 +19,7 @@ $sources+=@('imgui.cpp','imgui_draw.cpp','imgui_tables.cpp','imgui_widgets.cpp',
 & $zig c++ -target x86-windows-gnu -O2 -Wall -Wextra @kind @sources -I $imgui -I (Join-Path $minhook 'include') -o $output @libs
 if($LASTEXITCODE -ne 0){throw 'Compilation failed'}
 Get-FileHash $output
-if(-not $Test) {
+if($BuildLegacyNativeFOV -and -not $Test) {
     $nativeTool=Join-Path $root 'tools/native-fov/NativeFOV.exe'
     New-Item -ItemType Directory -Path (Split-Path $nativeTool -Parent) -Force | Out-Null
     & $zig c++ -target x86-windows-gnu -O2 -Wall -Wextra -Wno-unused-function (Join-Path $PSScriptRoot 'native_fov_tool.cpp') -o $nativeTool -lkernel32 -lshell32 -luser32

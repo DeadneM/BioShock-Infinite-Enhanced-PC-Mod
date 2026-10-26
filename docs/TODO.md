@@ -1,3 +1,7 @@
+## October26 documentation / artwork / maintenance audit
+
+Current README rewritten for all34 actions and0.31 features; historical README preserved. Generated cover and banner stored in assets. Retired green diagnostic archived, legacy FOV helper build made opt-in, tests isolated under tools/test-runs, and stale packaging defaults removed. No active runtime behavior or installed personal settings changed. See AUDIT-20261026.md for evidence and final checks.
+
 ## October 25 - 0.31 signed native distance
 
 Player accepted closer offset10 in0.30.1. New requested range -50..+50; Ctrl+Minus decreases, Ctrl+Plus increases by2 with endpoint clamping. Old closer10 loads as-10 without INI rewriting. Zero/native ADS and existing features retained. Extended range remains experimental. See [scope and controls](BUILD-v031.md).

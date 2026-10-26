@@ -6,9 +6,9 @@ param(
     [string]$IniPath,
     [string]$LoaderPath,
     [string]$OutputPath,
-    [string]$Objective='Configurable shortcuts and current-vitals refill on validated base 0.15.0.',
-    [string]$SuccessCriterion='Test the new bindings, persistent remapping, F1 without capacity increases, and previously validated features.',
-    [string]$ValidatedBase='0.15.0',
+    [string]$Objective='See the build record for this release.',
+    [string]$SuccessCriterion='Player validation is required for new runtime behavior.',
+    [string]$ValidatedBase='Not specified; packaging does not establish validation.',
     [switch]$ListOnly
 )
 . (Join-Path $PSScriptRoot 'Support.ps1')
@@ -29,7 +29,6 @@ $files=@(
     @{path='docs/HISTORY.md';source=(Join-Path $repo 'docs/HISTORY.md')},
     @{path='docs/TECHNICAL-NOTEBOOK.md';source=(Join-Path $repo 'docs/TECHNICAL-NOTEBOOK.md')},
     @{path='docs/TODO.md';source=(Join-Path $repo 'docs/TODO.md')},
-    @{path='docs/BUILD-v018.md';source=(Join-Path $repo 'docs/BUILD-v018.md')},
     @{path='INSTALLATION.md';source=(Join-Path $PSScriptRoot 'INSTALLATION.md')},
     @{path='Installer.ps1';source=(Join-Path $PSScriptRoot 'Installer.ps1')},
     @{path='Retour.ps1';source=(Join-Path $PSScriptRoot 'Retour.ps1')},
@@ -42,6 +41,7 @@ $files=@(
     @{path='licenses/Dear-ImGui-MIT.txt';source=(Join-Path $PSScriptRoot 'licenses/Dear-ImGui-MIT.txt')},
     @{path='licenses/MinHook-BSD.txt';source=(Join-Path $PSScriptRoot 'licenses/MinHook-BSD.txt')}
 )
+if($Version -in @('0.18.0','0.18.1')){$files+=@{path='docs/BUILD-v018.md';source=(Join-Path $repo 'docs/BUILD-v018.md')}}
 if($Version -eq '0.18.1'){$files+=@{path='docs/BUILD-v0181.md';source=(Join-Path $repo 'docs/BUILD-v0181.md')}}
 if($Version -in @('0.24.0','0.24.1')) {
     foreach($doc in @('BUILD-v024.md','NATIVE-ZOOM-TARGET.md','BUILD-v0181.md','DELIVERY-v0181.md','REJECTED-v021.md','REJECTED-v022.md','REJECTED-v023.md')) {
@@ -87,6 +87,14 @@ if($Version -eq '0.31.0') {
     }
 }
 if($Version -eq '0.29.0'){$files+=@{path='docs/BUILD-v029.md';source=(Join-Path $repo 'docs/BUILD-v029.md')}}
+if([version]$Version -ge [version]'0.31.0') {
+    foreach($asset in @('infinitemod-banner.png','infinitemod-cover-16x9.png','README.md','PROMPTS.md')) {
+        $files+=@{path=('assets/'+$asset);source=(Join-Path $repo ('assets/'+$asset))}
+    }
+    foreach($doc in @('AUDIT-20261026.md','archive/README-through-v031.md')) {
+        $files+=@{path=('docs/'+$doc);source=(Join-Path $repo ('docs/'+$doc))}
+    }
+}
 if(Test-Path -LiteralPath (Join-Path $repo 'LICENSE') -PathType Leaf){$files+=@{path='LICENSE';source=(Join-Path $repo 'LICENSE')}}
 $moduleFiles=@()
 foreach($file in $files) {
