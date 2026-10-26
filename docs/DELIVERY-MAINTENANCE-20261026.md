@@ -6,3 +6,6 @@ Artifacts: assets/infinitemod-cover-16x9.png (1672x941), assets/infinitemod-bann
 Local bundle: releases/InfiniteMod-v0.31.0-docs-artwork.zip, SHA256EE08F9F5B5E97BD08957E4BD33185CB944CB756AE3BB5029D5D881E71455022D.
 133 known generated test outputs archived with checksum manifest, no deletion. Current tests write privately under tools/test-runs. Historical green source preserved in archive. NativeFOV helper build opt-in. No game launch, native config write or installation.
 GitHub publication receipt follows after actual pushes. Default-branch publication is limited to documentation/assets; gameplay/build source on main must remain unchanged.
+
+
+GitHub maintenance source and artwork publication verified: commit92116431bda1fd6bfeccdb703872558bd5cdc346 pushed on experiment/firstperson-distance and maintenance/readme-art-audit. The repository homepage receives the current README/assets and linked records via a separate documentation-only commit based on retained main99a75aa9. No gameplay or build scripts from the experimental branch are merged into main. Release v0.31 tag/payload remain immutable.
