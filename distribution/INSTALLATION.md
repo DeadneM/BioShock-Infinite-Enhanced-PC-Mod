@@ -1,51 +1,30 @@
-# Install an experimental build
+# Install / restore InfiniteMod
 
-This package supports the checksum-verified BioShock Infinite GOG x86 build.
-The retained gameplay and controls base is v0.18.0. New features remain **EXPERIMENTAL**
-until the user confirms their in-game test. The build objective and success
-criterion are recorded in `package.json`.
+Current instructions apply to the v0.31 experimental line, targeting checksum-verified BioShock Infinite GOG 1.1.25.5165 Win32. Read `package.json` for the build's objective and success criterion. Player approval and local checks are recorded separately in the repository.
 
 1. Close the game normally.
-2. Extract the ZIP into a directory separate from the game. README, licenses,
-   scripts and `Binaries/Win32` are at the ZIP root, without an enclosing folder.
-3. From the extracted directory, run the installer in PowerShell:
+2. Extract the ZIP into a directory separate from the game. It contains scripts and `Binaries/Win32` directly at the root.
+3. In PowerShell from that directory, run:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Installer.ps1 -GameDirectory 'C:\Games\BioShock Infinite'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Installer.ps1 -GameDirectory 'P:\Games\BioShock Infinite'
 ```
 
-The installer verifies the files, backs up the existing ASI and INI under
-`InfiniteMod-Backups/install-*`, then installs the module. An existing INI
-is preserved in full; new shortcuts use defaults supplied by the ASI.
-Installation stops if a different `dinput8.dll` is already present.
-A compatible existing loader is reused and left intact during rollback.
-A loader added by this installation is also retained during rollback if
-other ASI plugins are present.
+Substitute your actual game root. The installer verifies the supported EXE and payload, backs up existing mod files under `InfiniteMod-Backups/install-*`, preserves an existing INI byte-for-byte and reuses a compatible loader. A different `dinput8.dll` is refused. New preferences use runtime defaults without overwriting your custom settings. Saves and the game EXE are not replaced.
 
-These scripts do not replace saves, the game executable or native game INI
-files. During gameplay, the module can change progression through the chosen
-commands and apply HUD/logo options to native INI files, as described in the
-README. Rolling back the module does not undo an autosave already made by
-the game.
+Launch normally. Current world FOV updates are live; no special launcher or NativeFOV utility is needed. HUD/menu size and logo options take effect at the next launch. The module can apply its documented logo/HUD preferences to native INI files and change progression on explicit commands; rollback does not reverse game autosaves.
 
-To restore the previous ASI and INI, close the game and use the backup path
-printed by the installer:
+## Restore the previous module
+
+Close the game and use the exact backup directory printed during installation:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Rollback.ps1 -GameDirectory 'C:\Games\BioShock Infinite' -BackupDirectory 'C:\Games\BioShock Infinite\InfiniteMod-Backups\install-YYYYMMDD-HHMMSS-fff-ID'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Rollback.ps1 -GameDirectory 'P:\Games\BioShock Infinite' -BackupDirectory 'P:\Games\BioShock Infinite\InfiniteMod-Backups\install-<timestamp-id>'
 ```
 
-Rollback verifies checksums and preserves the removed state under
-`InfiniteMod-Backups/before-rollback-*`. It refuses to replace an ASI or an
-owned loader that changed after installation. The INI may have been edited
-during gameplay: it is copied before the previous INI is restored.
+Rollback verifies checksums, preserves removed state in `before-rollback-*` and refuses to replace an unexpectedly changed ASI/owned loader. Existing INIs that the installer reused are retained. Any INI restoration is protected by a recovery copy. Shared loaders are retained when other ASIs need them. `Retour.ps1` remains a compatibility entry point.
 
-The earlier `Retour.ps1` entry point is retained for existing rollback commands.
-Both entry points run the same checked rollback operation.
-
-To compile the source repository, the bootstrap downloads Zig 0.13.0 from
-[the official website](https://ziglang.org/download/index.json) and verifies
-its SHA256:
+## Build the source
 
 ```powershell
 .\distribution\bootstrap.ps1
@@ -53,9 +32,6 @@ its SHA256:
 .\build.ps1
 ```
 
-An existing compiler can be selected with `INFINITEMOD_ZIG`, set to the full
-path of its `zig.exe` version 0.13.0. ImGui/MinHook source and licenses are
-included in the repository. `bootstrap.ps1 -IncludeLoader` also downloads
-the [official v9.7.4 loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases/tag/v9.7.4)
-using pinned archive and DLL checksums. The compiler and its caches are not
-included in the installable ZIP.
+Zig0.13.0 is pinned. Set `INFINITEMOD_ZIG` to the matching `zig.exe` if already installed. `bootstrap.ps1 -IncludeLoader` obtains the pinned Ultimate ASI Loader. ImGui/MinHook sources and licenses are in the repository. Compiler caches, test fixtures and local installation backups do not belong in release ZIPs.
+
+The historical FOV tool is compiled only with `-BuildLegacyNativeFOV`. Legacy0.25/0.27 launch/range tooling and rollback support remain for historical packages; they are not instructions for the current release. See the archived build records when reproducing those versions.
